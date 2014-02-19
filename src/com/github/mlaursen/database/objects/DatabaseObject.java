@@ -174,6 +174,17 @@ public abstract class DatabaseObject {
 	}
 	
 	/**
+	 * This is a implementation for using generics if you need a specific Database Object
+	 * sub class
+	 * @param primaryKey
+	 * @param type	Sub class to cast to
+	 * @return
+	 */
+	public <T extends DatabaseObject> T get(String primaryKey, Class<T> type) {
+		return manager.executeCursorProcedure("get", primaryKey).getRow().construct(type);
+	}
+	
+	/**
 	 * This is a default implementation for the GetAllable Interface 'getAll' method.
 	 * If the database object i not GetAllable, it will return an empty list.
 	 * If you want an additional key to be applied to the getAll method,
@@ -185,6 +196,18 @@ public abstract class DatabaseObject {
 	public List<DatabaseObject> getAll() {
 		Object[] params = getParameters(DatabaseAnnotationType.GETALL);
 		return (List<DatabaseObject>) manager.executeCursorProcedure("getall", params).toListOf(this.getClass());
+	}
+	
+	/**
+	 * This is a implementation for using generics if you need a specific list of Database Object
+	 * sub class
+	 * @param primaryKey
+	 * @param type	Sub class to cast to
+	 * @return
+	 */
+	public <T extends DatabaseObject> List<T> getAll(Class<T> type) {
+		Object[] params = getParameters(DatabaseAnnotationType.GETALL);
+		return manager.executeCursorProcedure("getall", params).toListOf(type);
 	}
 	
 	/**
@@ -206,6 +229,17 @@ public abstract class DatabaseObject {
 	@SuppressWarnings("unchecked")
 	public List<DatabaseObject> filter(Object... filterBy) {
 		return (List<DatabaseObject>) manager.executeCursorProcedure("fiter", filterBy).toListOf(this.getClass());
+	}
+	
+	/**
+	 * This is a implementation for using generics if you need a specific Database Object
+	 * sub class
+	 * @param primaryKey
+	 * @param type	Sub class to cast to
+	 * @return
+	 */
+	public <T extends DatabaseObject> List<T> filter(Class<T> type, Object... filterBy) {
+		return manager.executeCursorProcedure("filter", filterBy).toListOf(type);
 	}
 	
 	/**
