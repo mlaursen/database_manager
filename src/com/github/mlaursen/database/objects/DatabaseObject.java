@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseAnnotationType;
+import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.database.DatabaseObjectManager;
 
 /**
@@ -181,17 +181,47 @@ public abstract class DatabaseObject {
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public List<DatabaseObject> getAll() {
 		Object[] params = getParameters(DatabaseAnnotationType.GETALL);
 		return (List<DatabaseObject>) manager.executeCursorProcedure("getall", params).toListOf(this.getClass());
 	}
 	
+	/**
+	 * Default implementation for a DatabaseObject that is createable.
+	 * 
+	 * @return
+	 */
 	public boolean create() {
 		Object[] params = getParameters(DatabaseAnnotationType.CREATE);
 		return manager.executeStoredProcedure("create", params);
 	}
 	
+	/**
+	 * Default implmenetation for a database object that is filterable.
+	 * 
+	 * @param filterBy Array of objects to filter the query by
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<DatabaseObject> filter(Object... filterBy) {
 		return (List<DatabaseObject>) manager.executeCursorProcedure("fiter", filterBy).toListOf(this.getClass());
+	}
+	
+	/**
+	 * Default implementation for a updateable database object
+	 * @return
+	 */
+	public boolean update() {
+		Object[] params = getParameters(DatabaseAnnotationType.UPDATE);
+		return manager.executeStoredProcedure("update", params);
+	}
+	
+	/**
+	 * Default implementation for a deleteable database object.
+	 * @return
+	 */
+	public boolean delete() {
+		return manager.executeStoredProcedure("delete", primaryKey);
 	}
 }
