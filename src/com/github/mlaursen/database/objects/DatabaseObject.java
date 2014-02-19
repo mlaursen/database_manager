@@ -8,8 +8,7 @@ import java.util.Map;
 
 import com.github.mlaursen.annotations.DatabaseAnnotationType;
 import com.github.mlaursen.annotations.DatabaseField;
-import com.github.mlaursen.database.DatabaseObjectManager;
-import com.github.mlaursen.database.MyResultRow;
+import com.github.mlaursen.database.ObjectManager;
 
 /**
  * Basic outline for a DatbaseObject.
@@ -20,12 +19,12 @@ import com.github.mlaursen.database.MyResultRow;
  */
 public abstract class DatabaseObject {
 	
-	protected final DatabaseObjectManager manager = createManager();
+	protected final ObjectManager manager = createManager();
 	@DatabaseField(values=DatabaseAnnotationType.GET, getPosition=0)
 	protected String primaryKey;
 	protected String primaryKeyName = "id";
 	/**
-	 * This is mostly used to access the DatabaseObjectManager to do Database
+	 * This is mostly used to access the ObjectManager to do Database
 	 * calls
 	 */
 	public DatabaseObject() { }
@@ -92,12 +91,12 @@ public abstract class DatabaseObject {
 	
 	/**
 	 * Creates a manager for the database object.
-	 * {@link com.github.mlaursen.database.DatabaseObjectManager}
+	 * {@link com.github.mlaursen.database.ObjectManager}
 	 * Basic implementation is:
-	 * @return new DatabaseObjectManager(this.getClass());
+	 * @return new ObjectManager(this.getClass());
 	 */
-	protected DatabaseObjectManager createManager() {
-		return new DatabaseObjectManager(this.getClass());
+	protected ObjectManager createManager() {
+		return new ObjectManager(this.getClass());
 	}
 	
 	public String getDatabaseManagerToString() {
