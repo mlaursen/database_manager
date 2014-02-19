@@ -16,7 +16,10 @@ import java.util.Properties;
 import oracle.jdbc.OracleTypes;
 
 import com.github.mlaursen.database.objects.DatabaseObject;
+import com.github.mlaursen.database.objects.DatabasePackage;
+import com.github.mlaursen.database.objects.DatabaseProcedure;
 import com.github.mlaursen.database.objects.MyClob;
+import com.github.mlaursen.database.objects.MyResultSet;
 
 /**
  * Utility class for interacting with databases.

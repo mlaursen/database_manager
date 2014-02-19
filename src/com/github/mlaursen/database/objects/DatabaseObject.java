@@ -1,7 +1,14 @@
 package com.github.mlaursen.database.objects;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.github.mlaursen.annotations.DatabaseField;
+import com.github.mlaursen.annotations.DatabaseAnnotationType;
 import com.github.mlaursen.database.DatabaseObjectManager;
-import com.github.mlaursen.database.MyResultRow;
 
 /**
  * Basic outline for a DatbaseObject.
@@ -12,10 +19,10 @@ import com.github.mlaursen.database.MyResultRow;
  */
 public abstract class DatabaseObject {
 	
-	@SuppressWarnings("rawtypes")
 	protected final DatabaseObjectManager manager = createManager();
-	protected String primaryKey, primaryKeyName = "id";
-	
+	@DatabaseField(values=DatabaseAnnotationType.GET, getPosition=0)
+	protected String primaryKey;
+	protected String primaryKeyName = "id";
 	/**
 	 * This is mostly used to access the DatabaseObjectManager to do Database
 	 * calls
@@ -77,12 +84,114 @@ public abstract class DatabaseObject {
 		return primaryKeyName;
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@Override
+	public String toString() {
+		return "DatabaseObject [primaryKey=" + primaryKey + ", primaryKeyName=" + primaryKeyName + "]";
+	}
+	
 	/**
 	 * Creates a manager for the database object.
 	 * {@link com.github.mlaursen.database.DatabaseObjectManager}
 	 * Basic implementation is:
 	 * @return new DatabaseObjectManager(this.getClass());
 	 */
-	protected abstract DatabaseObjectManager createManager();
+	protected DatabaseObjectManager createManager() {
+		return new DatabaseObjectManager(this.getClass());
+	}
+	
+	public String getDatabaseManagerToString() {
+		return manager.toString();
+	}
+	
+	
+	private Object[] getParameters(DatabaseAnnotationType proc) {
+		return getParameters(getParametersMap(proc));
+	}
+	private Object[] getParameters(Map<Integer, Object> map) {
+		int s = map.size();
+		Object[] ps = new Object[s];
+		for(int i = 0; i < s; i++) {
+			ps[i] = map.get(i);
+		}
+		return ps;
+	}
+	
+	private Map<Integer, Object> getParametersMap(DatabaseAnnotationType proc) {
+		return getParametersMap(proc, new HashMap<Integer, Object>(), this.getClass());
+	}
+	
+	private Map<Integer, Object> getParametersMap(DatabaseAnnotationType proc, Map<Integer, Object> ps, Class<?> c) {
+		if(c.equals(Object.class)) {
+			return ps;
+		}
+		else {
+			for(Field f : c.getDeclaredFields()) {
+				if(f.isAnnotationPresent(DatabaseField.class)) {
+					DatabaseField a = f.getAnnotation(DatabaseField.class);
+					if(Arrays.asList(a.values()).contains(proc)) {
+						try {
+							Object o = f.get(this);
+							int pos = -1;
+							if(proc.equals(DatabaseAnnotationType.GET))
+								pos = a.getPosition();
+							else if(proc.equals(DatabaseAnnotationType.GETALL))
+								pos = a.getAllPosition();
+							else if(proc.equals(DatabaseAnnotationType.CREATE))
+								pos = a.createPosition();
+							else if(proc.equals(DatabaseAnnotationType.DELETE))
+								pos = a.deletePosition();
+							else if(proc.equals(DatabaseAnnotationType.FILTER))
+								pos = a.filterPosition();
+							if(pos == -1) {
+								throw new Exception();
+							}
+							else {
+								ps.put(pos, o);
+							}
+						}
+						catch (IllegalArgumentException | IllegalAccessException e) {
+							e.printStackTrace();
+						}
+						catch (Exception e) {
+							System.err.println("The position for " + proc + " has not been initialized.");
+							System.err.println("This field[" + f.getName() + "]'s value was not added to the results");
+						}
+					}
+				}
+			}
+			return getParametersMap(proc, ps, c.getSuperclass());
+		}
+	}
+	
+	/**
+	 * This is a default implementation for the Getable Interface get Method.
+	 * If the database object is not Getable, it will return null
+	 * @param primaryKey The primary key to search for in the database
+	 * @return Either a null DatabaseObject or a result DatabaseObjet
+	 */
+	public DatabaseObject get(String primaryKey) {
+		return manager.executeCursorProcedure("get", primaryKey).getRow().construct(this.getClass());
+	}
+	
+	/**
+	 * This is a default implementation for the GetAllable Interface 'getAll' method.
+	 * If the database object i not GetAllable, it will return an empty list.
+	 * If you want an additional key to be applied to the getAll method,
+	 * add the Annotation @DatabaseField(values={DatabaseField.GETALL}, position={$positionToBeApplied})
+	 * 
+	 * @return
+	 */
+	public List<DatabaseObject> getAll() {
+		Object[] params = getParameters(DatabaseAnnotationType.GETALL);
+		return (List<DatabaseObject>) manager.executeCursorProcedure("getall", params).toListOf(this.getClass());
+	}
+	
+	public boolean create() {
+		Object[] params = getParameters(DatabaseAnnotationType.CREATE);
+		return manager.executeStoredProcedure("create", params);
+	}
+	
+	public List<DatabaseObject> filter(Object... filterBy) {
+		return (List<DatabaseObject>) manager.executeCursorProcedure("fiter", filterBy).toListOf(this.getClass());
+	}
 }

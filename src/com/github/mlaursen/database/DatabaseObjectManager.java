@@ -1,12 +1,27 @@
 package com.github.mlaursen.database;
 
-import com.github.mlaursen.database.objects.DatabaseCreateable;
-import com.github.mlaursen.database.objects.DatabaseDeleteable;
-import com.github.mlaursen.database.objects.DatabaseFilterable;
-import com.github.mlaursen.database.objects.DatabaseGetable;
-import com.github.mlaursen.database.objects.DatabaseListable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.github.mlaursen.annotations.DatabaseAnnotationType;
+import com.github.mlaursen.annotations.DatabaseField;
+import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.objects.DatabaseObject;
-import com.github.mlaursen.database.objects.DatabaseUpdateable;
+import com.github.mlaursen.database.objects.DatabasePackage;
+import com.github.mlaursen.database.objects.DatabaseProcedure;
+import com.github.mlaursen.database.objects.MyResultRow;
+import com.github.mlaursen.database.objects.MyResultSet;
+import com.github.mlaursen.database.objecttypes.Createable;
+import com.github.mlaursen.database.objecttypes.Deleteable;
+import com.github.mlaursen.database.objecttypes.Filterable;
+import com.github.mlaursen.database.objecttypes.GetAllable;
+import com.github.mlaursen.database.objecttypes.Getable;
+import com.github.mlaursen.database.objecttypes.NoCursor;
+import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
  * A Database Manager for a database object.
@@ -16,29 +31,42 @@ import com.github.mlaursen.database.objects.DatabaseUpdateable;
  * 
  * @see DatabasePackage
  * @see DatabaseProcedure
- * @see DatabaseGetable
- * @see DatabaseListable
- * @see DatabaseUpdateable
- * @see DatabaseDeleteable
- * @see DatabaseFilterable
+ * @see Getable
+ * @see GetAllable
+ * @see Updateable
+ * @see Deleteable
+ * @see Filterable
  * @author mikkel.laursen
  *
  */
-public class DatabaseObjectManager<T extends DatabaseObject> {
+public class DatabaseObjectManager {
 
 	private Manager manager;
-	private T dbObject;
+	private Class<? extends DatabaseObject> type;
 	private DatabasePackage pkg;
-	public DatabaseObjectManager(T dbObj) {
-		dbObject = dbObj;
+	private List<String> availableCalls = new ArrayList<String>();
+	public DatabaseObjectManager(Class<? extends DatabaseObject> class1) {
+		type = class1;
 		manager = new Manager();
-		pkg = new DatabasePackage(dbObject.getClass());
+		pkg = new DatabasePackage(class1);
 		generatePackageProcedures();
+	}
+	
+	/**
+	 * A check if the procedure exists within the database object package
+	 * @param procedureName
+	 * @return
+	 */
+	public boolean canCall(String procedureName) {
+		return availableCalls.contains(procedureName);
 	}
 	
 	/**
 	 * Executes a database stored procedure that does not have a result set as a result.
 	 * The return type will be a boolean if the stored procedure affected at least 1 row.
+	 * Before executing the stored procedure, a check is performed to see if that procedure exists
+	 * in the package, if it does not exist, false is returned and an error message is printed
+	 * to the System.err.
 	 * 
 	 * @param procedureName The procedure name to lookup and call from the Database Object's 
 	 * 	package
@@ -48,11 +76,20 @@ public class DatabaseObjectManager<T extends DatabaseObject> {
 	 * 	the result is true.
 	 */
 	public boolean executeStoredProcedure(String procedureName, Object... parameters) {
-		return manager.executeStoredProcedure(pkg, procedureName, parameters);
+		if(canCall(procedureName)) {
+			return manager.executeStoredProcedure(pkg, procedureName, parameters);
+		}
+		else {
+			System.err.println(pkg.getName() + " does not contain the procedure " + procedureName);
+			return false;
+		}
 	}
 	
 	/**
 	 * Executes a database stored procedure and returns a list of result rows.
+	 * Before executing the stored procedure, a check is performed to see if that procedure exists
+	 * in the package, if it does not exist, an empty ResultSet is returned and an error message is printed
+	 * to the System.err.
 	 * 
 	 * @param procedureName The procedure name to lookup and call from the Database Object's 
 	 * 	package
@@ -61,7 +98,13 @@ public class DatabaseObjectManager<T extends DatabaseObject> {
 	 * @return a MyResultSet for the resulting rows from the database call. @see MyResultSet
 	 */
 	public MyResultSet executeCursorProcedure(String procedureName, Object... parameters) {
-		return manager.executeCursorProcedure(pkg, procedureName, parameters);
+		if(canCall(procedureName)) {
+			return manager.executeCursorProcedure(pkg, procedureName, parameters);
+		}
+		else {
+			System.err.println(pkg.getName() + " does not contain the procedure " + procedureName);
+			return new MyResultSet(Arrays.asList(new MyResultRow()));
+		}
 	}
 	
 	/**
@@ -79,50 +122,152 @@ public class DatabaseObjectManager<T extends DatabaseObject> {
 		return executeCursorProcedure(procedureName, parameters).getRow();
 	}
 	
-	private void generatePackageProcedures() {
-		if(dbObject instanceof DatabaseGetable) {
-			DatabaseGetable dbGetable = (DatabaseGetable) dbObject;
-			DatabaseProcedure pGet = new DatabaseProcedure("get", dbGetable.getGetableParameters());
-			pkg.addProcedure(pGet);
+	/**
+	 * Checks if the type instance variable is assignable from a given class
+	 * @param c	Class to test for
+	 * @return
+	 */
+	private boolean typeIsOf(Class<?> c) {
+		return c.isAssignableFrom(type);
+	}
+	
+	/**
+	 * Returns an array of String as the parameter names to be supplied to a procedure.
+	 * 
+	 * @param fieldName
+	 * @return
+	 */
+	@Deprecated
+	private String[] getParametersFromField(String fieldName) {
+		String upper = fieldName.toUpperCase();
+		try {
+			return (String[]) type.getField(upper).get(null);
 		}
-		
-		if(dbObject instanceof DatabaseListable) {
-			DatabaseListable dbListable = (DatabaseListable) dbObject;
-			DatabaseProcedure pGetAll = new DatabaseProcedure("get", dbListable.getListableParameters());
-			pGetAll.setDisplayName("getall");
-		}
-		
-		if(dbObject instanceof DatabaseCreateable) {
-			DatabaseCreateable dbCreateable = (DatabaseCreateable) dbObject;
-			DatabaseProcedure pCreate = new DatabaseProcedure("create", dbCreateable.getCreateableParameters());
-			pkg.addProcedure(pCreate);
-		}
-		
-		if(dbObject instanceof DatabaseUpdateable) {
-			DatabaseUpdateable dbUpdateable = (DatabaseUpdateable) dbObject;
-			DatabaseProcedure pUpdate = new DatabaseProcedure("update", dbUpdateable.getUpdateableParameters());
-			pkg.addProcedure(pUpdate);
-		}
-		
-		if(dbObject instanceof DatabaseFilterable) {
-			DatabaseFilterable dbFilter = (DatabaseFilterable) dbObject;
-			DatabaseProcedure pFilter = new DatabaseProcedure("filter", dbFilter.getFilterableParameters());
-			pkg.addProcedure(pFilter);
-		}
-		
-		if(dbObject instanceof DatabaseDeleteable) {
-			DatabaseDeleteable dbDelete = (DatabaseDeleteable) dbObject;
-			DatabaseProcedure pDelete = new DatabaseProcedure("delete", dbDelete.getDeleteableParameters());
-			pkg.addProcedure(pDelete);
+		catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			System.err.println("There must be a public static method in class '"
+							  + type.getCanonicalName() + "' listed as: 'public static final String[] " + upper + "'");
+			return null;
 		}
 	}
 	
+	/**
+	 * Creates a procedure in the database object package.
+	 * 
+	 * @param c		This is a class within the com.github.database.objecttypes package.
+	 * 	It creates a procedure based on the lowercase version of the class name and removes
+	 * the 'able' from the name.
+	 */
+	private void createProcedure(Class<?> c) {
+		if(typeIsOf(c)) {
+			String procName = c.getSimpleName().toLowerCase().replace("able", "");
+			availableCalls.add(procName);
+			DatabaseProcedure proc = new DatabaseProcedure(procName, getParametersFromClass(c));
+			if(NoCursor.class.isAssignableFrom(c)) {
+				proc.setHasCursor(false);
+			}
+			if(c.equals(GetAllable.class)) {
+				proc.setDisplayName("getall");
+				proc.setName("get");
+			}
+			pkg.addProcedure(proc);
+		}
+	}
+	
+	private String[] getParametersFromClass(Class<?> c) {
+		return getParametersFromClass(DatabaseAnnotationType.classToType(c), type);
+	}
+	private String[] getParametersFromClass(DatabaseAnnotationType proc, Class<?> c) {
+		Map<Integer, String> map = getParametersFromClass(proc, c, new HashMap<Integer, String>(), 0);
+		int s = map.size();
+		String[] ps = new String[s];
+		for(int i = 0; i < s; i++) {
+			ps[i] = map.get(i);
+		}
+		return ps;
+	}
+	
+	private Map<Integer, String> getParametersFromClass(DatabaseAnnotationType proc, Class<?> c, Map<Integer, String> current, int counter) {
+		if(c.equals(Object.class)) {
+			return current;
+		}
+		else {
+			for(Field f : c.getDeclaredFields()) {
+				if(f.isAnnotationPresent(MultipleDatabaseField.class)) {
+					MultipleDatabaseField m = f.getAnnotation(MultipleDatabaseField.class);
+					if(Arrays.asList(m.values()).contains(proc)) {
+						for(String n : m.names()) {
+							current.put(counter, n);
+							counter++;
+						}
+					}
+				}
+				else if(f.isAnnotationPresent(DatabaseField.class)) {
+					DatabaseField a = f.getAnnotation(DatabaseField.class);
+					if(Arrays.asList(a.values()).contains(proc)) {
+						try {
+							int pos;
+							if(a.reorder()) {
+								pos = -1;
+								if(proc.equals(DatabaseAnnotationType.GET))
+									pos = a.getPosition();
+								else if(proc.equals(DatabaseAnnotationType.GETALL))
+									pos = a.getAllPosition();
+								else if(proc.equals(DatabaseAnnotationType.CREATE))
+									pos = a.createPosition();
+								else if(proc.equals(DatabaseAnnotationType.DELETE))
+									pos = a.deletePosition();
+								else if(proc.equals(DatabaseAnnotationType.FILTER))
+									pos = a.filterPosition();
+							}
+							else {
+								pos = counter;
+							}
+							counter++;
+							if(pos == -1) {
+								throw new Exception();
+							}
+							else {
+								current.put(pos, f.getName());
+							}
+						}
+						catch (Exception e) {
+							System.err.println("The position for " + proc + " has not been initialized.");
+							System.err.println("This field[" + f.getName() + "]'s value was not added to the results");
+						}
+					}
+				}
+			}
+			return getParametersFromClass(proc, c.getSuperclass(), current, counter);
+		}
+	}
+	
+	/**
+	 * This adds each procedure to the package for every
+	 * database objecttype that the database object implments.
+	 * It would be nice to just dynamically create for every class
+	 * in: com.github.mlaursen.database.objecttypes
+	 * 
+	 */
+	private void generatePackageProcedures() {
+		createProcedure(Getable.class);
+		createProcedure(GetAllable.class);
+		createProcedure(Createable.class);
+		createProcedure(Deleteable.class);
+		createProcedure(Filterable.class);
+		createProcedure(Updateable.class);
+	}
+	
+	/**
+	 * 
+	 * @return The package for the databaseobject
+	 */
+	public DatabasePackage getPackage() {
+		return this.pkg;
+	}
 	
 	@Override
 	public String toString() {
-		return "DatabaseObjectManager [" + (dbObject != null ? "dbObject=" + dbObject + ", " : "") + (pkg != null ? "pkg=" + pkg : "")
+		return "DatabaseObjectManager [pkg=" + pkg + ", type=" + type.getSimpleName()
 				+ "]";
 	}
-	
-	
 }
