@@ -43,26 +43,7 @@ public class Ingredient extends DatabaseObject implements Getable, GetAllable, F
 	
 	@MultipleDatabaseField(values={CREATE}, names={"altServingSize", "altServingUnit"})
 	private Serving alternateServing;
-	/*
-	@DatabaseField(values={CREATE})
-	private String servingUnit;
 	
-	@DatabaseField(values={CREATE})
-	private double servingSize;
-	
-	@DatabaseField(values={CREATE})
-	private double altServingSIze;
-	
-	@DatabaseField(values={CREATE})
-	private String altServingUnit;
-	*/
-	/*
-	@DatabaseFieldClass(value=Serving.class, startVal=3)
-	private Serving defaultServing;
-	
-	@DatabaseFieldClass(value=Serving.class, startVal=5)
-	private Serving alternateServing;
-	*/
 	@DatabaseField(values={CREATE})
 	private double calories;
 	
@@ -79,11 +60,6 @@ public class Ingredient extends DatabaseObject implements Getable, GetAllable, F
 		super(r);
 		name = r.get("name");
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "Ingredient [primaryKey=" + primaryKey + ", primaryKeyName=" + primaryKeyName + ", name=" + name + "]";
@@ -92,20 +68,9 @@ public class Ingredient extends DatabaseObject implements Getable, GetAllable, F
 	public DatabasePackage getPackage() {
 		return this.manager.getPackage();
 	}
-
-	/*
-	public static final String[] GETABLE_PARAMETERS    = new String[] { "primaryKey" };
-	public static final String[] CREATEABLE_PARAMETERS = new String[] {"new", "brand", "category"
-																	  , "servingsize", "servingunit"
-																	  , "altservingsize", "altservingunit"
-																	  , "calories", "fat"
-																	  , "carbs", "protein"};
-	public static final String[] GETALLABLE_PARAMETERS = new String[] { };
-	public static final String[] FILTERABLE_PARAMETERS = new String[] {"cateogry", "brand"};
-	*/
 	public static void main(String[] _) {
 		Ingredient t = new Ingredient();
-		System.out.println(t.getDatabaseManagerToString());
+		System.out.println(t.getAll());
 		//System.out.println(t.getDatabaseManagerToString());
 	//	System.out.println(t.getPackage().getProcedure("getall"));
 	//	System.out.println(t.getAll());

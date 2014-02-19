@@ -51,6 +51,23 @@ public class DatabaseObjectManager {
 		pkg = new DatabasePackage(class1);
 		generatePackageProcedures();
 	}
+
+	
+	/**
+	 * This adds each procedure to the package for every
+	 * database objecttype that the database object implments.
+	 * It would be nice to just dynamically create for every class
+	 * in: com.github.mlaursen.database.objecttypes
+	 * 
+	 */
+	private void generatePackageProcedures() {
+		createProcedure(Getable.class);
+		createProcedure(GetAllable.class);
+		createProcedure(Createable.class);
+		createProcedure(Deleteable.class);
+		createProcedure(Filterable.class);
+		createProcedure(Updateable.class);
+	}
 	
 	/**
 	 * A check if the procedure exists within the database object package
@@ -132,25 +149,6 @@ public class DatabaseObjectManager {
 	}
 	
 	/**
-	 * Returns an array of String as the parameter names to be supplied to a procedure.
-	 * 
-	 * @param fieldName
-	 * @return
-	 */
-	@Deprecated
-	private String[] getParametersFromField(String fieldName) {
-		String upper = fieldName.toUpperCase();
-		try {
-			return (String[]) type.getField(upper).get(null);
-		}
-		catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-			System.err.println("There must be a public static method in class '"
-							  + type.getCanonicalName() + "' listed as: 'public static final String[] " + upper + "'");
-			return null;
-		}
-	}
-	
-	/**
 	 * Creates a procedure in the database object package.
 	 * 
 	 * @param c		This is a class within the com.github.database.objecttypes package.
@@ -176,6 +174,8 @@ public class DatabaseObjectManager {
 	private String[] getParametersFromClass(Class<?> c) {
 		return getParametersFromClass(DatabaseAnnotationType.classToType(c), type);
 	}
+	
+	
 	private String[] getParametersFromClass(DatabaseAnnotationType proc, Class<?> c) {
 		Map<Integer, String> map = getParametersFromClass(proc, c, new HashMap<Integer, String>(), 0);
 		int s = map.size();
@@ -186,6 +186,16 @@ public class DatabaseObjectManager {
 		return ps;
 	}
 	
+	/**
+	 * Phew. Big handler.
+	 * Recursive method to check a class and all super classes for the Annotations for a database.
+	 * 
+	 * @param proc Procedure type to lookup and possibly add parameters to the results 
+	 * @param c	A class to check for annotations
+	 * @param current	A result set
+	 * @param counter	Interger for the position to place the field in the procedure string
+	 * @return
+	 */
 	private Map<Integer, String> getParametersFromClass(DatabaseAnnotationType proc, Class<?> c, Map<Integer, String> current, int counter) {
 		if(c.equals(Object.class)) {
 			return current;
@@ -239,22 +249,6 @@ public class DatabaseObjectManager {
 			}
 			return getParametersFromClass(proc, c.getSuperclass(), current, counter);
 		}
-	}
-	
-	/**
-	 * This adds each procedure to the package for every
-	 * database objecttype that the database object implments.
-	 * It would be nice to just dynamically create for every class
-	 * in: com.github.mlaursen.database.objecttypes
-	 * 
-	 */
-	private void generatePackageProcedures() {
-		createProcedure(Getable.class);
-		createProcedure(GetAllable.class);
-		createProcedure(Createable.class);
-		createProcedure(Deleteable.class);
-		createProcedure(Filterable.class);
-		createProcedure(Updateable.class);
 	}
 	
 	/**

@@ -130,7 +130,6 @@ public class Manager {
 		CallableStatement cs = null;
 		ResultSet rs = null;
 		MyResultSet results = null;
-		System.out.println(procedureName);
 		try {
 			conn = getConnection();
 			cs = conn.prepareCall("{call " + procedureName + "}");
