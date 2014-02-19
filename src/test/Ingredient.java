@@ -5,9 +5,9 @@ import static com.github.mlaursen.annotations.DatabaseAnnotationType.FILTER;
 
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
+import com.github.mlaursen.database.DatabasePackage;
+import com.github.mlaursen.database.MyResultRow;
 import com.github.mlaursen.database.objects.DatabaseObject;
-import com.github.mlaursen.database.objects.DatabasePackage;
-import com.github.mlaursen.database.objects.MyResultRow;
 import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Filterable;
 import com.github.mlaursen.database.objecttypes.GetAllable;

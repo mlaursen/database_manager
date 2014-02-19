@@ -6,8 +6,8 @@ package test;
 import static com.github.mlaursen.annotations.DatabaseAnnotationType.*;
 
 import com.github.mlaursen.annotations.DatabaseField;
+import com.github.mlaursen.database.MyResultRow;
 import com.github.mlaursen.database.objects.DatabaseObject;
-import com.github.mlaursen.database.objects.MyResultRow;
 
 /**
  * @author mikkel.laursen
