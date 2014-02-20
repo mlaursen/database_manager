@@ -214,13 +214,7 @@ public class ObjectManager {
 	private Map<Integer, String> getParametersFromClassHelper(DatabaseFieldType proc, Class<?> clss) {
 		int counter = 0;
 		Map<Integer, String> current = new HashMap<Integer, String>();
-		List<Class<?>> classes = new ArrayList<Class<?>>();
-		Class<?> currentClass = clss;
-		while(!currentClass.equals(Object.class)) {
-			classes.add(currentClass);
-			currentClass = currentClass.getSuperclass();
-		}
-		Collections.reverse(classes);
+		List<Class<?>> classes = Util.getClassList(clss);
 		for(Class<?> c : classes) {
 			for(Field f : c.getDeclaredFields()) {
 				if(f.isAnnotationPresent(MultipleDatabaseField.class)) {	// Handle a MultipleDatabaseField

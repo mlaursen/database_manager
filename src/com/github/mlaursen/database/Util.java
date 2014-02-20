@@ -3,7 +3,10 @@
  */
 package com.github.mlaursen.database;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author mikkel.laursen
@@ -38,5 +41,21 @@ public class Util {
 	}
 	public static String[] splitOn(String s, String regex) {
 		return s.split(regex);
+	}
+	
+	/**
+	 * Creates a list of all classes that a subclass implements excluding Object.class
+	 * @param subclass
+	 * @return
+	 */
+	public static List<Class<?>> getClassList(Class<?> subclass) {
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+		Class<?> currentClass = subclass;
+		while(!currentClass.equals(Object.class)) {
+			classes.add(currentClass);
+			currentClass = currentClass.getSuperclass();
+		}
+		Collections.reverse(classes);
+		return classes;
 	}
 }

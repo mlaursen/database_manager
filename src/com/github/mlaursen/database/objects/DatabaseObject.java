@@ -12,6 +12,7 @@ import java.util.Map;
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.database.ObjectManager;
+import com.github.mlaursen.database.Util;
 
 /**
  * Basic outline for a DatbaseObject.
@@ -197,7 +198,34 @@ public abstract class DatabaseObject {
 	private Map<Integer, Object> getParametersMap(DatabaseFieldType proc) {
 		//return getParametersMap(proc, new HashMap<Integer, Object>(), this.getClass());
 		Map<Integer, Object> params = new HashMap<Integer, Object>();
-		
+		List<Class<?>> classes = Util.getClassList(this.getClass());
+		for(Class<?> c : classes) {
+			for(Field f : c.getDeclaredFields()) {
+				if(f.isAnnotationPresent(DatabaseField.class)) {
+					DatabaseField a = f.getAnnotation(DatabaseField.class);
+					if(Arrays.asList(a.values()).contains(proc)) {
+						try {
+							Object o = f.get(this);
+							int pos = DatabaseFieldType.getPosition(proc, a);
+							if(pos == -1) {
+								throw new Exception();
+							}
+							else {
+								params.put(pos, o);
+							}
+						}
+						catch (IllegalArgumentException | IllegalAccessException e) {
+							e.printStackTrace();
+						}
+						catch (Exception e) {
+							String err = "The position for the procedure '" + proc + "' has not been initialized for the field "
+									+ "["+f.getName()+"] in class [" + c.getName() + "].  The value has not been added to the parameter map.";
+							System.err.println(err);
+						}
+					}
+				}
+			}
+		}
 		return params;
 	}
 	
