@@ -38,8 +38,7 @@ public abstract class DatabaseObject {
 	 * @param primaryKey
 	 */
 	public DatabaseObject(String primaryKey) {
-		MyResultRow r = manager.getFirstRowFromCursorProcedure("get", primaryKey);
-		setAll(r);
+		init(primaryKey);
 	}
 	
 	/**
@@ -62,11 +61,10 @@ public abstract class DatabaseObject {
 		setAll(r);
 	}
 	
-	protected void init(Integer primaryKey) {
-		MyResultRow r = manager.getFirstRowFromCursorProcedure("get", primaryKey);
-		setAll(r);
-	}
-	
+	/**
+	 * 
+	 * @param primaryKey
+	 */
 	protected void init(String primaryKey) {
 		MyResultRow r = manager.getFirstRowFromCursorProcedure("get", primaryKey);
 		setAll(r);
