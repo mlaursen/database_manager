@@ -285,7 +285,7 @@ public abstract class DatabaseObject {
 	 * @return
 	 */
 	public boolean create() {
-		Object[] params = getParameters(DatabaseFieldType.CREATE);
+		Object[] params = getParameters(DatabaseFieldType.NEW);
 		return manager.executeStoredProcedure("create", params);
 	}
 	

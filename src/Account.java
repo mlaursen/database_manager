@@ -3,6 +3,7 @@ import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyResultRow;
 import com.github.mlaursen.database.objects.Procedure;
+import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
 
@@ -14,13 +15,13 @@ import com.github.mlaursen.database.objecttypes.Updateable;
  * @author mikkel.laursen
  *
  */
-public class Account extends DatabaseObject implements Getable, Updateable {
+public class Account extends DatabaseObject implements Getable, Updateable, Createable {
 	{
 		Procedure p = new Procedure("updatelastlogin", "id");
 		p.setHasCursor(false);
 		manager.addCustomProcedure(p);
 	}
-	@DatabaseField(values=DatabaseFieldType.UPDATE)
+	@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE})
 	private String username;
 	public Account() {
 		// TODO Auto-generated constructor stub
@@ -72,7 +73,7 @@ public class Account extends DatabaseObject implements Getable, Updateable {
 		Account a = new Account(0);
 		System.out.println(a);
 		System.out.println(a.getDatabaseManagerToString());
-		System.out.println(a.updateLastLogin());
+		//System.out.println(a.updateLastLogin());
 	}
 
 }

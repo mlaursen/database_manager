@@ -15,7 +15,7 @@ import com.github.mlaursen.database.objecttypes.Updateable;
  *
  */
 public enum DatabaseFieldType {
-	GET, GETALL, CREATE, DELETE, UPDATE, FILTER;
+	GET, GETALL, NEW, DELETE, UPDATE, FILTER;
 	public String toString() {
 		return this.name().toLowerCase();
 	}
@@ -26,7 +26,7 @@ public enum DatabaseFieldType {
 		else if(c.equals(GetAllable.class))
 			return GETALL;
 		else if(c.equals(Createable.class)) {
-			return CREATE;
+			return NEW;
 		}
 		else if(c.equals(Deleteable.class))
 			return DELETE;
@@ -45,7 +45,7 @@ public enum DatabaseFieldType {
 			pos = a.getPosition();
 		else if(proc.equals(DatabaseFieldType.GETALL))
 			pos = a.getAllPosition();
-		else if(proc.equals(DatabaseFieldType.CREATE))
+		else if(proc.equals(DatabaseFieldType.NEW))
 			pos = a.createPosition();
 		else if(proc.equals(DatabaseFieldType.UPDATE))
 			pos = a.updatePosition();
