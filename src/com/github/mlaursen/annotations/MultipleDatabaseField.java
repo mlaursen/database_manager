@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface MultipleDatabaseField {
-	DatabaseAnnotationType[] values() default {DatabaseAnnotationType.GET};
+	DatabaseFieldType[] values() default {DatabaseFieldType.GET};
 	String[] names();
 }

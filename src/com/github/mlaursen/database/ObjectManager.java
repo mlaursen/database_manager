@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.mlaursen.annotations.DatabaseAnnotationType;
+import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.objects.DatabaseObject;
@@ -172,11 +172,11 @@ public class ObjectManager {
 	}
 	
 	private String[] getParametersFromClass(Class<?> c) {
-		return getParametersFromClass(DatabaseAnnotationType.classToType(c), type);
+		return getParametersFromClass(DatabaseFieldType.classToType(c), type);
 	}
 	
 	
-	private String[] getParametersFromClass(DatabaseAnnotationType proc, Class<?> c) {
+	private String[] getParametersFromClass(DatabaseFieldType proc, Class<?> c) {
 		Map<Integer, String> map = getParametersFromClass(proc, c, new HashMap<Integer, String>(), 0);
 		int s = map.size();
 		String[] ps = new String[s];
@@ -196,7 +196,7 @@ public class ObjectManager {
 	 * @param counter	Interger for the position to place the field in the procedure string
 	 * @return
 	 */
-	private Map<Integer, String> getParametersFromClass(DatabaseAnnotationType proc, Class<?> c, Map<Integer, String> current, int counter) {
+	private Map<Integer, String> getParametersFromClass(DatabaseFieldType proc, Class<?> c, Map<Integer, String> current, int counter) {
 		if(c.equals(Object.class)) {
 			return current;
 		}
@@ -218,15 +218,15 @@ public class ObjectManager {
 							int pos;
 							if(a.reorder()) {
 								pos = -1;
-								if(proc.equals(DatabaseAnnotationType.GET))
+								if(proc.equals(DatabaseFieldType.GET))
 									pos = a.getPosition();
-								else if(proc.equals(DatabaseAnnotationType.GETALL))
+								else if(proc.equals(DatabaseFieldType.GETALL))
 									pos = a.getAllPosition();
-								else if(proc.equals(DatabaseAnnotationType.CREATE))
+								else if(proc.equals(DatabaseFieldType.CREATE))
 									pos = a.createPosition();
-								else if(proc.equals(DatabaseAnnotationType.DELETE))
+								else if(proc.equals(DatabaseFieldType.DELETE))
 									pos = a.deletePosition();
-								else if(proc.equals(DatabaseAnnotationType.FILTER))
+								else if(proc.equals(DatabaseFieldType.FILTER))
 									pos = a.filterPosition();
 							}
 							else {

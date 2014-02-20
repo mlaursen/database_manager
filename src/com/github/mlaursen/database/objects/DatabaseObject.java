@@ -1,12 +1,14 @@
 package com.github.mlaursen.database.objects;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.mlaursen.annotations.DatabaseAnnotationType;
+import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.database.ObjectManager;
 
@@ -20,7 +22,7 @@ import com.github.mlaursen.database.ObjectManager;
 public abstract class DatabaseObject {
 	
 	protected final ObjectManager manager = createManager();
-	@DatabaseField(values=DatabaseAnnotationType.GET, getPosition=0)
+	@DatabaseField(values=DatabaseFieldType.GET, getPosition=0)
 	protected String primaryKey;
 	protected String primaryKeyName = "id";
 	/**
@@ -28,8 +30,27 @@ public abstract class DatabaseObject {
 	 * calls
 	 */
 	public DatabaseObject() { }
+	/**
+	 * Create a database object by giving it a primary key and then
+	 * searching for it in the database.  It then calls all the setters
+	 * for that database object where the setter has a MyResultRow as
+	 * the only parameter
+	 * @param primaryKey
+	 */
 	public DatabaseObject(String primaryKey) {
-		this.primaryKey = primaryKey;
+		MyResultRow r = manager.getFirstRowFromCursorProcedure("get", primaryKey);
+		setAll(r);
+	}
+	
+	/**
+	 * Create a database object by giving it a primary key and then
+	 * searching for it in the database.  It then calls all the setters
+	 * for that database object where the setter has a MyResultRow as
+	 * the only parameter
+	 * @param primaryKey
+	 */
+	public DatabaseObject(Integer primaryKey) {
+		this(primaryKey.toString());
 	}
 	
 	/**
@@ -39,6 +60,27 @@ public abstract class DatabaseObject {
 	 */
 	public DatabaseObject(MyResultRow r) {
 		this.primaryKey = r.get(primaryKeyName);
+		setAll(r);
+	}
+	
+	/**
+	 * This finds all the methods that start with 'set'
+	 * and have a single parameter of a MyResultRow and then invokes
+	 * that method.
+	 * @param r
+	 */
+	protected void setAll(MyResultRow r) {
+		Method[] methods = this.getClass().getMethods();
+		for(Method m : methods) {
+			if(m.getName().startsWith("set") && Arrays.asList(m.getParameterTypes()).contains(MyResultRow.class)) {
+				try {
+					m.invoke(this, r);
+				}
+				catch(InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
+					System.err.println("There was a problem trying to invoke " + m.getName());
+				}
+			}
+		}
 	}
 	
 	/**
@@ -47,6 +89,14 @@ public abstract class DatabaseObject {
 	 */
 	public void setPrimaryKey(String primaryKey) {
 		this.primaryKey = primaryKey;
+	}
+	
+	/**
+	 * 
+	 * @param primaryKey
+	 */
+	public void setPrimaryKey(Integer primaryKey) {
+		this.primaryKey = primaryKey.toString();
 	}
 	
 	/**
@@ -84,11 +134,6 @@ public abstract class DatabaseObject {
 		return primaryKeyName;
 	}
 	
-	@Override
-	public String toString() {
-		return "DatabaseObject [primaryKey=" + primaryKey + ", primaryKeyName=" + primaryKeyName + "]";
-	}
-	
 	/**
 	 * Creates a manager for the database object.
 	 * {@link com.github.mlaursen.database.ObjectManager}
@@ -104,7 +149,7 @@ public abstract class DatabaseObject {
 	}
 	
 	
-	private Object[] getParameters(DatabaseAnnotationType proc) {
+	private Object[] getParameters(DatabaseFieldType proc) {
 		return getParameters(getParametersMap(proc));
 	}
 	private Object[] getParameters(Map<Integer, Object> map) {
@@ -116,11 +161,11 @@ public abstract class DatabaseObject {
 		return ps;
 	}
 	
-	private Map<Integer, Object> getParametersMap(DatabaseAnnotationType proc) {
+	private Map<Integer, Object> getParametersMap(DatabaseFieldType proc) {
 		return getParametersMap(proc, new HashMap<Integer, Object>(), this.getClass());
 	}
 	
-	private Map<Integer, Object> getParametersMap(DatabaseAnnotationType proc, Map<Integer, Object> ps, Class<?> c) {
+	private Map<Integer, Object> getParametersMap(DatabaseFieldType proc, Map<Integer, Object> ps, Class<?> c) {
 		if(c.equals(Object.class)) {
 			return ps;
 		}
@@ -132,15 +177,15 @@ public abstract class DatabaseObject {
 						try {
 							Object o = f.get(this);
 							int pos = -1;
-							if(proc.equals(DatabaseAnnotationType.GET))
+							if(proc.equals(DatabaseFieldType.GET))
 								pos = a.getPosition();
-							else if(proc.equals(DatabaseAnnotationType.GETALL))
+							else if(proc.equals(DatabaseFieldType.GETALL))
 								pos = a.getAllPosition();
-							else if(proc.equals(DatabaseAnnotationType.CREATE))
+							else if(proc.equals(DatabaseFieldType.CREATE))
 								pos = a.createPosition();
-							else if(proc.equals(DatabaseAnnotationType.DELETE))
+							else if(proc.equals(DatabaseFieldType.DELETE))
 								pos = a.deletePosition();
-							else if(proc.equals(DatabaseAnnotationType.FILTER))
+							else if(proc.equals(DatabaseFieldType.FILTER))
 								pos = a.filterPosition();
 							if(pos == -1) {
 								throw new Exception();
@@ -194,7 +239,7 @@ public abstract class DatabaseObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<DatabaseObject> getAll() {
-		Object[] params = getParameters(DatabaseAnnotationType.GETALL);
+		Object[] params = getParameters(DatabaseFieldType.GETALL);
 		return (List<DatabaseObject>) manager.executeCursorProcedure("getall", params).toListOf(this.getClass());
 	}
 	
@@ -206,7 +251,7 @@ public abstract class DatabaseObject {
 	 * @return
 	 */
 	public <T extends DatabaseObject> List<T> getAll(Class<T> type) {
-		Object[] params = getParameters(DatabaseAnnotationType.GETALL);
+		Object[] params = getParameters(DatabaseFieldType.GETALL);
 		return manager.executeCursorProcedure("getall", params).toListOf(type);
 	}
 	
@@ -216,7 +261,7 @@ public abstract class DatabaseObject {
 	 * @return
 	 */
 	public boolean create() {
-		Object[] params = getParameters(DatabaseAnnotationType.CREATE);
+		Object[] params = getParameters(DatabaseFieldType.CREATE);
 		return manager.executeStoredProcedure("create", params);
 	}
 	
@@ -234,8 +279,8 @@ public abstract class DatabaseObject {
 	/**
 	 * This is a implementation for using generics if you need a specific Database Object
 	 * sub class
-	 * @param primaryKey
-	 * @param type	Sub class to cast to
+	 * @param type	Sub class to cast to 
+	 * @param filterBy	The objects to filter the result set with
 	 * @return
 	 */
 	public <T extends DatabaseObject> List<T> filter(Class<T> type, Object... filterBy) {
@@ -247,7 +292,7 @@ public abstract class DatabaseObject {
 	 * @return
 	 */
 	public boolean update() {
-		Object[] params = getParameters(DatabaseAnnotationType.UPDATE);
+		Object[] params = getParameters(DatabaseFieldType.UPDATE);
 		return manager.executeStoredProcedure("update", params);
 	}
 	
@@ -257,5 +302,15 @@ public abstract class DatabaseObject {
 	 */
 	public boolean delete() {
 		return manager.executeStoredProcedure("delete", primaryKey);
+	}
+	
+	
+
+	/**
+	 * This is the default toString
+	 */
+	@Override
+	public String toString() {
+		return "DatabaseObject [primaryKey=" + primaryKey + ", primaryKeyName=" + primaryKeyName + "]";
 	}
 }
