@@ -38,7 +38,7 @@ public class DatabaseView extends DatabaseObject implements Getable {
 	
 	protected void setPackageName() {
 		Package pkg = manager.getPackage();
-		pkg.setName(pkg.getName().replace("View", ""));
+		pkg.setName(pkg.getName().replace("_View", ""));
 	}
 	
 	protected void setPackageName(String name) {
