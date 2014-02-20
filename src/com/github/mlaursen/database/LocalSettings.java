@@ -3,8 +3,6 @@
  */
 package com.github.mlaursen.database;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -25,7 +23,7 @@ public class LocalSettings {
 	private String propertiesSource;
 	public static final String DATABASE_NAME = "database", USERNAME = "dbuser"
 							 , PASSWORD="dbpswd", CLASS_FOR_NAME="className";
-	public static final String DEFAULT_PROPERTIES_SOURCE = "config/dbconfig.properties";
+	public static final String DEFAULT_PROPERTIES_SOURCE = "/dbconfig.properties";
 	public LocalSettings() {
 		propertiesSource = DEFAULT_PROPERTIES_SOURCE;
 	}
@@ -44,6 +42,7 @@ public class LocalSettings {
 	 * @throws IOException	is thrown if the file does not exist
 	 */
 	public Properties getLocalSettings() throws IOException {
-		properties.load(new FileInputStream(new File(propertiesSource)));return properties;
+		properties.load(this.getClass().getResourceAsStream(propertiesSource));
+		return properties;
 	}
 }
