@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Utility functions used in the DatabaseManager project.
  * @author mikkel.laursen
  *
  */
@@ -27,6 +28,8 @@ public class Util {
 		String com = combineWith == null ? DEF_COMBINE : combineWith;
 		return combineWith(splitOn(c.getSimpleName(), reg), com);
 	}
+	
+	
 	public static String combineWith(String[] strs) { return combineWith(strs, "_"); }
 	public static String combineWith(String[] strs, String with) {
 		String s = "";
@@ -57,5 +60,21 @@ public class Util {
 		}
 		Collections.reverse(classes);
 		return classes;
+	}
+	
+
+	/**
+	 * Checks if an object can be parsed as an integer
+	 * @param i
+	 * @return
+	 */
+	public static boolean canParseInt(Object i) {
+		try {
+			Integer.parseInt((String)i);
+			return true;
+		}
+		catch(NumberFormatException | ClassCastException e) {
+			return false;
+		}
 	}
 }

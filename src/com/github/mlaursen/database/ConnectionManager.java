@@ -80,6 +80,13 @@ public class ConnectionManager {
 		return executeStoredProcedure(p.toString(), parameters);
 	}
 	
+	/**
+	 * Main grunt work for executing a stored procedure that can be successful or fail.
+	 * 
+	 * @param procedureName Full procedure to be called, including parameters that should be bound.
+	 * @param parameters	Array of parameters to be bound to the procedure
+	 * @return
+	 */
 	private boolean executeStoredProcedure(String procedureName, Object... parameters) {
 		boolean success = false;
 		Connection conn = null;
@@ -87,7 +94,7 @@ public class ConnectionManager {
 		try {
 			conn = getConnection();
 			cs = conn.prepareCall("{call " + procedureName + "}");
-			for(int i = 1; i < parameters.length; i++) {
+			for(int i = 1; i < parameters.length+1; i++) {
 				Object param = parameters[i-1];
 				bindWithDatatype(param, i, conn, cs);
 			}
@@ -104,10 +111,12 @@ public class ConnectionManager {
 	}
 	
 	/**
-	 * 
-	 * @param pkg
-	 * @param procedureName
-	 * @param parameters
+	 * Public method to execute a stored procedure that has a cursor as a return type.
+	 * The package looks for the procedure name given and executes it.
+	 * @param pkg	The package that the procedure is in
+	 * @param procedureName	The procedure to call
+	 * @param parameters	An array of objects to be passed to the procedure. They will be bound
+	 * 	to some data types or the toString() method will be called on them.
 	 * @return
 	 */
 	public MyResultSet executeCursorProcedure(Package pkg, String procedureName, Object... parameters) {
@@ -115,8 +124,10 @@ public class ConnectionManager {
 	}
 	
 	/**
-	 * 
-	 * @param procedure
+	 * Public method for executing a stored procedure that has a cursor as the
+	 * return type. This version is only used if you are not using packages.
+	 * This method calls the main handler with a formatted procedure name
+	 * @param procedure	The procedure to execute
 	 * @param parameters
 	 * @return
 	 */
@@ -124,6 +135,12 @@ public class ConnectionManager {
 		return executeCursorProcedure(procedure.toString(), parameters);
 	}
 	
+	/**
+	 * 
+	 * @param procedureName
+	 * @param parameters
+	 * @return
+	 */
 	private MyResultSet executeCursorProcedure(String procedureName, Object... parameters) {
 		int cursorPos = parameters.length+1;
 		Connection conn = null;
@@ -153,6 +170,10 @@ public class ConnectionManager {
 		return results;
 	}
 	
+	/**
+	 * Closes a database connection
+	 * @param conn
+	 */
 	private void closeConnection(Connection conn) {
 		if(conn != null) {
 			try {
@@ -164,6 +185,10 @@ public class ConnectionManager {
 		}
 	}
 	
+	/**
+	 * Closes a SQL CallableStatement
+	 * @param cs
+	 */
 	private void closeCallableStatement(CallableStatement cs) {
 		if(cs != null) {
 			try {
@@ -175,6 +200,10 @@ public class ConnectionManager {
 		}
 	}
 	
+	/**
+	 * Closes a SQL ResultSet
+	 * @param rs
+	 */
 	private void closeResultSet(ResultSet rs) {
 		if(rs != null) {
 			try {
@@ -186,12 +215,26 @@ public class ConnectionManager {
 		}
 	}
 	
-	
+	/**
+	 * Attempts to bind an object with it's data type into an oracle callable statment.
+	 * If the object is not a Date, Integer, something that can be parsed as an integer, Double, 
+	 * MyClob, or DatabaseObject; the toString() method is called.
+	 * 
+	 * If the Object is a MyClob, an oracle Clob is created and the getValue() method is called
+	 * on the object.
+	 * 
+	 * If the Object is a Database Object, then the primary key is bound.
+	 * @param p	Parameter to bind
+	 * @param i	The index to bind to
+	 * @param conn	A database connection
+	 * @param cs	The callable statement to bind to
+	 * @throws SQLException
+	 */
 	private static void bindWithDatatype(Object p, int i, Connection conn, CallableStatement cs) throws SQLException {
 		if(p instanceof Date) {
 			cs.setDate(i, (Date) p);
 		}
-		else if(p instanceof Integer || canParseInt(p)) {
+		else if(p instanceof Integer || Util.canParseInt(p)) {
 			cs.setInt(i, Integer.parseInt((String) p));
 		}
 		else if(p instanceof Double) {
@@ -207,16 +250,6 @@ public class ConnectionManager {
 		}
 		else {
 			cs.setString(i, p.toString());
-		}
-	}
-	
-	private static boolean canParseInt(Object i) {
-		try {
-			Integer.parseInt((String)i);
-			return true;
-		}
-		catch(NumberFormatException | ClassCastException e) {
-			return false;
 		}
 	}
 }

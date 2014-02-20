@@ -2,6 +2,7 @@ import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyResultRow;
+import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
 
@@ -14,7 +15,11 @@ import com.github.mlaursen.database.objecttypes.Updateable;
  *
  */
 public class Account extends DatabaseObject implements Getable, Updateable {
-
+	{
+		Procedure p = new Procedure("updatelastlogin", "id");
+		p.setHasCursor(false);
+		manager.addCustomProcedure(p);
+	}
 	@DatabaseField(values=DatabaseFieldType.UPDATE)
 	private String username;
 	public Account() {
@@ -49,6 +54,9 @@ public class Account extends DatabaseObject implements Getable, Updateable {
 		this.username = r.get("username");
 	}
 
+	public boolean updateLastLogin() {
+		return manager.executeStoredProcedure("updatelastlogin", primaryKey);
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -64,7 +72,7 @@ public class Account extends DatabaseObject implements Getable, Updateable {
 		Account a = new Account(0);
 		System.out.println(a);
 		System.out.println(a.getDatabaseManagerToString());
-
+		System.out.println(a.updateLastLogin());
 	}
 
 }

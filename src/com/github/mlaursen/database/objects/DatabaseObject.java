@@ -335,8 +335,6 @@ public abstract class DatabaseObject {
 	public boolean delete() {
 		return manager.executeStoredProcedure("delete", primaryKey);
 	}
-	
-	
 
 	/**
 	 * This is the default toString
