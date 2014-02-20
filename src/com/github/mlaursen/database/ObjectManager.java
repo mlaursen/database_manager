@@ -274,6 +274,17 @@ public class ObjectManager {
 		this.availableCalls.add(p.getName());
 	}
 	
+	/**
+	 * Sets a procedure's parameters manually if it was generated incorrectly or
+	 * creating your own procedure
+	 * @param p
+	 * @param params
+	 */
+	public void setProcedureParameters(Procedure p, String... params) { setProcedureParameters(p.getDisplayName(), params); }
+	public void setProcedureParameters(String pName, String... params) {
+		this.pkg.getProcedure(pName).setParams(params);
+	}
+	
 	@Override
 	public String toString() {
 		return "ObjectManager [pkg=" + pkg + ", type=" + type.getSimpleName()
