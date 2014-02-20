@@ -3,7 +3,6 @@ package com.github.mlaursen.database.objects;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -227,50 +226,6 @@ public abstract class DatabaseObject {
 			}
 		}
 		return params;
-	}
-	
-	
-	private Map<Integer, Object> getParametersMap(DatabaseFieldType proc, Map<Integer, Object> ps, Class<?> c) {
-		if(c.equals(Object.class)) {
-			return ps;
-		}
-		else {
-			for(Field f : c.getDeclaredFields()) {
-				if(f.isAnnotationPresent(DatabaseField.class)) {
-					DatabaseField a = f.getAnnotation(DatabaseField.class);
-					if(Arrays.asList(a.values()).contains(proc)) {
-						try {
-							Object o = f.get(this);
-							int pos = -1;
-							if(proc.equals(DatabaseFieldType.GET))
-								pos = a.getPosition();
-							else if(proc.equals(DatabaseFieldType.GETALL))
-								pos = a.getAllPosition();
-							else if(proc.equals(DatabaseFieldType.CREATE))
-								pos = a.createPosition();
-							else if(proc.equals(DatabaseFieldType.DELETE))
-								pos = a.deletePosition();
-							else if(proc.equals(DatabaseFieldType.FILTER))
-								pos = a.filterPosition();
-							if(pos == -1) {
-								throw new Exception();
-							}
-							else {
-								ps.put(pos, o);
-							}
-						}
-						catch (IllegalArgumentException | IllegalAccessException e) {
-							e.printStackTrace();
-						}
-						catch (Exception e) {
-							System.err.println("The position for " + proc + " has not been initialized.");
-							System.err.println("This field[" + f.getName() + "]'s value was not added to the results");
-						}
-					}
-				}
-			}
-			return getParametersMap(proc, ps, c.getSuperclass());
-		}
 	}
 	
 	/**
