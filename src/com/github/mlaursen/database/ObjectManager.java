@@ -224,6 +224,8 @@ public class ObjectManager {
 									pos = a.getAllPosition();
 								else if(proc.equals(DatabaseFieldType.CREATE))
 									pos = a.createPosition();
+								else if(proc.equals(DatabaseFieldType.UPDATE))
+									pos = a.updatePosition();
 								else if(proc.equals(DatabaseFieldType.DELETE))
 									pos = a.deletePosition();
 								else if(proc.equals(DatabaseFieldType.FILTER))
@@ -241,7 +243,7 @@ public class ObjectManager {
 							}
 						}
 						catch (Exception e) {
-							System.err.println("The position for " + proc + " has not been initialized.");
+							System.err.println("The position for '" + proc + "' has not been initialized.");
 							System.err.println("This field[" + f.getName() + "]'s value was not added to the results");
 						}
 					}

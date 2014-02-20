@@ -1,6 +1,9 @@
+import com.github.mlaursen.annotations.DatabaseField;
+import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyResultRow;
 import com.github.mlaursen.database.objecttypes.Getable;
+import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
  * 
@@ -10,8 +13,9 @@ import com.github.mlaursen.database.objecttypes.Getable;
  * @author mikkel.laursen
  *
  */
-public class Account extends DatabaseObject implements Getable {
+public class Account extends DatabaseObject implements Getable, Updateable {
 
+	@DatabaseField(values=DatabaseFieldType.UPDATE)
 	private String username;
 	public Account() {
 		// TODO Auto-generated constructor stub
@@ -59,6 +63,7 @@ public class Account extends DatabaseObject implements Getable {
 	public static void main(String[] args) {
 		Account a = new Account(0);
 		System.out.println(a);
+		System.out.println(a.getDatabaseManagerToString());
 
 	}
 

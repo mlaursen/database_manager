@@ -22,7 +22,7 @@ import com.github.mlaursen.database.ObjectManager;
 public abstract class DatabaseObject {
 	
 	protected final ObjectManager manager = createManager();
-	@DatabaseField(values=DatabaseFieldType.GET, getPosition=0)
+	@DatabaseField(values={DatabaseFieldType.GET, DatabaseFieldType.UPDATE})
 	protected String primaryKey;
 	protected String primaryKeyName = "id";
 	/**
