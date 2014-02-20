@@ -3,6 +3,7 @@ package com.github.mlaursen.database;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,7 +178,7 @@ public class ObjectManager {
 	
 	
 	private String[] getParametersFromClass(DatabaseFieldType proc, Class<?> c) {
-		Map<Integer, String> map = getParametersFromClass(proc, c, new HashMap<Integer, String>(), 0);
+		Map<Integer, String> map = getParametersFromClassHelper(proc, c);
 		int s = map.size();
 		String[] ps = new String[s];
 		for(int i = 0; i < s; i++) {
@@ -187,8 +188,9 @@ public class ObjectManager {
 	}
 	
 	/**
-	 * Phew. Big handler.
-	 * Recursive method to check a class and all super classes for the Annotations for a database.
+	 * Phew. Big Helper.
+	 * Gets all the super classes for a class and starts from superclass down to current class
+	 * adding each annotation within that class for the correspoding procedure as parameters.
 	 * 
 	 * @param proc Procedure type to lookup and possibly add parameters to the results 
 	 * @param c	A class to check for annotations
@@ -196,13 +198,19 @@ public class ObjectManager {
 	 * @param counter	Interger for the position to place the field in the procedure string
 	 * @return
 	 */
-	private Map<Integer, String> getParametersFromClass(DatabaseFieldType proc, Class<?> c, Map<Integer, String> current, int counter) {
-		if(c.equals(Object.class)) {
-			return current;
+	private Map<Integer, String> getParametersFromClassHelper(DatabaseFieldType proc, Class<?> clss) {
+		int counter = 0;
+		Map<Integer, String> current = new HashMap<Integer, String>();
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+		Class<?> currentClass = clss;
+		while(!currentClass.equals(Object.class)) {
+			classes.add(currentClass);
+			currentClass = currentClass.getSuperclass();
 		}
-		else {
+		Collections.reverse(classes);
+		for(Class<?> c : classes) {
 			for(Field f : c.getDeclaredFields()) {
-				if(f.isAnnotationPresent(MultipleDatabaseField.class)) {
+				if(f.isAnnotationPresent(MultipleDatabaseField.class)) {	// Handle a MultipleDatabaseField
 					MultipleDatabaseField m = f.getAnnotation(MultipleDatabaseField.class);
 					if(Arrays.asList(m.values()).contains(proc)) {
 						for(String n : m.names()) {
@@ -211,7 +219,7 @@ public class ObjectManager {
 						}
 					}
 				}
-				else if(f.isAnnotationPresent(DatabaseField.class)) {
+				else if(f.isAnnotationPresent(DatabaseField.class)) {	// Handle DatabaseField
 					DatabaseField a = f.getAnnotation(DatabaseField.class);
 					if(Arrays.asList(a.values()).contains(proc)) {
 						try {
@@ -243,14 +251,15 @@ public class ObjectManager {
 							}
 						}
 						catch (Exception e) {
-							System.err.println("The position for '" + proc + "' has not been initialized.");
-							System.err.println("This field[" + f.getName() + "]'s value was not added to the results");
+							String err = "The position for the procedure '" + proc + "' has not been initialized for the field "
+									+ "["+f.getName()+"] in class [" + c.getName() + "].  The value has not been added to the parameter map.";
+							System.err.println(err);
 						}
 					}
 				}
 			}
-			return getParametersFromClass(proc, c.getSuperclass(), current, counter);
 		}
+		return current;
 	}
 	
 	/**
