@@ -8,11 +8,12 @@ import com.github.mlaursen.database.objecttypes.Getable;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 public class Ingredient extends DatabaseObject implements Getable {
 
 	private String name, brand, category;
+
 	public Ingredient() {
 		// TODO Auto-generated constructor stub
 	}
@@ -40,21 +41,19 @@ public class Ingredient extends DatabaseObject implements Getable {
 		super(r);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public void setName(MyResultRow r) {
 		name = r.get("name");
 	}
-	
+
 	public void setBrand(MyResultRow r) {
 		brand = r.get("brand");
 	}
-	
+
 	public void setCategory(MyResultRow r) {
 		category = r.get("category");
 	}
-	
-	
-	
+
 	@Override
 	public String toString() {
 		return "Ingredient [primaryKey=" + primaryKey + ", name=" + name + ", brand=" + brand + ", category=" + category + "]";

@@ -13,7 +13,7 @@ import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 public class Account extends DatabaseObject implements Getable, Updateable, Createable {
 	{
@@ -21,8 +21,9 @@ public class Account extends DatabaseObject implements Getable, Updateable, Crea
 		p.setHasCursor(false);
 		manager.addCustomProcedure(p);
 	}
-	@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE})
+	@DatabaseField(values = { DatabaseFieldType.NEW, DatabaseFieldType.UPDATE })
 	private String username;
+
 	public Account() {
 		// TODO Auto-generated constructor stub
 	}
@@ -50,7 +51,7 @@ public class Account extends DatabaseObject implements Getable, Updateable, Crea
 		super(r);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public void setUsername(MyResultRow r) {
 		this.username = r.get("username");
 	}
@@ -58,7 +59,10 @@ public class Account extends DatabaseObject implements Getable, Updateable, Crea
 	public boolean updateLastLogin() {
 		return manager.executeStoredProcedure("updatelastlogin", primaryKey);
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -73,7 +77,7 @@ public class Account extends DatabaseObject implements Getable, Updateable, Crea
 		Account a = new Account(0);
 		System.out.println(a);
 		System.out.println(a.getDatabaseManagerToString());
-		//System.out.println(a.updateLastLogin());
+		// System.out.println(a.updateLastLogin());
 	}
 
 }

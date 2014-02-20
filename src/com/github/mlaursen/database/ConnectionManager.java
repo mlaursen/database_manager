@@ -22,15 +22,16 @@ import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.database.objects.Procedure;
 
 /**
- * Utility class for interacting with databases.
- * A dbconfig.properties file must be located in {projectHomeDirectory}/config
+ * Utility class for interacting with databases. A dbconfig.properties file must
+ * be located in {projectHomeDirectory}/config
  * 
  * 
  * @author mikkel.laursen
- *
+ * 
  */
 public class ConnectionManager {
 	private String databaseName, databaseUser, databasePswd, classForName;
+
 	public ConnectionManager() {
 		try {
 			Properties localProperties = new LocalSettings().getLocalSettings();
@@ -43,9 +44,10 @@ public class ConnectionManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Creates a database connection from the localProperties file.
+	 * 
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
@@ -54,37 +56,48 @@ public class ConnectionManager {
 		Class.forName(classForName);
 		return DriverManager.getConnection(databaseName, databaseUser, databasePswd);
 	}
-	
+
 	/**
-	 * Takes in a package and a procedure name to call with an array of parameters
+	 * Takes in a package and a procedure name to call with an array of
+	 * parameters
 	 * 
-	 * @param pkg	Package that holds a procedure to call
-	 * @param procedureName	The procedure name to call from the package
-	 * @param parameters	Array of parameters to be passed to the stored procedure
-	 * @return	True or false depending on if the stored procedure executed successfully without
-	 * 			errors
+	 * @param pkg
+	 *            Package that holds a procedure to call
+	 * @param procedureName
+	 *            The procedure name to call from the package
+	 * @param parameters
+	 *            Array of parameters to be passed to the stored procedure
+	 * @return True or false depending on if the stored procedure executed
+	 *         successfully without errors
 	 */
 	public boolean executeStoredProcedure(Package pkg, String procedureName, Object... parameters) {
 		return executeStoredProcedure(pkg.call(procedureName), parameters);
 	}
-	
-	
+
 	/**
-	 * Takes in a procedure and an arrya of parameters to be passed to the stored procedure
-	 * @param p	The procedure to call
-	 * @param parameters An array of objects to be passed to the stored procedure
-	 * @return	True or false depending on if the stored procedure executed successfully without
-	 * 			errors
+	 * Takes in a procedure and an arrya of parameters to be passed to the
+	 * stored procedure
+	 * 
+	 * @param p
+	 *            The procedure to call
+	 * @param parameters
+	 *            An array of objects to be passed to the stored procedure
+	 * @return True or false depending on if the stored procedure executed
+	 *         successfully without errors
 	 */
 	public boolean executeStoredProcedure(Procedure p, Object... parameters) {
 		return executeStoredProcedure(p.toString(), parameters);
 	}
-	
+
 	/**
-	 * Main grunt work for executing a stored procedure that can be successful or fail.
+	 * Main grunt work for executing a stored procedure that can be successful
+	 * or fail.
 	 * 
-	 * @param procedureName Full procedure to be called, including parameters that should be bound.
-	 * @param parameters	Array of parameters to be bound to the procedure
+	 * @param procedureName
+	 *            Full procedure to be called, including parameters that should
+	 *            be bound.
+	 * @param parameters
+	 *            Array of parameters to be bound to the procedure
 	 * @return
 	 */
 	private boolean executeStoredProcedure(String procedureName, Object... parameters) {
@@ -94,13 +107,13 @@ public class ConnectionManager {
 		try {
 			conn = getConnection();
 			cs = conn.prepareCall("{call " + procedureName + "}");
-			for(int i = 1; i < parameters.length+1; i++) {
-				Object param = parameters[i-1];
+			for (int i = 1; i < parameters.length + 1; i++) {
+				Object param = parameters[i - 1];
 				bindWithDatatype(param, i, conn, cs);
 			}
 			success = cs.executeUpdate() > 0;
 		}
-		catch(SQLException | ClassNotFoundException e) {
+		catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -109,32 +122,39 @@ public class ConnectionManager {
 		}
 		return success;
 	}
-	
+
 	/**
-	 * Public method to execute a stored procedure that has a cursor as a return type.
-	 * The package looks for the procedure name given and executes it.
-	 * @param pkg	The package that the procedure is in
-	 * @param procedureName	The procedure to call
-	 * @param parameters	An array of objects to be passed to the procedure. They will be bound
-	 * 	to some data types or the toString() method will be called on them.
+	 * Public method to execute a stored procedure that has a cursor as a return
+	 * type. The package looks for the procedure name given and executes it.
+	 * 
+	 * @param pkg
+	 *            The package that the procedure is in
+	 * @param procedureName
+	 *            The procedure to call
+	 * @param parameters
+	 *            An array of objects to be passed to the procedure. They will
+	 *            be bound to some data types or the toString() method will be
+	 *            called on them.
 	 * @return
 	 */
 	public MyResultSet executeCursorProcedure(Package pkg, String procedureName, Object... parameters) {
 		return executeCursorProcedure(pkg.call(procedureName), parameters);
 	}
-	
+
 	/**
 	 * Public method for executing a stored procedure that has a cursor as the
 	 * return type. This version is only used if you are not using packages.
 	 * This method calls the main handler with a formatted procedure name
-	 * @param procedure	The procedure to execute
+	 * 
+	 * @param procedure
+	 *            The procedure to execute
 	 * @param parameters
 	 * @return
 	 */
 	public MyResultSet executeCursorProcedure(Procedure procedure, Object... parameters) {
 		return executeCursorProcedure(procedure.toString(), parameters);
 	}
-	
+
 	/**
 	 * 
 	 * @param procedureName
@@ -142,7 +162,7 @@ public class ConnectionManager {
 	 * @return
 	 */
 	private MyResultSet executeCursorProcedure(String procedureName, Object... parameters) {
-		int cursorPos = parameters.length+1;
+		int cursorPos = parameters.length + 1;
 		Connection conn = null;
 		CallableStatement cs = null;
 		ResultSet rs = null;
@@ -150,8 +170,8 @@ public class ConnectionManager {
 		try {
 			conn = getConnection();
 			cs = conn.prepareCall("{call " + procedureName + "}");
-			for(int i = 1; i <= parameters.length; i++) {
-				Object p = parameters[i-1];
+			for (int i = 1; i <= parameters.length; i++) {
+				Object p = parameters[i - 1];
 				bindWithDatatype(p, i, conn, cs);
 			}
 			cs.registerOutParameter(cursorPos, OracleTypes.CURSOR);
@@ -159,7 +179,7 @@ public class ConnectionManager {
 			rs = (ResultSet) cs.getObject(cursorPos);
 			results = MyResultSet.toMyResultSet(rs);
 		}
-		catch(SQLException | ClassNotFoundException e) {
+		catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -169,13 +189,14 @@ public class ConnectionManager {
 		}
 		return results;
 	}
-	
+
 	/**
 	 * Closes a database connection
+	 * 
 	 * @param conn
 	 */
 	private void closeConnection(Connection conn) {
-		if(conn != null) {
+		if (conn != null) {
 			try {
 				conn.close();
 			}
@@ -184,13 +205,14 @@ public class ConnectionManager {
 			}
 		}
 	}
-	
+
 	/**
 	 * Closes a SQL CallableStatement
+	 * 
 	 * @param cs
 	 */
 	private void closeCallableStatement(CallableStatement cs) {
-		if(cs != null) {
+		if (cs != null) {
 			try {
 				cs.close();
 			}
@@ -199,13 +221,14 @@ public class ConnectionManager {
 			}
 		}
 	}
-	
+
 	/**
 	 * Closes a SQL ResultSet
+	 * 
 	 * @param rs
 	 */
 	private void closeResultSet(ResultSet rs) {
-		if(rs != null) {
+		if (rs != null) {
 			try {
 				rs.close();
 			}
@@ -214,38 +237,44 @@ public class ConnectionManager {
 			}
 		}
 	}
-	
+
 	/**
-	 * Attempts to bind an object with it's data type into an oracle callable statment.
-	 * If the object is not a Date, Integer, something that can be parsed as an integer, Double, 
-	 * MyClob, or DatabaseObject; the toString() method is called.
+	 * Attempts to bind an object with it's data type into an oracle callable
+	 * statment. If the object is not a Date, Integer, something that can be
+	 * parsed as an integer, Double, MyClob, or DatabaseObject; the toString()
+	 * method is called.
 	 * 
-	 * If the Object is a MyClob, an oracle Clob is created and the getValue() method is called
-	 * on the object.
+	 * If the Object is a MyClob, an oracle Clob is created and the getValue()
+	 * method is called on the object.
 	 * 
 	 * If the Object is a Database Object, then the primary key is bound.
-	 * @param p	Parameter to bind
-	 * @param i	The index to bind to
-	 * @param conn	A database connection
-	 * @param cs	The callable statement to bind to
+	 * 
+	 * @param p
+	 *            Parameter to bind
+	 * @param i
+	 *            The index to bind to
+	 * @param conn
+	 *            A database connection
+	 * @param cs
+	 *            The callable statement to bind to
 	 * @throws SQLException
 	 */
 	private static void bindWithDatatype(Object p, int i, Connection conn, CallableStatement cs) throws SQLException {
-		if(p instanceof Date) {
+		if (p instanceof Date) {
 			cs.setDate(i, (Date) p);
 		}
-		else if(p instanceof Integer || Util.canParseInt(p)) {
+		else if (p instanceof Integer || Util.canParseInt(p)) {
 			cs.setInt(i, Integer.parseInt((String) p));
 		}
-		else if(p instanceof Double) {
+		else if (p instanceof Double) {
 			cs.setDouble(i, (Double) p);
 		}
-		else if(p instanceof MyClob) {
+		else if (p instanceof MyClob) {
 			Clob c = conn.createClob();
 			c.setString(1, ((MyClob) p).getValue());
 			cs.setClob(i, c);
 		}
-		else if(p instanceof DatabaseObject) {
+		else if (p instanceof DatabaseObject) {
 			cs.setString(i, ((DatabaseObject) p).getPrimaryKey());
 		}
 		else {

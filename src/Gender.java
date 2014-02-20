@@ -9,13 +9,14 @@ import com.github.mlaursen.database.objecttypes.GetAllable;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 public class Gender extends DatabaseObject implements GetAllable {
 
 	{
 		setPrimaryKeyName("name");
 	}
+
 	public Gender() {
 		// TODO Auto-generated constructor stub
 	}
@@ -37,14 +38,16 @@ public class Gender extends DatabaseObject implements GetAllable {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "Gender [primaryKey=" + primaryKey + "]";
 	}
-	
+
 	public static void main(String[] _) {
 		Gender g = new Gender();
 		System.out.println(g.getAll());

@@ -5,13 +5,14 @@ package com.github.mlaursen.database.objects;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 public class Procedure {
 
 	private String name, displayName;
 	private boolean hasCursor;
 	private String[] params;
+
 	public Procedure(String n, String... params) {
 		name = n;
 		displayName = n;
@@ -19,14 +20,13 @@ public class Procedure {
 		this.params = params;
 	}
 
-	
 	public Procedure(String n, String displayName, boolean hasCursor, String... params) {
 		name = n;
 		this.displayName = displayName;
 		this.hasCursor = hasCursor;
 		this.params = params;
 	}
-	
+
 	/**
 	 * @return the displayName
 	 */
@@ -35,22 +35,23 @@ public class Procedure {
 	}
 
 	/**
-	 * @param displayName the displayName to set
+	 * @param displayName
+	 *            the displayName to set
 	 */
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
 
 	/**
-	 * THIS AUTOMATICALLY ADDES A :CURSOR AS THE FINAL PARAMETER IF HASCURSOR IS TRUE
-	 * Turns everything to uppercase
+	 * THIS AUTOMATICALLY ADDES A :CURSOR AS THE FINAL PARAMETER IF HASCURSOR IS
+	 * TRUE Turns everything to uppercase
 	 */
 	public String toString() {
 		String s = name.toUpperCase() + "(";
-		for(int i = 0; i < params.length; i++) {
+		for (int i = 0; i < params.length; i++) {
 			String p = params[i].toUpperCase();
-			s += ":" + p + (i+1 < params.length ? ", " : "");
-			
+			s += ":" + p + (i + 1 < params.length ? ", " : "");
+
 		}
 		s += hasCursor ? (params.length == 0 ? "" : ", ") + ":CURSOR" : "";
 		return s + ")";
@@ -64,22 +65,23 @@ public class Procedure {
 	}
 
 	/**
-	 * @param params the params to set
+	 * @param params
+	 *            the params to set
 	 */
 	public void setParams(String[] params) {
 		this.params = params;
 	}
-	
+
 	public void addParams(String... params) {
 		int psize = this.params.length;
 		int ssize = params.length;
 		int nsize = psize + ssize;
 		String[] ps = new String[nsize];
-		for(int i = 0; i < psize; i++) {
+		for (int i = 0; i < psize; i++) {
 			ps[i] = this.params[i];
 		}
-		for(int i = psize; i < nsize; i++) {
-			ps[i] = params[i-psize];
+		for (int i = psize; i < nsize; i++) {
+			ps[i] = params[i - psize];
 		}
 		this.params = ps;
 	}
@@ -92,7 +94,8 @@ public class Procedure {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -106,11 +109,11 @@ public class Procedure {
 	}
 
 	/**
-	 * @param hasCursor the hasCursor to set
+	 * @param hasCursor
+	 *            the hasCursor to set
 	 */
 	public void setHasCursor(boolean hasCursor) {
 		this.hasCursor = hasCursor;
 	}
-	
-	
+
 }

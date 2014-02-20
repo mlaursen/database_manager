@@ -6,12 +6,13 @@ import java.util.Map;
 
 /**
  * A representation of a database row
+ * 
  * @author mikkel.laursen
- *
+ * 
  */
 public class MyResultRow {
 	private Map<String, String> row;
-	
+
 	public MyResultRow() {
 		this.row = new HashMap<String, String>();
 	}
@@ -27,12 +28,14 @@ public class MyResultRow {
 	public String toString() {
 		return this.row.toString();
 	}
-	
+
 	/**
-	 * Calls the constructor for a Database Object using the constructor with a MyResultRow parameter.
+	 * Calls the constructor for a Database Object using the constructor with a
+	 * MyResultRow parameter.
 	 * 
-	 * @param type Class to cast the generic to
-	 * @return	A type that has been created for the class type
+	 * @param type
+	 *            Class to cast the generic to
+	 * @return A type that has been created for the class type
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException

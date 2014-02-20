@@ -10,11 +10,12 @@ import java.lang.annotation.Target;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface MultipleDatabaseField {
-	DatabaseFieldType[] values() default {DatabaseFieldType.GET};
+	DatabaseFieldType[] values() default { DatabaseFieldType.GET };
+
 	String[] names();
 }
