@@ -172,11 +172,24 @@ public class ObjectManager {
 		}
 	}
 	
+	/**
+	 * Gets an array of String parameters from a class based on the
+	 * DatabseField annotations given in all super classes and current class
+	 * @param c
+	 * @return
+	 */
 	private String[] getParametersFromClass(Class<?> c) {
 		return getParametersFromClass(DatabaseFieldType.classToType(c), type);
 	}
 	
 	
+	/**
+	 * Converts the key/value pair of parameters into an ordered
+	 * array of parameters
+	 * @param proc
+	 * @param c
+	 * @return
+	 */
 	private String[] getParametersFromClass(DatabaseFieldType proc, Class<?> c) {
 		Map<Integer, String> map = getParametersFromClassHelper(proc, c);
 		int s = map.size();
@@ -225,19 +238,7 @@ public class ObjectManager {
 						try {
 							int pos;
 							if(a.reorder()) {
-								pos = -1;
-								if(proc.equals(DatabaseFieldType.GET))
-									pos = a.getPosition();
-								else if(proc.equals(DatabaseFieldType.GETALL))
-									pos = a.getAllPosition();
-								else if(proc.equals(DatabaseFieldType.CREATE))
-									pos = a.createPosition();
-								else if(proc.equals(DatabaseFieldType.UPDATE))
-									pos = a.updatePosition();
-								else if(proc.equals(DatabaseFieldType.DELETE))
-									pos = a.deletePosition();
-								else if(proc.equals(DatabaseFieldType.FILTER))
-									pos = a.filterPosition();
+								pos = DatabaseFieldType.getPosition(proc, a);
 							}
 							else {
 								pos = counter;

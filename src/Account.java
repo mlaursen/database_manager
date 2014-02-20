@@ -61,8 +61,8 @@ public class Account extends DatabaseObject implements Getable, Updateable {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//Account a = new Account(0);
-		//System.out.println(a);
+		Account a = new Account(0);
+		System.out.println(a);
 		System.out.println(new Account().getDatabaseManagerToString());
 
 	}

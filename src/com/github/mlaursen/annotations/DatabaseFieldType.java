@@ -37,6 +37,22 @@ public enum DatabaseFieldType {
 		else {
 			return null;
 		}
-		
+	}
+	
+	public static int getPosition(DatabaseFieldType proc, DatabaseField a) {
+		int pos = -1;
+		if(proc.equals(DatabaseFieldType.GET))
+			pos = a.getPosition();
+		else if(proc.equals(DatabaseFieldType.GETALL))
+			pos = a.getAllPosition();
+		else if(proc.equals(DatabaseFieldType.CREATE))
+			pos = a.createPosition();
+		else if(proc.equals(DatabaseFieldType.UPDATE))
+			pos = a.updatePosition();
+		else if(proc.equals(DatabaseFieldType.DELETE))
+			pos = a.deletePosition();
+		else if(proc.equals(DatabaseFieldType.FILTER))
+			pos = a.filterPosition();
+		return pos;
 	}
 }
