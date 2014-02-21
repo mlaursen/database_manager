@@ -174,7 +174,7 @@ public class ObjectManager {
 		if (typeIsOf(c)) {
 			String procName = c.getSimpleName().toLowerCase().replace("able", "");
 			procName = procName.equals("create") ? "new" : procName;
-			procName = procName.equals("update") ? procName + type.getSimpleName() : procName;
+			procName = procName.equals("update") ? procName + type.getSimpleName().replace("View", "") : procName;
 			availableCalls.add(procName);
 			Procedure proc = new Procedure(procName, getParametersFromClass(c));
 			if (NoCursor.class.isAssignableFrom(c)) {

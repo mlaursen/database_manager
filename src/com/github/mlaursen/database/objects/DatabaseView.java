@@ -55,5 +55,4 @@ public class DatabaseView extends DatabaseObject implements Getable {
 	protected void setPackage(DatabaseObject o) {
 		manager.setPackage(o.manager.getPackage());
 	}
-
 }

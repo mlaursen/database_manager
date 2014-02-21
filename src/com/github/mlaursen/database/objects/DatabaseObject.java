@@ -84,7 +84,9 @@ public abstract class DatabaseObject {
 		for (Method m : methods) {
 			if (m.getName().startsWith("set") && Arrays.asList(m.getParameterTypes()).contains(MyResultRow.class)) {
 				try {
+					m.setAccessible(true);
 					m.invoke(this, r);
+					m.setAccessible(false);
 				}
 				catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
 					System.err.println("There was a problem trying to invoke " + m.getName());
@@ -205,13 +207,12 @@ public abstract class DatabaseObject {
 	 * @return
 	 */
 	private Map<Integer, Object> getParametersMap(DatabaseFieldType proc) {
-		// return getParametersMap(proc, new HashMap<Integer, Object>(),
-		// this.getClass());
 		int counter = 0;
 		Map<Integer, Object> params = new HashMap<Integer, Object>();
 		List<Class<?>> classes = Util.getClassList(this.getClass());
 		for (Class<?> c : classes) {
 			for (Field f : c.getDeclaredFields()) {
+				f.setAccessible(true);
 				if (f.isAnnotationPresent(DatabaseField.class)) {
 					DatabaseField a = f.getAnnotation(DatabaseField.class);
 					if (Arrays.asList(a.values()).contains(proc)) {
@@ -237,6 +238,7 @@ public abstract class DatabaseObject {
 						}
 					}
 				}
+				f.setAccessible(false);
 			}
 		}
 		return params;
@@ -307,7 +309,11 @@ public abstract class DatabaseObject {
 	 */
 	public boolean create() {
 		Object[] params = getParameters(DatabaseFieldType.NEW);
-		return manager.executeStoredProcedure("create", params);
+		for(Object p : params) {
+			if(p == null)
+				return false;
+		}
+		return manager.executeStoredProcedure("new", params);
 	}
 
 	/**
@@ -349,6 +355,10 @@ public abstract class DatabaseObject {
 	 */
 	public boolean update() {
 		Object[] params = getParameters(DatabaseFieldType.UPDATE);
+		for(Object p : params) {
+			if(p == null)
+				return false;
+		}
 		return manager.executeStoredProcedure("update" + this.getClass().getSimpleName().replace("View", ""), params);
 	}
 
