@@ -327,7 +327,7 @@ public abstract class DatabaseObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<DatabaseObject> filter(Object... filterBy) {
-		return (List<DatabaseObject>) manager.executeCursorProcedure("fiter", filterBy).toListOf(this.getClass());
+		return (List<DatabaseObject>) manager.executeCursorProcedure("filter", filterBy).toListOf(this.getClass());
 	}
 
 	/**

@@ -22,7 +22,7 @@ public class MyResultRow {
 	}
 
 	public String get(String key) {
-		return this.row.get(key);
+		return this.row.get(key.toLowerCase());
 	}
 
 	public String toString() {

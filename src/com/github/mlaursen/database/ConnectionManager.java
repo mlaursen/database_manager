@@ -32,7 +32,7 @@ import com.github.mlaursen.database.objects.Procedure;
  */
 public class ConnectionManager {
 	private static enum ErrorCode {
-		ARGUMENT_MISMATCH(6550);
+		UNIQUE_CONSTRAINT(1), ARGUMENT_MISMATCH(6550);
 		private int code;
 		private ErrorCode(int code) {
 			this.code = code;
