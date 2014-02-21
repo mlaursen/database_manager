@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
+import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.ObjectManager;
 import com.github.mlaursen.database.Util;
 
@@ -23,7 +24,7 @@ import com.github.mlaursen.database.Util;
 public abstract class DatabaseObject {
 
 	protected final ObjectManager manager = createManager();
-	@DatabaseField(values = { DatabaseFieldType.GET, DatabaseFieldType.UPDATE })
+	@DatabaseField(values = { DatabaseFieldType.GET, DatabaseFieldType.DELETE, DatabaseFieldType.UPDATE })
 	protected String primaryKey;
 	protected String primaryKeyName = "id";
 
@@ -213,7 +214,37 @@ public abstract class DatabaseObject {
 		for (Class<?> c : classes) {
 			for (Field f : c.getDeclaredFields()) {
 				f.setAccessible(true);
-				if (f.isAnnotationPresent(DatabaseField.class)) {
+				if(f.isAnnotationPresent(MultipleDatabaseField.class)) {
+					MultipleDatabaseField a = f.getAnnotation(MultipleDatabaseField.class);
+					if(Arrays.asList(a.values()).contains(proc)) {
+						for(String n : a.names()) {
+							try {
+								Object o = f.get(this);
+								Class<?> oClass = o.getClass();
+								String oClassName = oClass.getSimpleName();	
+								String searchName = n.substring(oClassName.length());
+								for(Method m : oClass.getMethods()) {
+									String mName = m.getName();
+									if(mName.startsWith("get") && mName.matches("(?i)get" + searchName)) {
+										Object ret = m.invoke(o);
+										params.put(counter, ret);
+										counter++;
+									}
+								}
+							}
+							catch (IllegalArgumentException | IllegalAccessException e) {
+								e.printStackTrace();
+							}
+							catch (Exception e) {
+								String err = "The position for the procedure '" + proc + "' has not been initialized for the field " + "["
+										+ f.getName() + "]\nin class [" + c.getName() + "].  This error occured when seraching for the values "
+										+ "to add when calling the stored procedure. The value has not been added to the parameter map.";
+								System.err.println(err);
+							}
+						}
+					}
+				}
+				else if (f.isAnnotationPresent(DatabaseField.class)) {
 					DatabaseField a = f.getAnnotation(DatabaseField.class);
 					if (Arrays.asList(a.values()).contains(proc)) {
 						try {
@@ -313,6 +344,7 @@ public abstract class DatabaseObject {
 			if(p == null)
 				return false;
 		}
+		System.out.println(Arrays.toString(params));
 		return manager.executeStoredProcedure("new", params);
 	}
 
@@ -359,6 +391,7 @@ public abstract class DatabaseObject {
 			if(p == null)
 				return false;
 		}
+		System.out.println(Arrays.toString(params));
 		return manager.executeStoredProcedure("update" + this.getClass().getSimpleName().replace("View", ""), params);
 	}
 
