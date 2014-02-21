@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Properties;
 
 import oracle.jdbc.OracleTypes;
@@ -30,6 +31,22 @@ import com.github.mlaursen.database.objects.Procedure;
  * 
  */
 public class ConnectionManager {
+	private static enum ErrorCode {
+		ARGUMENT_MISMATCH(6550);
+		private int code;
+		private ErrorCode(int code) {
+			this.code = code;
+		}
+		
+		public static ErrorCode getErrorCode(int code) {
+			for(ErrorCode c : values()) {
+				if(c.code == code)
+					return c;
+			}
+			return null;
+		}
+	}
+	
 	private String databaseName, databaseUser, databasePswd, classForName;
 
 	public ConnectionManager() {
@@ -113,7 +130,10 @@ public class ConnectionManager {
 			}
 			success = cs.executeUpdate() > 0;
 		}
-		catch (SQLException | ClassNotFoundException e) {
+		catch (SQLException e) {
+			handleSqlException(e, procedureName, parameters);
+		}
+		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -121,6 +141,18 @@ public class ConnectionManager {
 			closeConnection(conn);
 		}
 		return success;
+	}
+	
+	private void handleSqlException(SQLException e, String procedureName, Object[] parameters) {
+		ErrorCode c = ErrorCode.getErrorCode(e.getErrorCode());
+		if(c == null) {
+			e.printStackTrace();
+		}
+		else {
+			String msg = "There was a " + c.name() + " exception when calling " + procedureName + ".\n";
+			msg += "\tThe parameters being passed were: " + Arrays.toString(parameters);
+			System.err.println(msg);
+		}
 	}
 
 	/**
@@ -179,7 +211,10 @@ public class ConnectionManager {
 			rs = (ResultSet) cs.getObject(cursorPos);
 			results = MyResultSet.toMyResultSet(rs);
 		}
-		catch (SQLException | ClassNotFoundException e) {
+		catch (SQLException e) {
+			handleSqlException(e, procedureName, parameters);
+		}
+		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		finally {
