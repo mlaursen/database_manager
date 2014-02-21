@@ -228,6 +228,7 @@ public abstract class DatabaseObject {
 									if(mName.startsWith("get") && mName.matches("(?i)get" + searchName)) {
 										Object ret = m.invoke(o);
 										params.put(counter, ret);
+										System.out.println(searchName + " added at position " + counter);
 										counter++;
 									}
 								}
@@ -255,6 +256,7 @@ public abstract class DatabaseObject {
 								throw new Exception();
 							}
 							else {
+								System.out.println(f.getName() + " added at postion " + (counter-1));
 								params.put(pos, o);
 							}
 						}
