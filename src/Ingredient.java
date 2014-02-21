@@ -242,9 +242,22 @@ public class Ingredient extends DatabaseObject implements Getable, GetAllable, C
 				+ (fat != null ? "fat=" + fat + ", " : "") + (protein != null ? "protein=" + protein : "") + "]";
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Ingredient) {
+			Ingredient i = (Ingredient) o;
+			return name.equals(i.getName()) && brand.equals(i.getBrand())
+					&& category.equals(i.getCategory()) && defaultServing.equals(i.getDefaultServing())
+					&& alternateServing.equals(getAlternateServing()) && calories.equals(i.getCalories())
+					&& fat.equals(i.getFat()) && carbs.equals(i.getCarbs()) && protein.equals(i.getProtein());
+		}
+		else
+			return false;
+				
+	}
+	
 	public static void main(String[] _) {
 		Ingredient i = new Ingredient();
-		System.out.println(i.getDatabaseManagerToString());
 		i.setName("0% Greek Yogurt");
 		i.setBrand(new Brand("Chobani"));
 		i.setCategory(new Category("Dairy"));
@@ -254,8 +267,18 @@ public class Ingredient extends DatabaseObject implements Getable, GetAllable, C
 		i.setFat(new Fat(0));
 		i.setCarbs(new Carbohydrate(9));
 		i.setProtein(new Protein(23));
-		System.out.println(i);
-		System.out.println(i.create());
+		Ingredient i2 = new Ingredient();
+		i2.setName("0% Greek Yogurt");
+		i2.setBrand(new Brand("Chobani"));
+		i2.setCategory(new Category("Dairy"));
+		i2.setDefaultServing(new Serving(227, new FoodUnit("g")));
+		i2.setAlternateServing(new AltServing(1, new FoodUnit("c")));
+		i2.setCalories(new Calorie(140));
+		i2.setFat(new Fat(0));
+		i2.setCarbs(new Carbohydrate(9));
+		i2.setProtein(new Protein(23));
+		System.out.println(i.equals(i2));
+		
 	}
 	
 }

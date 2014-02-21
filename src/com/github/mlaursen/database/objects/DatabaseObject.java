@@ -221,14 +221,13 @@ public abstract class DatabaseObject {
 							try {
 								Object o = f.get(this);
 								Class<?> oClass = o.getClass();
-								String oClassName = oClass.getSimpleName();	
+								String oClassName = oClass.getSimpleName();
 								String searchName = n.substring(oClassName.length());
 								for(Method m : oClass.getMethods()) {
 									String mName = m.getName();
 									if(mName.startsWith("get") && mName.matches("(?i)get" + searchName)) {
 										Object ret = m.invoke(o);
 										params.put(counter, ret);
-										System.out.println(searchName + " added at position " + counter);
 										counter++;
 									}
 								}
@@ -256,7 +255,6 @@ public abstract class DatabaseObject {
 								throw new Exception();
 							}
 							else {
-								System.out.println(f.getName() + " added at postion " + (counter-1));
 								params.put(pos, o);
 							}
 						}
@@ -346,7 +344,6 @@ public abstract class DatabaseObject {
 			if(p == null)
 				return false;
 		}
-		System.out.println(Arrays.toString(params));
 		return manager.executeStoredProcedure("new", params);
 	}
 
@@ -393,7 +390,6 @@ public abstract class DatabaseObject {
 			if(p == null)
 				return false;
 		}
-		System.out.println(Arrays.toString(params));
 		return manager.executeStoredProcedure("update" + this.getClass().getSimpleName().replace("View", ""), params);
 	}
 
@@ -406,6 +402,16 @@ public abstract class DatabaseObject {
 	 */
 	public boolean delete() {
 		return manager.executeStoredProcedure("delete", primaryKey);
+	}
+	
+	/**
+	 * This is a basic check for if a Database object equals another.
+	 * It just checks if the primary Key values are equal.
+	 * @param o The object to compare to
+	 */
+	@Override
+	public boolean equals(Object o) {
+		return (o instanceof DatabaseObject) && primaryKey.equals(((DatabaseObject) o).primaryKey);
 	}
 
 	/**

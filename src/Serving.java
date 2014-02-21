@@ -45,6 +45,11 @@ public class Serving {
 	public String getUnitName() {
 		return foodUnit.getPrimaryKey();
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Serving && foodUnit.getPrimaryKey().equals(((Serving) o).foodUnit.getPrimaryKey());
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

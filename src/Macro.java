@@ -31,6 +31,11 @@ public abstract class Macro {
 		toCals = c;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Macro && ((Macro) o).amt == amt;
+	}
+	
 	public String toString() {
 		return String.format("%.2f", amt);
 	}

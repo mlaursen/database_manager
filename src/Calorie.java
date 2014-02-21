@@ -30,5 +30,8 @@ public class Calorie {
 		return String.format("%.2f", amt);
 	}
 	
-	
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Calorie && amt == ((Calorie) o).amt;
+	}
 }
