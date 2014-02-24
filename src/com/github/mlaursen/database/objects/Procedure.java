@@ -35,8 +35,9 @@ public class Procedure {
 	}
 
 	/**
-	 * @param displayName
-	 *            the displayName to set
+	 * @param displayName The display name to be set.  This is the name that is used to find
+	 * a procedure within a package.
+	 * 
 	 */
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;

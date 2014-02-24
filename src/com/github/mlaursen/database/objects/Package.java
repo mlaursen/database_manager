@@ -97,6 +97,9 @@ public class Package {
 
 	/**
 	 * Returns a Procedure by procedure name
+	 * This looks for the displayName instead of the name
+	 * For example the procedure GETALL will have a displayName of GETALL
+	 * while the name would be GET
 	 * 
 	 * @param pName
 	 * @return

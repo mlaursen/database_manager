@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -298,7 +299,10 @@ public class ConnectionManager {
 		if (p instanceof Date) {
 			cs.setDate(i, (Date) p);
 		}
-		else if (p instanceof Integer || Util.canParseInt(p)) {
+		else if (p instanceof Integer) {
+			cs.setInt(i, (Integer) p);
+		}
+		else if(Util.canParseInt(p)) {
 			cs.setInt(i, Integer.parseInt((String) p));
 		}
 		else if (p instanceof Double) {
@@ -311,6 +315,9 @@ public class ConnectionManager {
 		}
 		else if (p instanceof DatabaseObject) {
 			cs.setString(i, ((DatabaseObject) p).getPrimaryKey());
+		}
+		else if(p == null) {
+			cs.setNull(i, Types.VARCHAR);
 		}
 		else {
 			cs.setString(i, p.toString());
