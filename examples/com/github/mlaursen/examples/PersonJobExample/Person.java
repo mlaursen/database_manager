@@ -14,13 +14,34 @@ import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
+ * This is a Database Object representation of the Database Table PERSON.
+ * 
+ * This class is a little bit different since we created our own custom procedure that
+ * is not one of the generateable procedures. A procedure named GETBYNAME is created with 
+ * the Procedure class.  Since a boolean value was not supplied for whether or not there is
+ * a return cursor for this procedure, it is automatically set to true. You can either add a true value 
+ * to the Initialization of a procedure or call the setHasCursor method to remove the cursor. Once the procedure
+ * has been created, you need to add it to the manager.
+ * 
+ * The manager generated is:
+ * 	Package name: PERSON_PKG
+ * 	Procedures: GET(:PRIMARYKEY, :CURSOR) --> Returns a Person by id
+ * 				NEW(:JOBID, :FIRSTNAME, :LASTNAME, :SALARY) --> Creates a new Person and uses the sequence to generate
+ * 																the Person ID
+ * 				UPDATEPERSON(:PRIMARYKEY, :JOBID, :FIRSTNAME, :LASTNAE, :SALARY) --> Updates all the fields for a person
+ * 																					 for the given id
+ * 				DELETE(:PRIMARYKEY) --> Deletes a person from the database based on id
+ * 
+ * The manager also includes our procedure:
+ * 	GETBYNAME(:FIRST, :LAST, :CURSOR) --> which gets a person by first/last name or just either a first or last name
+ * 
+ * 
  * @author mikkel.laursen
  *
  */
 public class Person extends DatabaseObject implements Createable, Deleteable, Getable, Updateable {
 	{
 		Procedure getByName = new Procedure("getbyname", "first", "last");
-		//getByName.setDisplayName("getbyname");
 		this.manager.addCustomProcedure(getByName);
 	}
 	@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE})
@@ -124,9 +145,8 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	public Person getByName(String first, String last) {
 		return manager.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
+
 	@Override
 	public String toString() {
 		return "Person [primaryKey=" + primaryKey + ", jobId=" + jobId + ", firstName=" + firstName + ", lastName=" + lastName

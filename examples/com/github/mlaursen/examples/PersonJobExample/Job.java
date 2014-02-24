@@ -15,6 +15,19 @@ import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
  * This is a Database Object representation for the Table named JOB.
+ * The order of the fields matter unless you had the value xxPosition for each of the values supplied.
+ * Since this DatabaseObject has additional fields other than a primary key, they must be Annotated with the
+ * NEW and UPDATE DatabaseFieldType enums.  In addition, getters must be implemented for getting each of the database field
+ * values. Setters must be created as well for each DatabaseField that takes only a MyResultRow as the parameter. All of the
+ * setters with a MyResultRow parameter will be called when the super method setAll() is called.
+ * 
+ * This class will generate a manager as follows:
+ * 	Package name: JOB_PKG
+ * 	Procedures: GET(:PRIMARYKEY, :CURSOR) --> Returns a single Job by searching for the primary key (which is an integer id)
+ * 			    GET(:CURSOR) --> Returns a List of ALL Jobs
+ * 				NEW(:JOBTYPE, NAME, DESCRIPTION) --> Creates a new Job in the database with the ID being the next value in the sequence
+ * 				UPDATEJOB(:PRIMARYKEY, :JOBTYPE, :NAME, :DESCRIPTION) --> Updates all the values in the database for a job based on the job id
+ * 				DELETE(:PRIMARYKEY) --> Deletes a job in the database by the primary key id
  * 
  * @author mikkel.laursen
  *
@@ -95,9 +108,8 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
+	
 	@Override
 	public String toString() {
 		return "Job [primaryKey=" + primaryKey + ", jobType=" + jobType + ", name=" + name + ", description=" + description + "]";
