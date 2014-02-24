@@ -5,7 +5,7 @@ Java implementation of a Database handler
 
 1. Setup
 2. Useage
-
+3. Problems/Limitations
 
 
 ============
@@ -55,3 +55,9 @@ Would create:
       UPDATE(:PRIMARYKEY, :VALUE)
     
 Please look at the examples for more detail.
+
+
+===================
+3. Problems/Limitations
+The database manager is created EVERY time a DatabaseObject is created. It might be better to have a separate database manager for a database object
+that can be filtered or get all of them.
