@@ -5,7 +5,7 @@ package com.github.mlaursen.database.objects;
 
 import java.util.Arrays;
 
-import com.github.mlaursen.database.Util;
+import com.github.mlaursen.database.DatabaseObjectClassUtil;
 
 /**
  * @author mikkel.laursen
@@ -31,7 +31,7 @@ public class Package {
 	 * @param procedures
 	 */
 	public Package(Class<?> c, Procedure... procedures) {
-		setName(Util.combineWith(Util.splitOnUpper(c.getSimpleName())));
+		setName(DatabaseObjectClassUtil.combineWith(DatabaseObjectClassUtil.splitOnUpper(c.getSimpleName())));
 		this.procedures = procedures;
 	}
 

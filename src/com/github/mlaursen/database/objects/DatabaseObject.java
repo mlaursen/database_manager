@@ -12,7 +12,7 @@ import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.ObjectManager;
-import com.github.mlaursen.database.Util;
+import com.github.mlaursen.database.DatabaseObjectClassUtil;
 
 /**
  * Basic outline for a DatbaseObject. Every database object must have at least a
@@ -62,7 +62,8 @@ public abstract class DatabaseObject {
 	 * @param r
 	 */
 	public DatabaseObject(MyResultRow r) {
-		setAll(r);
+		if(r.get(primaryKeyName) != null)
+			setAll(r);
 	}
 
 	/**
@@ -83,7 +84,7 @@ public abstract class DatabaseObject {
 	protected void setAll(MyResultRow r) {
 		Method[] methods = this.getClass().getMethods();
 		for (Method m : methods) {
-			if (m.getName().startsWith("set") && Arrays.asList(m.getParameterTypes()).contains(MyResultRow.class)) {
+			if (m.getName().startsWith("set") && Arrays.asList(m.getParameterTypes()).contains(MyResultRow.class) && r != null) {
 				try {
 					m.setAccessible(true);
 					m.invoke(this, r);
@@ -210,7 +211,7 @@ public abstract class DatabaseObject {
 	private Map<Integer, Object> getParametersMap(DatabaseFieldType proc) {
 		int counter = 0;
 		Map<Integer, Object> params = new HashMap<Integer, Object>();
-		List<Class<?>> classes = Util.getClassList(this.getClass());
+		List<Class<?>> classes = DatabaseObjectClassUtil.getClassList(this.getClass());
 		for (Class<?> c : classes) {
 			for (Field f : c.getDeclaredFields()) {
 				f.setAccessible(true);

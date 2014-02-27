@@ -302,7 +302,7 @@ public class ConnectionManager {
 		else if (p instanceof Integer) {
 			cs.setInt(i, (Integer) p);
 		}
-		else if(Util.canParseInt(p)) {
+		else if(DatabaseObjectClassUtil.canParseInt(p)) {
 			cs.setInt(i, Integer.parseInt((String) p));
 		}
 		else if (p instanceof Double) {
