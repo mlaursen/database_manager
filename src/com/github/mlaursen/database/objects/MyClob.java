@@ -22,6 +22,11 @@ public class MyClob {
 	public void setValue(String v) {
 		this.v = v;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof MyClob && ((MyClob) o).v.equals(v);
+	}
 
 	@Override
 	public String toString() {

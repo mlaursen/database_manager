@@ -414,6 +414,10 @@ public abstract class DatabaseObject {
 	public boolean equals(Object o) {
 		return (o instanceof DatabaseObject) && primaryKey.equals(((DatabaseObject) o).primaryKey);
 	}
+	
+	public ObjectManager getObjectManager() {
+		return manager;
+	}
 
 	/**
 	 * This is the default toString
