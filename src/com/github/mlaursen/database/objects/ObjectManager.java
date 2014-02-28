@@ -22,13 +22,16 @@ import com.github.mlaursen.database.DatabaseObjectClassUtil;
  */
 public class ObjectManager {
 
-	private ConnectionManager connectionManager;
-	private List<Package> packages = new ArrayList<Package>();
-	private Map<String, Integer> packageMap = new HashMap<String, Integer>();
-	private List<String> availablePackages = new ArrayList<String>();
+	protected ConnectionManager connectionManager;
+	protected List<Package> packages = new ArrayList<Package>();
+	protected Map<String, Integer> packageMap = new HashMap<String, Integer>();
+	protected List<String> availablePackages = new ArrayList<String>();
+	protected Class<? extends DatabaseObject>[] databaseObjects;
+	
 	@SafeVarargs
 	public ObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		connectionManager = new ConnectionManager();
+		this.databaseObjects = databaseObjects;
 		int i = 0;
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			Package pkg = new Package(c);

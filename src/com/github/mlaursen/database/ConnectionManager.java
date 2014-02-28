@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.Properties;
@@ -48,7 +49,7 @@ public class ConnectionManager {
 		}
 	}
 	
-	private String databaseName, databaseUser, databasePswd, classForName;
+	protected String databaseName, databaseUser, databasePswd, classForName;
 
 	public ConnectionManager() {
 		try {
@@ -118,7 +119,7 @@ public class ConnectionManager {
 	 *            Array of parameters to be bound to the procedure
 	 * @return
 	 */
-	private boolean executeStoredProcedure(String procedureName, Object... parameters) {
+	protected boolean executeStoredProcedure(String procedureName, Object... parameters) {
 		boolean success = false;
 		Connection conn = null;
 		CallableStatement cs = null;
@@ -144,7 +145,7 @@ public class ConnectionManager {
 		return success;
 	}
 	
-	private void handleSqlException(SQLException e, String procedureName, Object[] parameters) {
+	protected void handleSqlException(SQLException e, String procedureName, Object[] parameters) {
 		ErrorCode c = ErrorCode.getErrorCode(e.getErrorCode());
 		if(c == null) {
 			e.printStackTrace();
@@ -194,7 +195,7 @@ public class ConnectionManager {
 	 * @param parameters
 	 * @return
 	 */
-	private MyResultSet executeCursorProcedure(String procedureName, Object... parameters) {
+	protected MyResultSet executeCursorProcedure(String procedureName, Object... parameters) {
 		int cursorPos = parameters.length + 1;
 		Connection conn = null;
 		CallableStatement cs = null;
@@ -231,7 +232,7 @@ public class ConnectionManager {
 	 * 
 	 * @param conn
 	 */
-	private void closeConnection(Connection conn) {
+	protected void closeConnection(Connection conn) {
 		if (conn != null) {
 			try {
 				conn.close();
@@ -247,12 +248,23 @@ public class ConnectionManager {
 	 * 
 	 * @param cs
 	 */
-	private void closeCallableStatement(CallableStatement cs) {
+	protected void closeCallableStatement(CallableStatement cs) {
 		if (cs != null) {
 			try {
 				cs.close();
 			}
 			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void closeStatement(Statement s) {
+		if(s != null) {
+			try {
+				s.close();
+			}
+			catch(SQLException e) {
 				e.printStackTrace();
 			}
 		}
@@ -263,7 +275,7 @@ public class ConnectionManager {
 	 * 
 	 * @param rs
 	 */
-	private void closeResultSet(ResultSet rs) {
+	protected void closeResultSet(ResultSet rs) {
 		if (rs != null) {
 			try {
 				rs.close();
@@ -295,7 +307,7 @@ public class ConnectionManager {
 	 *            The callable statement to bind to
 	 * @throws SQLException
 	 */
-	private static void bindWithDatatype(Object p, int i, Connection conn, CallableStatement cs) throws SQLException {
+	protected static void bindWithDatatype(Object p, int i, Connection conn, CallableStatement cs) throws SQLException {
 		if (p instanceof Date) {
 			cs.setDate(i, (Date) p);
 		}

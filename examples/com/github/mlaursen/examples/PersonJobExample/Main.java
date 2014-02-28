@@ -3,7 +3,8 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
-import com.github.mlaursen.database.objects.ObjectManager;
+import com.github.mlaursen.database.testing.TestingConnectionManager;
+import com.github.mlaursen.database.testing.TestingObjectManager;
 
 /**
  * @author mikkel.laursen
@@ -14,9 +15,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ObjectManager manager = new ObjectManager(JobType.class, Job.class, Person.class);
-		System.out.println(manager);
-		
+		TestingObjectManager manager = new TestingObjectManager(JobType.class, Job.class, Person.class);
 		System.out.println("====================\nJobType queries");
 		System.out.println(manager.getAll(JobType.class));
 		System.out.println(manager.get("it", JobType.class));
@@ -43,6 +42,8 @@ public class Main {
 		test = manager.getCustom("getbyname", Person.class, "test", null);
 		System.out.println(test);
 		System.out.println(manager.delete(test));
+		
+		manager.cleanUp();
 	}
 
 }

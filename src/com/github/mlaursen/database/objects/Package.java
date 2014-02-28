@@ -37,9 +37,9 @@ public class Package {
 		setName(n);
 		this.procedures = Arrays.asList(procedures);
 	}
-	
-	public Package(Class<? extends DatabaseObject> databaseObject) {
-		this.name = formatClassName(databaseObject);
+	public Package(Class<? extends DatabaseObject> databaseObject) { this(databaseObject, false); }
+	public Package(Class<? extends DatabaseObject> databaseObject, boolean test) {
+		this.name = (test ? "test_" : "") + formatClassName(databaseObject);
 		generateProcedures(databaseObject);
 		try {
 			DatabaseObject dbo = databaseObject.newInstance();
