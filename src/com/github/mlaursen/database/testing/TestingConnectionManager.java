@@ -9,9 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.github.mlaursen.database.ConnectionManager;
-import com.github.mlaursen.database.DatabaseObjectClassUtil;
-import com.github.mlaursen.database.objects.DatabaseObject;
-import com.github.mlaursen.database.objects.Package;
 
 /**
  * @author mikkel.laursen

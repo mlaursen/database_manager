@@ -3,7 +3,6 @@
  */
 package com.github.mlaursen.database.testing;
 
-import com.github.mlaursen.database.ConnectionManager;
 import com.github.mlaursen.database.DatabaseObjectClassUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.ObjectManager;
@@ -19,6 +18,7 @@ public class TestingObjectManager extends ObjectManager {
 	/**
 	 * @param databaseObjects
 	 */
+	@SafeVarargs
 	public TestingObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		super();
 		connectionManager = new TestingConnectionManager();
@@ -34,14 +34,19 @@ public class TestingObjectManager extends ObjectManager {
 		}
 	}
 	
+	@Override
 	public <T extends DatabaseObject>  boolean packageIsAvailable(Class<T> type) {
 		return availablePackages.contains("test_"+Package.formatClassName(type));
 	}
 	
+	@Override
 	public <T extends DatabaseObject> Package getPackage(Class<T> type) {
 		return packages.get(packageMap.get("test_"+Package.formatClassName(type)));
 	}
 	
+	/**
+	 * This deletes all the temporary tables and packages created
+	 */
 	public void cleanUp() {
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			connectionManager.deleteTestingTable(DatabaseObjectClassUtil.formatClassName(c));

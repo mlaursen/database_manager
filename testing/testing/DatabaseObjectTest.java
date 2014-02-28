@@ -18,7 +18,7 @@ import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyClob;
 import com.github.mlaursen.database.objects.MyResultRow;
-import com.github.mlaursen.database.objects.ObjectManager;
+import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Deleteable;
@@ -26,7 +26,7 @@ import com.github.mlaursen.database.objecttypes.Filterable;
 import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
-import com.github.mlaursen.database.objects.Package;
+import com.github.mlaursen.database.testing.TestingObjectManager;
 
 /**
  * @author mikkel.laursen
@@ -128,9 +128,8 @@ public class DatabaseObjectTest {
 		String getAll = "GET(:CURSOR)";
 		String deleteAll = "DELETEALL(:NAME)";
 		
-		ObjectManager m = new ObjectManager(TestTable.class);
-		System.out.println(m);
-		/*
+		TestingObjectManager m = new TestingObjectManager(TestTable.class);
+		
 		Package pkg = m.getPackage(TestTable.class);
 		Procedure createProc = pkg.getProcedure("new");
 		Procedure updateProc = pkg.getProcedure("updatetesttable");
@@ -170,7 +169,8 @@ public class DatabaseObjectTest {
 		assertNotNull(tt.getPrimaryKey());
 		assertTrue(m.executeCustomProcedure("deleteall", TestTable.class, "test1"));
 		assertTrue(m.delete(tt));
-		*/
+		
+		m.cleanUp();
 	}
 
 }
