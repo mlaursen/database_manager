@@ -42,16 +42,12 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 	
 	@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE})
 	protected String description;
-	public Job() { }
-	public Job(String primaryKey) {
-		super(primaryKey);
-	}
-
-	/**
-	 * @param primaryKey
-	 */
-	public Job(Integer primaryKey) {
-		super(primaryKey);
+	
+	public Job() {}
+	public Job(String jobType, String name, String description) {
+		this.jobType = jobType;
+		this.name = name;
+		this.description = description;
 	}
 
 	/**

@@ -3,7 +3,12 @@
  */
 package testing;
 
-import static org.junit.Assert.*;
+import static com.github.mlaursen.database.DatabaseObjectClassUtil.canParseInt;
+import static com.github.mlaursen.database.DatabaseObjectClassUtil.formatClassName;
+import static com.github.mlaursen.database.DatabaseObjectClassUtil.getClassList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -13,8 +18,6 @@ import com.github.mlaursen.database.DatabaseObjectClassUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.Procedure;
-
-import static com.github.mlaursen.database.DatabaseObjectClassUtil.*;
 
 /**
  * @author mikkel.laursen

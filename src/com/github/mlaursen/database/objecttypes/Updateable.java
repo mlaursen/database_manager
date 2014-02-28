@@ -8,5 +8,4 @@ package com.github.mlaursen.database.objecttypes;
  * 
  */
 public interface Updateable extends NoCursor {
-	boolean update();
 }

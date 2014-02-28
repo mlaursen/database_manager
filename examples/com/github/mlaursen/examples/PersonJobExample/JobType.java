@@ -31,9 +31,10 @@ public class JobType extends DatabaseObject implements Getable, GetAllable, Crea
 	{
 		primaryKeyName="name";
 	}
-	public JobType() { }
-	public JobType(String primaryKey) {
-		super(primaryKey);
+	
+	public JobType() {}
+	public JobType(String name) {
+		super(name);
 	}
 
 	/**
