@@ -14,6 +14,7 @@ import com.github.mlaursen.database.objecttypes.Getable;
  * 
  */
 public class DatabaseView extends DatabaseObject implements Getable {
+	public DatabaseView() { }
 	public DatabaseView(MyResultRow r) {
 		super(r);
 	}
