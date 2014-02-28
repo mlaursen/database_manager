@@ -103,6 +103,7 @@ public class ObjectManager {
 		return new ArrayList<T>();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T extends DatabaseObject> List<T> getAll(T object) {
 		if(packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
