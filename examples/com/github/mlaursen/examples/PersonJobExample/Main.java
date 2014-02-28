@@ -15,8 +15,11 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		System.out.println("====================\nInitilizin TestingObjectManager and creating testing environment...");
 		TestingObjectManager manager = new TestingObjectManager(JobType.class, Job.class, Person.class);
-		System.out.println("====================\nJobType queries");
+		System.out.println(manager);
+		
+		System.out.println("\n====================\nJobType queries");
 		System.out.println(manager.getAll(JobType.class));
 		System.out.println(manager.get("it", JobType.class));
 		
