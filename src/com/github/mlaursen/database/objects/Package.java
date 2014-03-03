@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
+import com.github.mlaursen.annotations.DatabaseViewClass;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.objecttypes.Createable;
@@ -63,13 +64,8 @@ public class Package {
 	 */
 	public Package(Class<? extends DatabaseObject> databaseObject, boolean test) {
 		if(ClassUtil.objectAssignableFrom(databaseObject, DatabaseView.class)) {
-			try {
-				this.addAllCustomProcedures(databaseObject);
-				databaseObject = ((DatabaseView) databaseObject.newInstance()).getManagerObject();
-			}
-			catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
+			this.addAllCustomProcedures(databaseObject);
+			databaseObject = (Class<? extends DatabaseObject>) databaseObject.getAnnotation(DatabaseViewClass.class).value();
 		}
 		this.name = (test ? "test_" : "") + formatClassName(databaseObject);
 		generateProcedures(databaseObject);
@@ -105,6 +101,10 @@ public class Package {
 		mergeProcedures(pkg.getProcedures());
 	}
 	
+	/**
+	 * Merges a list of procedures to the current package.
+	 * @param procedures
+	 */
 	public void mergeProcedures(List<Procedure> procedures) {
 		for(Procedure p : procedures) {
 			if(!this.canCallProcedure(p.getName())) {
@@ -305,13 +305,26 @@ public class Package {
 		this.procedures = procedures;
 	}
 	
+	/**
+	 * Adds a procedure to the package and updates the availableProcedures and procedureMap
+	 * @param p
+	 */
 	public void addProcedure(Procedure p) {
 		this.procedures.add(p);
 		this.availableProcedures.add(p.getName());
 		this.procedureMap.put(p.getName(), procedures.size()-1);
 	}
 	
+	/**
+	 * Formats the class name for a DatabaseObject.
+	 * 
+	 * @param c
+	 * @return
+	 */
 	public static String formatClassName(Class<?> c) {
+		if(c.isAnnotationPresent(DatabaseViewClass.class)) {
+			c = c.getAnnotation(DatabaseViewClass.class).value();
+		}
 		String name = ClassUtil.combineWith(ClassUtil.splitOnUpper(c.getSimpleName()));
 		return name + (name.toLowerCase().contains("_pkg") ? "" : "_pkg");
 	}

@@ -31,8 +31,11 @@ public class Test {
 	public static void main(String[] args) {
 		//Package normalPkg = new Package(Person.class);
 		//System.out.println(normalPkg);
+		System.out.println(Package.formatClassName(PersonView.class));
 		ObjectManager om = new ObjectManager(Person.class, PersonView.class);
 		System.out.println(om);
+		System.out.println(om.get(0, PersonView.class));
+		//System.out.println(om.get(1, PersonView.class));
 		/*
 		//Package pkg = new Package(Person.class);
 		//System.out.println(pkg);

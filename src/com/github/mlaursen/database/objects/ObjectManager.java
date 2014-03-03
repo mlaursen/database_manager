@@ -34,7 +34,7 @@ public class ObjectManager {
 		this.databaseObjects = databaseObjects;
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			Package pkg = new Package(c);
-			if(packageExists(pkg.getName())) {
+			if(packageIsAvailable(pkg.getName())) {
 				Package pkgOld = getPackage(pkg.getName());
 				pkgOld.mergeProcedures(pkg);
 			}
@@ -44,18 +44,41 @@ public class ObjectManager {
 		}
 	}
 	
+	/**
+	 * Adds a package to the List of packages.
+	 * It also updates the availablePackages list and the packageMap
+	 * @param pkg
+	 */
 	public void addPackage(Package pkg) {
 		packages.add(pkg);
 		availablePackages.add(pkg.getName());
 		packageMap.put(pkg.getName(), packages.size()-1);
 	}
 	
-	public boolean packageExists(String pkgName) { return this.availablePackages.contains(pkgName); }
-	
-	public <T extends DatabaseObject>  boolean packageIsAvailable(Class<T> type) {
-		return availablePackages.contains(Package.formatClassName(type));
+	/**
+	 * Checks if the availablePackages list contains the package Name
+	 * @param pkgName
+	 * @return
+	 */
+	public boolean packageIsAvailable(String pkgName) { 
+		return this.availablePackages.contains(pkgName);
 	}
 	
+	/**
+	 * Checks if a package is avaialbe by checking the availabePackages for the formatted 
+	 * Class name
+	 * @param type
+	 * @return
+	 */
+	public <T extends DatabaseObject>  boolean packageIsAvailable(Class<T> type) {
+		return packageIsAvailable(Package.formatClassName(type));
+	}
+	
+	/**
+	 * Returns a package for the DatabaseObject class given.
+	 * @param type
+	 * @return
+	 */
 	public <T extends DatabaseObject> Package getPackage(Class<T> type) {
 		return getPackage(Package.formatClassName(type));
 	}

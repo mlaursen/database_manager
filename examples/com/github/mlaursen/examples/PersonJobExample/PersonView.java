@@ -6,6 +6,7 @@ package com.github.mlaursen.examples.PersonJobExample;
 import java.util.Arrays;
 import java.util.List;
 
+import com.github.mlaursen.annotations.DatabaseViewClass;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.MyResultRow;
 import com.github.mlaursen.database.objects.Procedure;
@@ -16,15 +17,14 @@ import com.github.mlaursen.database.objecttypes.Getable;
  * @author mikkel.laursen
  *
  */
+@DatabaseViewClass(Person.class)
 public class PersonView extends DatabaseView implements Getable, GetAllable {
 
 	protected String personName;
 	protected double personSalary;
 	protected JobType jobType;
 	protected String jobName, jobDescription;
-	public PersonView() {
-		super(Person.class);
-	}
+	public PersonView() { }
 
 	/**
 	 * @param primaryKey

@@ -3,6 +3,7 @@
  */
 package com.github.mlaursen.database.objects;
 
+import com.github.mlaursen.annotations.DatabaseViewClass;
 import com.github.mlaursen.database.objecttypes.Getable;
 
 /**
@@ -11,11 +12,7 @@ import com.github.mlaursen.database.objecttypes.Getable;
  */
 public class DatabaseView extends DatabaseObject implements Getable {
 	
-	protected Class<? extends DatabaseObject> managerObject;
-	protected DatabaseView(Class<? extends DatabaseObject> managerObject) {
-		this.managerObject = managerObject;
-	}
-
+	public DatabaseView() {}
 	/**
 	 * @param primaryKey
 	 */
@@ -29,13 +26,5 @@ public class DatabaseView extends DatabaseObject implements Getable {
 	 */
 	public DatabaseView(MyResultRow r) {
 		super(r);
-	}
-
-	public void setManagerObject(Class<? extends DatabaseObject> managerObject) {
-		this.managerObject = managerObject;
-	}
-	
-	public Class<? extends DatabaseObject> getManagerObject() {
-		return this.managerObject;
 	}
 }
