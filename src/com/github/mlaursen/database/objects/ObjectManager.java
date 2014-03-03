@@ -156,6 +156,7 @@ public class ObjectManager {
 		if(packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
 			if(pkg.canCallProcedure("new")) {
+				System.out.println(pkg.getName() + "." + pkg.getProcedure("new").toString());
 				Object[] params = getParameters(DatabaseFieldType.NEW, object);
 				return connectionManager.executeStoredProcedure(pkg, "new", params);
 			}

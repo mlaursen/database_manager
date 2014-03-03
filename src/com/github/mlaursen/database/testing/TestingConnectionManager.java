@@ -28,7 +28,7 @@ public class TestingConnectionManager extends ConnectionManager {
 			conn = getConnection();
 			stmt = conn.createStatement();
 			String sql = "CREATE GLOBAL TEMPORARY TABLE test_" + tableName;
-			sql += " AS SELECT * FROM " + tableName;
+			sql += " AS SELECT * FROM " + tableName + " WHERE 1=0";
 			success = stmt.executeUpdate(sql) > 0;
 		}
 		catch (SQLException e) {
@@ -86,9 +86,17 @@ public class TestingConnectionManager extends ConnectionManager {
 	
 	public String packageToTest(StringBuilder pkg, String packageName) {
 		String tableName = packageName.replace("_pkg", "");
-		String s = pkg.toString().replaceAll("(?i)\\b"+packageName+"\\b", "test_"+packageName);
-		s = s.replace("(?i)\\b"+tableName+"\\b", "test_"+tableName);
-		return s;
+		String[] splits = pkg.toString().toUpperCase().split("(?i)"+tableName);
+		StringBuilder str = new StringBuilder("");
+		for(int i = 0; i < splits.length; i++) {
+			if(i == 0) {
+				str.append(splits[i]);
+			}
+			else {
+				str.append((" TEST_" + tableName + splits[i]).toUpperCase());
+			}
+		}
+		return str.toString();
 	}
 	
 	public boolean deleteTestingTable(String tableName) {

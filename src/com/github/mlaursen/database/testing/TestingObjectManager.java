@@ -5,6 +5,7 @@ package com.github.mlaursen.database.testing;
 
 import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
+import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.ObjectManager;
 import com.github.mlaursen.database.objects.Package;
 
@@ -23,14 +24,22 @@ public class TestingObjectManager extends ObjectManager {
 		super();
 		connectionManager = new TestingConnectionManager();
 		this.databaseObjects = databaseObjects;
-		int i = 0;
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			Package pkg = new Package(c, true);
-			packages.add(pkg);
-			availablePackages.add(pkg.getName());
-			packageMap.put(pkg.getName(), i++);
-			connectionManager.createTestingTable(ClassUtil.formatClassName(c));
-			connectionManager.createTestingPackage(Package.formatClassName(c));
+			if(packageIsAvailable(pkg.getName())) {
+				Package pkgOld = getPackage(pkg.getName());
+				pkgOld.mergeProcedures(pkg);
+			}
+			else {
+				this.addPackage(pkg);
+			}
+			if(ClassUtil.objectAssignableFrom(c, DatabaseView.class)) {
+				System.out.println("Was a view.. haven't delt with that yet");
+			}
+			else {
+				connectionManager.createTestingTable(ClassUtil.formatClassName(c));
+				connectionManager.createTestingPackage(Package.formatClassName(c));
+			}
 		}
 	}
 	
