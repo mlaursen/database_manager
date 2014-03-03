@@ -6,16 +6,36 @@ package com.github.mlaursen.database.objects;
 import com.github.mlaursen.database.objecttypes.Getable;
 
 /**
- * This is an extention of a DatabaseObject. The default implementation removes
- * the "View" from the package name. This is if the View uses the same database
- * package as the source table(s)
- * 
  * @author mikkel.laursen
- * 
+ *
  */
 public class DatabaseView extends DatabaseObject implements Getable {
-	public DatabaseView() { }
+	
+	protected Class<? extends DatabaseObject> managerObject;
+	protected DatabaseView(Class<? extends DatabaseObject> managerObject) {
+		this.managerObject = managerObject;
+	}
+
+	/**
+	 * @param primaryKey
+	 */
+	public DatabaseView(String primaryKey) {
+		super(primaryKey);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param r
+	 */
 	public DatabaseView(MyResultRow r) {
 		super(r);
+	}
+
+	public void setManagerObject(Class<? extends DatabaseObject> managerObject) {
+		this.managerObject = managerObject;
+	}
+	
+	public Class<? extends DatabaseObject> getManagerObject() {
+		return this.managerObject;
 	}
 }
