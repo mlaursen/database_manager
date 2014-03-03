@@ -103,13 +103,13 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 		this.lastName = lastName;
 	}
 	/**
-	 * @return the salary
+	 * @return the personSalary
 	 */
 	public double getSalary() {
 		return salary;
 	}
 	/**
-	 * @param salary the salary to set
+	 * @param personSalary the personSalary to set
 	 */
 	public void setSalary(double salary) {
 		this.salary = salary;
@@ -129,7 +129,7 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	
 	public void setSalary(MyResultRow r) {
 		try {
-			this.salary = Double.parseDouble(r.get("salary"));
+			this.salary = Double.parseDouble(r.get("personSalary"));
 		}
 		catch(NullPointerException | NumberFormatException e) {
 			this.salary = 0;
@@ -155,7 +155,7 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	@Override
 	public String toString() {
 		return "Person [primaryKey=" + primaryKey + ", jobId=" + jobId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", salary=" + salary + "]";
+				+ ", personSalary=" + salary + "]";
 	}
 	
 	

@@ -39,6 +39,14 @@ public class Package {
 	}
 	public Package(Class<? extends DatabaseObject> databaseObject) { this(databaseObject, false); }
 	public Package(Class<? extends DatabaseObject> databaseObject, boolean test) {
+		if(objectAssignableFrom(databaseObject, DatabaseView.class)) {
+			try {
+				databaseObject = ((DatabaseView) databaseObject.newInstance()).getManagerObject();
+			}
+			catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 		this.name = (test ? "test_" : "") + formatClassName(databaseObject);
 		generateProcedures(databaseObject);
 		try {

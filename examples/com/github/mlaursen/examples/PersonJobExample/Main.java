@@ -36,9 +36,9 @@ public class Main {
 		System.out.println(archer);
 		double salary = archer.getSalary();
 		archer.setSalary(800000);
-		System.out.println("Updating Archer's salary. Was it successful? " + manager.update(archer));
+		System.out.println("Updating Archer's personSalary. Was it successful? " + manager.update(archer));
 		archer.setSalary(salary);
-		System.out.println("Returning archer's salary to the previous amount. " + manager.update(archer));
+		System.out.println("Returning archer's personSalary to the previous amount. " + manager.update(archer));
 		Person test = new Person("test", "testing", "1", 60000);
 		System.out.println(test);
 		System.out.println(manager.create(test));

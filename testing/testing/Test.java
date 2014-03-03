@@ -10,6 +10,7 @@ import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.examples.PersonJobExample.Job;
 import com.github.mlaursen.examples.PersonJobExample.JobType;
 import com.github.mlaursen.examples.PersonJobExample.Person;
+import com.github.mlaursen.examples.PersonJobExample.PersonView;
 
 /**
  * @author mikkel.laursen
@@ -28,6 +29,14 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Package normalPkg = new Package(Person.class);
+		System.out.println(normalPkg);
+		
+		PersonView pv = new PersonView();
+		System.out.println(pv);
+		ObjectManager om = new ObjectManager(Person.class, PersonView.class);
+		System.out.println(om);
+		/*
 		//Package pkg = new Package(Person.class);
 		//System.out.println(pkg);
 		
@@ -46,6 +55,7 @@ public class Test {
 		//System.out.println(mom.getAll(Job.class));
 		
 		//System.out.println(mom.create(Person.class))
+		*/
 	}
 
 }

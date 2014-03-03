@@ -35,12 +35,19 @@ public class ObjectManager {
 		int i = 0;
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			Package pkg = new Package(c);
-			packages.add(pkg);
-			availablePackages.add(pkg.getName());
-			packageMap.put(pkg.getName(), i);
-			i++;
+			if(packageExists(pkg.getName())) {
+				
+			}
+			else {
+				packages.add(pkg);
+				availablePackages.add(pkg.getName());
+				packageMap.put(pkg.getName(), i);
+				i++;
+			}
 		}
 	}
+	
+	public boolean packageExists(String pkgName) { return this.availablePackages.contains(pkgName); }
 	
 	public <T extends DatabaseObject>  boolean packageIsAvailable(Class<T> type) {
 		return availablePackages.contains(Package.formatClassName(type));

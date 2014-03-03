@@ -25,6 +25,23 @@ CREATE TABLE PERSON
 , CONSTRAINT FK_JOB_ID FOREIGN KEY (JOB_ID) REFERENCES JOB(ID)
 );
 
+
+-------------------------------------------------------------------------------
+-- Create Views
+-------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW PERSON_VIEW
+AS
+  SELECT LAST_NAME||', '||FIRST_NAME PERSON_NAME, 
+         SALARY, 
+         JOB_TYPE, 
+         J.NAME JOB_NAME, 
+         DESCRIPTION JOB_DESCRIPTION
+  FROM PERSON P
+  INNER JOIN JOB J ON P.JOB_ID = J.ID
+  ORDER BY LAST_NAME, FIRST_NAME
+WITH READ ONLY;
+
+
 -------------------------------------------------------------------------------
 -- Initial data
 -------------------------------------------------------------------------------
