@@ -50,7 +50,6 @@ public class TestAll {
 		assertTrue(tom.create(it));
 		assertTrue(tom.create(hr));
 		assertTrue(tom.create(business));
-		System.out.println("HERE");
 		JobType itDB = tom.get("IT", JobType.class);
 		assertEquals(it, itDB);
 		
@@ -61,10 +60,6 @@ public class TestAll {
 		for(JobType jt : fromDb) {
 			assertTrue(jobTypes.contains(jt));
 		}
-		/*
-		assertEquals(it, tom.get("IT", JobType.class));
-		assertEquals(it, tom.get("it", JobType.class));
-		*/
 	}
 
 	@Test

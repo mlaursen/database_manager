@@ -125,8 +125,6 @@ public class ObjectManager {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
 			if(pkg.canCallProcedure("get")) {
-				System.out.println(pkg);
-				System.out.println(pkg.canCallProcedure("get"));
 				return connectionManager.executeCursorProcedure(pkg, "get", primaryKey).getRow().construct(type);
 			}
 		}
@@ -135,13 +133,10 @@ public class ObjectManager {
 	public <T extends DatabaseObject> List<T> getAll(Class<T> type) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			System.out.println(pkg.getName());
 			if(pkg.canCallProcedure("getall")) {
-				System.out.println("can call get all");
 				return connectionManager.executeCursorProcedure(pkg, "getall").toListOf(type);
 			}
 		}
-		System.out.println("not dere");
 		return new ArrayList<T>();
 	}
 	
@@ -163,7 +158,6 @@ public class ObjectManager {
 			if(pkg.canCallProcedure("new")) {
 				Object[] params = getParameters(DatabaseFieldType.NEW, object);
 				if(params.length == 0) {
-					System.out.println("There were no parameters. primaryKey=" + object.primaryKey );
 					return connectionManager.executeStoredProcedure(pkg, "new", object.primaryKey);
 				}
 				else {

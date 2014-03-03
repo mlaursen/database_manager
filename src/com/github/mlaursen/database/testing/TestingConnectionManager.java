@@ -68,7 +68,6 @@ public class TestingConnectionManager extends ConnectionManager {
 			}
 			String packageStr = "CREATE OR REPLACE " + packageToTest(pkg, packageName);
 			String packageBody = "CREATE OR REPLACE " + packageToTest(pkgBody, packageName);
-			System.out.println(packageBody);
 			stmt.execute(packageStr);
 			stmt.execute(packageBody);
 		}
