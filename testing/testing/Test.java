@@ -29,11 +29,8 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Package normalPkg = new Package(Person.class);
-		System.out.println(normalPkg);
-		
-		PersonView pv = new PersonView();
-		System.out.println(pv);
+		//Package normalPkg = new Package(Person.class);
+		//System.out.println(normalPkg);
 		ObjectManager om = new ObjectManager(Person.class, PersonView.class);
 		System.out.println(om);
 		/*

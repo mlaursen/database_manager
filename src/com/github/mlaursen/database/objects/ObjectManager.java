@@ -32,19 +32,22 @@ public class ObjectManager {
 	public ObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		connectionManager = new ConnectionManager();
 		this.databaseObjects = databaseObjects;
-		int i = 0;
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			Package pkg = new Package(c);
 			if(packageExists(pkg.getName())) {
-				
+				Package pkgOld = getPackage(pkg.getName());
+				pkgOld.mergeProcedures(pkg);
 			}
 			else {
-				packages.add(pkg);
-				availablePackages.add(pkg.getName());
-				packageMap.put(pkg.getName(), i);
-				i++;
+				this.addPackage(pkg);
 			}
 		}
+	}
+	
+	public void addPackage(Package pkg) {
+		packages.add(pkg);
+		availablePackages.add(pkg.getName());
+		packageMap.put(pkg.getName(), packages.size()-1);
 	}
 	
 	public boolean packageExists(String pkgName) { return this.availablePackages.contains(pkgName); }
@@ -54,7 +57,11 @@ public class ObjectManager {
 	}
 	
 	public <T extends DatabaseObject> Package getPackage(Class<T> type) {
-		return packages.get(packageMap.get(Package.formatClassName(type)));
+		return getPackage(Package.formatClassName(type));
+	}
+	
+	public Package getPackage(String pkgName) {
+		return packages.get(packageMap.get(pkgName));
 	}
 	
 	public <T extends DatabaseObject> T getCustom(String procedureName, Class<T> type, Object... params) {

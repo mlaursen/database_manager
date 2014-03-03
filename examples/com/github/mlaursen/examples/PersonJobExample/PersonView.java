@@ -3,9 +3,12 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
-import com.github.mlaursen.database.objects.DatabaseObject;
+import java.util.Arrays;
+import java.util.List;
+
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.MyResultRow;
+import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 
@@ -126,6 +129,11 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	
 	public void setJobDescription(MyResultRow r) {
 		this.jobDescription = r.get("job_description");
+	}
+	
+	@Override
+	public List<Procedure> getCustomProcedures() {
+		return Arrays.asList(new Procedure("test"));
 	}
 
 	/* (non-Javadoc)

@@ -23,6 +23,12 @@ import com.github.mlaursen.database.objecttypes.NoCursor;
 import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
+ * This is a java representation of an Oracle Package.
+ * A package has:
+ * 	a Name
+ * 	Stored procedures.
+ * 
+ * 
  * @author mikkel.laursen
  * 
  */
@@ -32,15 +38,33 @@ public class Package {
 	private List<Procedure> procedures = new ArrayList<Procedure>();
 	private Map<String, Integer> procedureMap = new HashMap<String, Integer>();
 	private List<String> availableProcedures = new ArrayList<String>();
-
+	
+	/*
 	public Package(String n, Procedure... procedures) {
 		setName(n);
 		this.procedures = Arrays.asList(procedures);
 	}
+	*/
+	
+	/**
+	 * The basic constructor for a Package.
+	 * It takes in a DatabaseObject class to generate a package for and generates
+	 * all the stored procedures
+	 * @param databaseObject
+	 */
 	public Package(Class<? extends DatabaseObject> databaseObject) { this(databaseObject, false); }
+	
+	/**
+	 * Creates a Package with all the stored procedures.
+	 * If the boolean test is true, it appends the packagename with test_ to be used for test
+	 * cases.
+	 * @param databaseObject
+	 * @param test
+	 */
 	public Package(Class<? extends DatabaseObject> databaseObject, boolean test) {
-		if(objectAssignableFrom(databaseObject, DatabaseView.class)) {
+		if(ClassUtil.objectAssignableFrom(databaseObject, DatabaseView.class)) {
 			try {
+				this.addAllCustomProcedures(databaseObject);
 				databaseObject = ((DatabaseView) databaseObject.newInstance()).getManagerObject();
 			}
 			catch (InstantiationException | IllegalAccessException e) {
@@ -49,13 +73,43 @@ public class Package {
 		}
 		this.name = (test ? "test_" : "") + formatClassName(databaseObject);
 		generateProcedures(databaseObject);
+		this.addAllCustomProcedures(databaseObject);
+	}
+	
+	/**
+	 * Adds all custom stored procedures for a Database Object.
+	 * It creates a new instance with the basic constructor and executes the inheritated method
+	 * getCustomProcedures and then adds each procedure from that list.
+	 * @param databaseObject
+	 */
+	protected void addAllCustomProcedures(Class<? extends DatabaseObject> databaseObject) {
 		try {
 			DatabaseObject dbo = databaseObject.newInstance();
-			this.procedures.addAll(dbo.getCustomProcedures());
+			List<Procedure> procedures = dbo.getCustomProcedures();
+			for(Procedure p : procedures) {
+				this.addProcedure(p);
+			}
 		}
 		catch (InstantiationException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * This merges all the procedures for another package into the current package.
+	 * The example is if you have a Database Object and a Database View. The Database View
+	 * has some extra stored procedures so you add the additional stored procedures to the package.
+	 * @param pkg
+	 */
+	public void mergeProcedures(Package pkg) {
+		mergeProcedures(pkg.getProcedures());
+	}
+	
+	public void mergeProcedures(List<Procedure> procedures) {
+		for(Procedure p : procedures) {
+			if(!this.canCallProcedure(p.getName())) {
+				addProcedure(p);
+			}
 		}
 	}
 	
@@ -69,7 +123,7 @@ public class Package {
 	}
 	
 	private void generateProcedure(Class<? extends DatabaseObject> databaseObject, Class<?> objectType) {
-		if(objectAssignableFrom(databaseObject, objectType)) {
+		if(ClassUtil.objectAssignableFrom(databaseObject, objectType)) {
 			String procedureName = objectType.getSimpleName().toLowerCase().replace("able", "");
 			procedureName = procedureName.equals("create") 
 								? "new" 
@@ -77,21 +131,20 @@ public class Package {
 										? databaseObject.getSimpleName().replace("View", "") 
 										: "");
 			Procedure p = new Procedure(procedureName, getParametersFromClass(DatabaseFieldType.classToType(objectType), databaseObject));
-			if (objectAssignableFrom(objectType, NoCursor.class)) {
+			if (ClassUtil.objectAssignableFrom(objectType, NoCursor.class)) {
 				p.setHasCursor(false);
 			}
 			if (objectType.equals(GetAllable.class)) {
 				p.setDisplayName("getall");
 				p.setName("get");
 			}
+			/*
 			this.procedures.add(p);
 			this.availableProcedures.add(p.getName());
 			this.procedureMap.put(p.getName(), procedures.size()-1);
+			*/
+			this.addProcedure(p);
 		}
-	}
-	
-	public boolean objectAssignableFrom(Class<?> c1, Class<?> c2) {
-		return c2.isAssignableFrom(c1);
 	}
 
 	/**
@@ -254,6 +307,8 @@ public class Package {
 	
 	public void addProcedure(Procedure p) {
 		this.procedures.add(p);
+		this.availableProcedures.add(p.getName());
+		this.procedureMap.put(p.getName(), procedures.size()-1);
 	}
 	
 	public static String formatClassName(Class<?> c) {
@@ -261,6 +316,11 @@ public class Package {
 		return name + (name.toLowerCase().contains("_pkg") ? "" : "_pkg");
 	}
 	
+	/**
+	 * Checks if a procedure exists by name
+	 * @param n
+	 * @return
+	 */
 	public boolean canCallProcedure(String n) {
 		return getProcedure(n) != null;
 	}
