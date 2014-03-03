@@ -116,11 +116,11 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	}
 	
 	public void setPersonSalary(MyResultRow r) {
-		this.personSalary = Double.parseDouble(r.get("personSalary"));
+		this.personSalary = Double.parseDouble(r.get("person_salary"));
 	}
 	
 	public void setJobType(MyResultRow r) {
-		this.jobType = new JobType(r);
+		this.jobType = new JobType(r.get("job_type"));
 	}
 	
 	public void setJobName(MyResultRow r) {

@@ -31,8 +31,11 @@ CREATE TABLE PERSON
 -------------------------------------------------------------------------------
 CREATE OR REPLACE VIEW PERSON_VIEW
 AS
-  SELECT LAST_NAME||', '||FIRST_NAME PERSON_NAME, 
-         SALARY, 
+  SELECT P.ID,
+         LAST_NAME||', '||FIRST_NAME PERSON_NAME,
+         FIRST_NAME,
+         LAST_NAME,
+         SALARY PERSON_SALARY, 
          JOB_TYPE, 
          J.NAME JOB_NAME, 
          DESCRIPTION JOB_DESCRIPTION
@@ -282,10 +285,10 @@ END JOB_PKG;
 -- Person Package
 
 CREATE OR REPLACE PACKAGE PERSON_PKG AS
-  -- Gets a person by id
+  -- Gets a person by id from the person view
   PROCEDURE GET(PID IN PERSON.ID%TYPE, PCURSOR OUT SYS_REFCURSOR);
   
-  -- Gets a person by first name and last name. The first name or last name can be null
+  -- Gets a person by first name and last name from the person view. The first name or last name can be null
   PROCEDURE GETBYNAME(PFIRST IN PERSON.FIRST_NAME%TYPE, PLAST IN PERSON.LAST_NAME%TYPE, PCURSOR OUT SYS_REFCURSOR);
   
   -- Update a person
@@ -309,7 +312,7 @@ CREATE OR REPLACE PACKAGE BODY PERSON_PKG AS
   BEGIN
     OPEN PCURSOR FOR
       SELECT *
-      FROM PERSON
+      FROM PERSON_VIEW
       WHERE ID=PID;
   END GET;
   
@@ -323,10 +326,10 @@ CREATE OR REPLACE PACKAGE BODY PERSON_PKG AS
     ULAST := UPPER(PLAST);
     IF PFIRST!=NULL AND PLAST!=NULL THEN
       OPEN PCURSOR FOR
-        SELECT * FROM PERSON WHERE FIRST_NAME=UFIRST AND LAST_NAME=ULAST;
+        SELECT * FROM PERSON_VIEW WHERE FIRST_NAME=UFIRST AND LAST_NAME=ULAST;
     ELSE
       OPEN PCURSOR FOR
-        SELECT * FROM PERSON WHERE LAST_NAME=ULAST OR FIRST_NAME=UFIRST;
+        SELECT * FROM PERSON_VIEW WHERE LAST_NAME=ULAST OR FIRST_NAME=UFIRST;
     END IF;
   END GETBYNAME;
   
