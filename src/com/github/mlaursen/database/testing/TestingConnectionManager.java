@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.github.mlaursen.database.ConnectionManager;
+import com.github.mlaursen.database.PackageUtil;
 
 /**
  * @author mikkel.laursen
@@ -66,8 +67,8 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				pkgBody.append(rs.getString(1));
 			}
-			String packageStr = "CREATE OR REPLACE " + packageToTest(pkg, packageName);
-			String packageBody = "CREATE OR REPLACE " + packageToTest(pkgBody, packageName);
+			String packageStr = "CREATE OR REPLACE " + PackageUtil.packageToTest(pkg, packageName);
+			String packageBody = "CREATE OR REPLACE " + PackageUtil.packageToTest(pkgBody, packageName);
 			stmt.execute(packageStr);
 			stmt.execute(packageBody);
 		}
@@ -83,21 +84,6 @@ public class TestingConnectionManager extends ConnectionManager {
 		}
 		System.out.println("Created " + packageName);
 		return success;
-	}
-	
-	public String packageToTest(StringBuilder pkg, String packageName) {
-		String tableName = packageName.replace("_pkg", "");
-		String[] splits = pkg.toString().toUpperCase().split("(?i)"+tableName);
-		StringBuilder str = new StringBuilder("");
-		for(int i = 0; i < splits.length; i++) {
-			if(i == 0) {
-				str.append(splits[i]);
-			}
-			else {
-				str.append(("TEST_" + tableName + splits[i]).toUpperCase());
-			}
-		}
-		return str.toString();
 	}
 	
 	public boolean deleteTestingTable(String tableName) {
