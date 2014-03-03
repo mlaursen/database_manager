@@ -131,6 +131,9 @@ public class Package {
 										? databaseObject.getSimpleName().replace("View", "") 
 										: "");
 			Procedure p = new Procedure(procedureName, getParametersFromClass(DatabaseFieldType.classToType(objectType), databaseObject));
+			if(procedureName.equals("new") && p.getParams().length == 0) {
+				p.addParams(new String[]{"primarykey"});
+			}
 			if (ClassUtil.objectAssignableFrom(objectType, NoCursor.class)) {
 				p.setHasCursor(false);
 			}
@@ -138,11 +141,6 @@ public class Package {
 				p.setDisplayName("getall");
 				p.setName("get");
 			}
-			/*
-			this.procedures.add(p);
-			this.availableProcedures.add(p.getName());
-			this.procedureMap.put(p.getName(), procedures.size()-1);
-			*/
 			this.addProcedure(p);
 		}
 	}

@@ -33,12 +33,9 @@ public class JobType extends DatabaseObject implements Getable, GetAllable, Crea
 	{
 		primaryKeyName="name";
 	}
-	@DatabaseField(values={DatabaseFieldType.NEW})
-	protected String primaryKey;
 	public JobType() {}
 	public JobType(String name) {
-		super();
-		this.primaryKey = name;
+		super(name);
 	}
 
 	/**
@@ -48,32 +45,10 @@ public class JobType extends DatabaseObject implements Getable, GetAllable, Crea
 		super();
 		setAll(r);
 	}
-
 	
-	/**
-	 * @return the primaryKey
-	 */
-	@Override
-	public String getPrimaryKey() {
-		return primaryKey;
-	}
-	/**
-	 * @param primaryKey the primaryKey to set
-	 */
-	@Override
-	public void setPrimaryKey(String primaryKey) {
-		this.primaryKey = primaryKey;
-	}
-	
-	@Override
-	public void setPrimaryKey(MyResultRow r) {
-		this.primaryKey = r.get(primaryKeyName);
-	}
 	@Override
 	public String toString() {
-		return "JobType [primaryKey=" + primaryKey + "]";
+		return "JobType [primaryKey=" + primaryKey+ "]";
 	}
-	
-	
 
 }

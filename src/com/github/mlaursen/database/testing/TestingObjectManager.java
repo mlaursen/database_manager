@@ -59,7 +59,8 @@ public class TestingObjectManager extends ObjectManager {
 	public void cleanUp() {
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			connectionManager.deleteTestingTable(ClassUtil.formatClassName(c));
-			connectionManager.deleteTestingPackage(Package.formatClassName(c));
+			//connectionManager.deleteTestingView(ClassUtil.formatClassname(c));
+			//connectionManager.deleteTestingPackage(Package.formatClassName(c));
 		}
 		
 	}

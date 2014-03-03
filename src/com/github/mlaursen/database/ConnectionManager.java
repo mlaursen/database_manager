@@ -130,6 +130,8 @@ public class ConnectionManager {
 				Object param = parameters[i - 1];
 				bindWithDatatype(param, i, conn, cs);
 			}
+			System.out.println(procedureName+", "+(parameters[0] instanceof String ? (String) parameters[0] : parameters[0] ));
+			System.out.println(cs.executeUpdate());
 			success = cs.executeUpdate() > 0;
 		}
 		catch (SQLException e) {

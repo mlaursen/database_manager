@@ -3,10 +3,10 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.util.regex.Pattern;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +23,7 @@ import com.github.mlaursen.database.testing.TestingObjectManager;
  */
 public class TestAll {
 	protected TestingObjectManager tom = new TestingObjectManager();
+	
 	@Rule
 	public TestRule rule = new TestWatcher() {		
 		@Override
@@ -42,15 +43,25 @@ public class TestAll {
 		assertEquals(get.toString(), tom.getPackage(JobType.class).getProcedure("get").toString());
 		assertEquals(getAll.toString(), tom.getPackage(JobType.class).getProcedure("getall").toString());
 		assertEquals(newP.toString(), tom.getPackage(JobType.class).getProcedure("new").toString());
-		//System.out.println(tom.getAll(JobType.class));
-		/*
+		
 		JobType it = new JobType("IT");
 		JobType hr = new JobType("HR");
 		JobType business = new JobType("BUSINESS");
-		//assertTrue(tom.create(it));
+		assertTrue(tom.create(it));
 		assertTrue(tom.create(hr));
 		assertTrue(tom.create(business));
+		System.out.println("HERE");
+		JobType itDB = tom.get("IT", JobType.class);
+		assertEquals(it, itDB);
 		
+		List<JobType> jobTypes = Arrays.asList(it, hr, business);
+		List<JobType> fromDb = tom.getAll(JobType.class);
+		assertNotNull(fromDb);
+		assertEquals(jobTypes.size(), fromDb.size());
+		for(JobType jt : fromDb) {
+			assertTrue(jobTypes.contains(jt));
+		}
+		/*
 		assertEquals(it, tom.get("IT", JobType.class));
 		assertEquals(it, tom.get("it", JobType.class));
 		*/

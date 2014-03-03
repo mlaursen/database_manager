@@ -27,7 +27,7 @@ public class TestingConnectionManager extends ConnectionManager {
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
-			String sql = "CREATE GLOBAL TEMPORARY TABLE test_" + tableName;
+			String sql = "CREATE TABLE test_" + tableName;
 			sql += " AS SELECT * FROM " + tableName + " WHERE 1=0";
 			success = stmt.executeUpdate(sql) > 0;
 		}
@@ -66,8 +66,9 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				pkgBody.append(rs.getString(1));
 			}
-			String packageStr = "CREATE " + packageToTest(pkg, packageName);
-			String packageBody = "CREATE " + packageToTest(pkgBody, packageName);
+			String packageStr = "CREATE OR REPLACE " + packageToTest(pkg, packageName);
+			String packageBody = "CREATE OR REPLACE " + packageToTest(pkgBody, packageName);
+			System.out.println(packageBody);
 			stmt.execute(packageStr);
 			stmt.execute(packageBody);
 		}
@@ -93,7 +94,7 @@ public class TestingConnectionManager extends ConnectionManager {
 				str.append(splits[i]);
 			}
 			else {
-				str.append((" TEST_" + tableName + splits[i]).toUpperCase());
+				str.append(("TEST_" + tableName + splits[i]).toUpperCase());
 			}
 		}
 		return str.toString();
