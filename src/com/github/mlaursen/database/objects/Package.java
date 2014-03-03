@@ -13,7 +13,7 @@ import java.util.Map;
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
-import com.github.mlaursen.database.DatabaseObjectClassUtil;
+import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Deleteable;
 import com.github.mlaursen.database.objecttypes.Filterable;
@@ -124,7 +124,7 @@ public class Package {
 	private Map<Integer, String> getParametersFromClassHelper(DatabaseFieldType proc, Class<?> clss) {
 		int counter = 0;
 		Map<Integer, String> current = new HashMap<Integer, String>();
-		List<Class<?>> classes = DatabaseObjectClassUtil.getClassList(clss);
+		List<Class<?>> classes = ClassUtil.getClassList(clss);
 		for (Class<?> c : classes) {
 			for (Field f : c.getDeclaredFields()) {
 				if (f.isAnnotationPresent(MultipleDatabaseField.class)) { // Handle
@@ -249,7 +249,7 @@ public class Package {
 	}
 	
 	public static String formatClassName(Class<?> c) {
-		String name = DatabaseObjectClassUtil.combineWith(DatabaseObjectClassUtil.splitOnUpper(c.getSimpleName()));
+		String name = ClassUtil.combineWith(ClassUtil.splitOnUpper(c.getSimpleName()));
 		return name + (name.toLowerCase().contains("_pkg") ? "" : "_pkg");
 	}
 	

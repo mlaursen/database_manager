@@ -3,9 +3,9 @@
  */
 package testing;
 
-import static com.github.mlaursen.database.DatabaseObjectClassUtil.canParseInt;
-import static com.github.mlaursen.database.DatabaseObjectClassUtil.formatClassName;
-import static com.github.mlaursen.database.DatabaseObjectClassUtil.getClassList;
+import static com.github.mlaursen.database.ClassUtil.canParseInt;
+import static com.github.mlaursen.database.ClassUtil.formatClassName;
+import static com.github.mlaursen.database.ClassUtil.getClassList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.github.mlaursen.database.DatabaseObjectClassUtil;
+import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.Procedure;
@@ -27,7 +27,7 @@ public class UtilTest {
 
 	@Test
 	public void testFormatClassName() {
-		assertEquals(formatClassName(DatabaseObjectClassUtil.class), "Database_Object_Class_Util");
+		assertEquals(formatClassName(ClassUtil.class), "Database_Object_Class_Util");
 		assertEquals(formatClassName(Procedure.class), "Procedure");
 		assertEquals(formatClassName(DatabaseObject.class, null, "ello"), "DatabaseelloObject");
 		assertEquals(formatClassName(DatabaseObject.class, "", ""), "DatabaseObject");

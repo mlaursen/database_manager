@@ -3,7 +3,7 @@
  */
 package com.github.mlaursen.database.testing;
 
-import com.github.mlaursen.database.DatabaseObjectClassUtil;
+import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.ObjectManager;
 import com.github.mlaursen.database.objects.Package;
@@ -29,7 +29,7 @@ public class TestingObjectManager extends ObjectManager {
 			packages.add(pkg);
 			availablePackages.add(pkg.getName());
 			packageMap.put(pkg.getName(), i++);
-			connectionManager.createTestingTable(DatabaseObjectClassUtil.formatClassName(c));
+			connectionManager.createTestingTable(ClassUtil.formatClassName(c));
 			connectionManager.createTestingPackage(Package.formatClassName(c));
 		}
 	}
@@ -49,7 +49,7 @@ public class TestingObjectManager extends ObjectManager {
 	 */
 	public void cleanUp() {
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
-			connectionManager.deleteTestingTable(DatabaseObjectClassUtil.formatClassName(c));
+			connectionManager.deleteTestingTable(ClassUtil.formatClassName(c));
 			connectionManager.deleteTestingPackage(Package.formatClassName(c));
 		}
 		

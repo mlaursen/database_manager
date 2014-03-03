@@ -14,7 +14,7 @@ import java.util.List;
  * @author mikkel.laursen
  * 
  */
-public class DatabaseObjectClassUtil {
+public class ClassUtil {
 	public static final String DEF_REGEX = "(?=\\p{Upper})", DEF_COMBINE = "_";
 
 	/**

@@ -15,7 +15,7 @@ import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.ConnectionManager;
-import com.github.mlaursen.database.DatabaseObjectClassUtil;
+import com.github.mlaursen.database.ClassUtil;
 /**
  * @author mikkel.laursen
  *
@@ -208,7 +208,7 @@ public class ObjectManager {
 	private <T extends DatabaseObject> Map<Integer, Object> getParametersMap(DatabaseFieldType proc, T object) {
 		int counter = 0;
 		Map<Integer, Object> params = new HashMap<Integer, Object>();
-		List<Class<?>> classes = DatabaseObjectClassUtil.getClassList(object.getClass());
+		List<Class<?>> classes = ClassUtil.getClassList(object.getClass());
 		for (Class<?> c : classes) {
 			for (Field f : c.getDeclaredFields()) {
 				f.setAccessible(true);
