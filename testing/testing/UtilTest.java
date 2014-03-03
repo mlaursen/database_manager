@@ -27,7 +27,7 @@ public class UtilTest {
 
 	@Test
 	public void testFormatClassName() {
-		assertEquals(formatClassName(ClassUtil.class), "Database_Object_Class_Util");
+		assertEquals(formatClassName(ClassUtil.class), "Class_Util");
 		assertEquals(formatClassName(Procedure.class), "Procedure");
 		assertEquals(formatClassName(DatabaseObject.class, null, "ello"), "DatabaseelloObject");
 		assertEquals(formatClassName(DatabaseObject.class, "", ""), "DatabaseObject");
