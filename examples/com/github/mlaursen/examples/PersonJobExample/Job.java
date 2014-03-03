@@ -35,7 +35,7 @@ import com.github.mlaursen.database.objecttypes.Updateable;
 public class Job extends DatabaseObject implements Getable, GetAllable, Updateable, Createable, Deleteable {
 
 	@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE})
-	protected String jobType;
+	protected JobType jobType;
 	
 	@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE})
 	protected String name;
@@ -45,6 +45,12 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 	
 	public Job() {}
 	public Job(String jobType, String name, String description) {
+		this.jobType = new JobType(jobType);
+		this.name = name;
+		this.description = description;
+	}
+	
+	public Job(JobType jobType, String name, String description) {
 		this.jobType = jobType;
 		this.name = name;
 		this.description = description;
@@ -58,7 +64,7 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 	}
 
 	public void setJobType(MyResultRow r) {
-		this.jobType = r.get("job_type");
+		this.jobType = new JobType(r.get("job_type"));
 	}
 	
 	public void setName(MyResultRow r) {
@@ -71,14 +77,14 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 	/**
 	 * @return the jobType
 	 */
-	public String getJobType() {
+	public JobType getJobType() {
 		return jobType;
 	}
 	/**
 	 * @param jobType the jobType to set
 	 */
 	public void setJobType(String jobType) {
-		this.jobType = jobType;
+		this.jobType = new JobType(jobType);
 	}
 	/**
 	 * @return the name

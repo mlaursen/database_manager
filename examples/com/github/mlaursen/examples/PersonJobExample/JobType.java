@@ -48,7 +48,7 @@ public class JobType extends DatabaseObject implements Getable, GetAllable, Crea
 	
 	@Override
 	public String toString() {
-		return "JobType [primaryKey=" + primaryKey+ "]";
+		return primaryKey;
 	}
 
 }

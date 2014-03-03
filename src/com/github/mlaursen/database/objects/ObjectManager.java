@@ -26,21 +26,26 @@ public class ObjectManager {
 	protected List<Package> packages = new ArrayList<Package>();
 	protected Map<String, Integer> packageMap = new HashMap<String, Integer>();
 	protected List<String> availablePackages = new ArrayList<String>();
-	protected Class<? extends DatabaseObject>[] databaseObjects;
+	protected List<Class<? extends DatabaseObject>> databaseObjects = new ArrayList<Class<? extends DatabaseObject>>();
 	
 	@SafeVarargs
 	public ObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		connectionManager = new ConnectionManager();
-		this.databaseObjects = databaseObjects;
+		this.databaseObjects = Arrays.asList(databaseObjects);
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
-			Package pkg = new Package(c);
-			if(packageIsAvailable(pkg.getName())) {
-				Package pkgOld = getPackage(pkg.getName());
-				pkgOld.mergeProcedures(pkg);
-			}
-			else {
-				this.addPackage(pkg);
-			}
+			addPackage(c);
+		}
+	}
+	
+	public void addPackage(Class<? extends DatabaseObject> c) {
+		this.databaseObjects.add(c);
+		Package pkg = new Package(c);
+		if(packageIsAvailable(pkg.getName())) {
+			Package pkgOld = getPackage(pkg.getName());
+			pkgOld.mergeProcedures(pkg);
+		}
+		else {
+			this.addPackage(pkg);
 		}
 	}
 	

@@ -81,6 +81,7 @@ public class TestingConnectionManager extends ConnectionManager {
 			closeStatement(stmt);
 			closeConnection(conn);
 		}
+		System.out.println("Created " + packageName);
 		return success;
 	}
 	

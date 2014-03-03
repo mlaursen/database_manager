@@ -3,16 +3,18 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 
 import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.testing.TestingObjectManager;
@@ -22,19 +24,19 @@ import com.github.mlaursen.database.testing.TestingObjectManager;
  *
  */
 public class TestAll {
-	protected TestingObjectManager tom = new TestingObjectManager();
+	protected static TestingObjectManager tom = new TestingObjectManager();
 	
-	@Rule
-	public TestRule rule = new TestWatcher() {		
+	@ClassRule
+	public static ExternalResource resource = new ExternalResource() {
 		@Override
-		public void finished(Description description) {
-			super.finished(description);
-			if(tom != null) tom.cleanUp();
+		protected void after() {
+			tom.cleanUp();
 		}
 	};
+	
 	@Test
 	public void testJobType() {
-		tom = new TestingObjectManager(JobType.class);
+		tom.addPackage(JobType.class);
 		Procedure get = new Procedure("get", "primarykey");
 		Procedure getAll = new Procedure("getall");
 		getAll.setName("get");
@@ -64,7 +66,22 @@ public class TestAll {
 
 	@Test
 	public void testJob() {
-		//tom = new TestingObjectManager(Job.class);
+		tom.addPackage(Job.class);
+		//Job jDev = new Job("IT", "ENTRY LEVEL JAVA DEVELOPER", "Stuff");
+		Job business = new Job("BUSINESS", "ENTRY LEVEL BUSINESS POSITION", "IDK BUSINESS");
+		JobType it = tom.get("it", JobType.class);
+		assertNotNull(it);
+		Job jDev = new Job(it, "ENTRY LEVEL JAVA DEVELOPER", "Stuff happens");
+		assertTrue(tom.create(jDev));
+		//assertTrue(tom.create(jDev));
+		//assertTrue(tom.create(business));
+		
+		
+	}
+	
+	@Test
+	public void testPerson() {
+		
 	}
 	
 	@Test

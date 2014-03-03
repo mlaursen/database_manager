@@ -3,6 +3,9 @@
  */
 package com.github.mlaursen.database.testing;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
@@ -23,23 +26,28 @@ public class TestingObjectManager extends ObjectManager {
 	public TestingObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		super();
 		connectionManager = new TestingConnectionManager();
-		this.databaseObjects = databaseObjects;
+		this.databaseObjects = databaseObjects.length > 0 ? Arrays.asList(databaseObjects) : new ArrayList<Class<? extends DatabaseObject>>();
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
-			Package pkg = new Package(c, true);
-			if(packageIsAvailable(pkg.getName())) {
-				Package pkgOld = getPackage(pkg.getName());
-				pkgOld.mergeProcedures(pkg);
-			}
-			else {
-				this.addPackage(pkg);
-			}
-			if(ClassUtil.objectAssignableFrom(c, DatabaseView.class)) {
-				System.out.println("Was a view.. haven't delt with that yet");
-			}
-			else {
-				connectionManager.createTestingTable(ClassUtil.formatClassName(c));
-				connectionManager.createTestingPackage(Package.formatClassName(c));
-			}
+			addPackage(c);
+		}
+	}
+	
+	public void addPackage(Class<? extends DatabaseObject> type) {
+		Package pkg = new Package(type, true);
+		this.databaseObjects.add(type);
+		if(packageIsAvailable(pkg.getName())) {
+			Package pkgOld = getPackage(pkg.getName());
+			pkgOld.mergeProcedures(pkg);
+		}
+		else {
+			this.addPackage(pkg);
+		}
+		if(ClassUtil.objectAssignableFrom(type, DatabaseView.class)) {
+			System.out.println("Was a view.. haven't delt with that yet");
+		}
+		else {
+			connectionManager.createTestingTable(ClassUtil.formatClassName(type));
+			connectionManager.createTestingPackage(Package.formatClassName(type));
 		}
 	}
 	
@@ -58,9 +66,10 @@ public class TestingObjectManager extends ObjectManager {
 	 */
 	public void cleanUp() {
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
+			System.out.println("Deleteing " + c);
 			connectionManager.deleteTestingTable(ClassUtil.formatClassName(c));
 			//connectionManager.deleteTestingView(ClassUtil.formatClassname(c));
-			connectionManager.deleteTestingPackage(Package.formatClassName(c));
+			//connectionManager.deleteTestingPackage(Package.formatClassName(c));
 		}
 		
 	}

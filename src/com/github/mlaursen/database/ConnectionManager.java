@@ -153,6 +153,7 @@ public class ConnectionManager {
 		else {
 			String msg = "There was a " + c.name() + " exception when calling " + procedureName + ".\n";
 			msg += "\tThe parameters being passed were: " + Arrays.toString(parameters);
+			e.printStackTrace();
 			System.err.println(msg);
 		}
 	}
