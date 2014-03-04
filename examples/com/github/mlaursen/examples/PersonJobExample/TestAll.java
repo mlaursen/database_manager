@@ -67,21 +67,45 @@ public class TestAll {
 	@Test
 	public void testJob() {
 		tom.addPackage(Job.class);
-		//Job jDev = new Job("IT", "ENTRY LEVEL JAVA DEVELOPER", "Stuff");
-		Job business = new Job("BUSINESS", "ENTRY LEVEL BUSINESS POSITION", "IDK BUSINESS");
 		JobType it = tom.get("it", JobType.class);
+		JobType business = tom.get("business", JobType.class);
+		JobType hr = tom.get("hr", JobType.class);
 		assertNotNull(it);
+		assertNotNull(business);
+		assertNotNull(hr);
 		Job jDev = new Job(it, "ENTRY LEVEL JAVA DEVELOPER", "Stuff happens");
 		assertTrue(tom.create(jDev));
-		//assertTrue(tom.create(jDev));
-		//assertTrue(tom.create(business));
+		Job businessEntry = new Job(business, "ENTRY LEVEL BUSINESS POSITION", "IDK BUSINESS");
+		assertTrue(tom.create(businessEntry));
 		
+		Job leadHR = new Job(hr, "LEAD HR REPRESENTATIVE", "Woo woo. HR Stuff");
+		assertTrue(tom.create(leadHR));
+		Job jDev2 = tom.get(0, Job.class);
+		assertNotNull(jDev2);
+		assertEquals(jDev, jDev2);
 		
+		Job businessEntry2 = tom.get(1, Job.class);
+		assertNotNull(businessEntry2);
+		assertEquals(businessEntry, businessEntry2);
+		
+		Job leadHR2 = tom.get(2, Job.class);
+		assertNotNull(leadHR2);
+		assertEquals(leadHR, leadHR2);
+		
+		assertTrue(tom.delete(businessEntry2));
+		assertTrue(tom.create(businessEntry));
+		
+		List<Job> jobs = Arrays.asList(jDev, businessEntry, leadHR);
+		List<Job> jobsFromDB = tom.getAll(Job.class);
+		assertEquals(jobs.size(), jobsFromDB.size());
+		for(Job j : jobsFromDB) {
+			assertTrue(jobs.contains(j));
+		}
 	}
 	
 	@Test
 	public void testPerson() {
-		
+		tom.addPackage(Person.class);
 	}
 	
 	@Test

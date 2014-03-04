@@ -10,6 +10,7 @@ import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyResultRow;
+import com.github.mlaursen.database.objects.ObjectManager;
 import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Deleteable;
@@ -143,14 +144,14 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 		procs.add(p);
 		return procs;
 	}
-	/*
-	public Person getByFirstName(String first) { return getByName(first, null); }
-	public Person getByLastName(String last) { return getByName(null, last); }
 	
-	public Person getByName(String first, String last) {
-		return manager.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
+	public static Person getByFirstName(String first) { return getByName(first, null); }
+	public static Person getByLastName(String last) { return getByName(null, last); }
+	
+	public static Person getByName(String first, String last) {
+		return new ObjectManager(Person.class).getCustom("getbyname", Person.class, first, last);//.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
 	}
-*/
+
 
 	@Override
 	public String toString() {
@@ -158,5 +159,13 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 				+ ", personSalary=" + salary + "]";
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Person) {
+			Person p = (Person) o;
+			return firstName.equals(p.getFirstName()) && lastName.equals(p.getLastName());
+		}
+		return false;
+	}
 	
 }

@@ -117,5 +117,13 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 		return "Job [primaryKey=" + primaryKey + ", jobType=" + jobType + ", name=" + name + ", description=" + description + "]";
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Job) {
+			Job j = (Job) o;
+			return j.getName().equals(name) && j.getDescription().equals(description) && j.getJobType().equals(jobType);
+		}
+		return false;
+	}
 	
 }
