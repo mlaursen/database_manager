@@ -25,6 +25,9 @@ import com.github.mlaursen.database.testing.TestingObjectManager;
  */
 public class TestAll {
 	protected static TestingObjectManager tom = new TestingObjectManager();
+	static {
+		tom.setDelete(false);
+	}
 	
 	@ClassRule
 	public static ExternalResource resource = new ExternalResource() {
@@ -111,9 +114,15 @@ public class TestAll {
 		Person test = new Person("Test", "Tester", "0", 45000);
 		assertTrue(tom.create(test));
 		
+		/* This technically works because it can retrieve the 
+		 * first name and last name columns
+		 */
 		Person test2 = tom.get(0, Person.class);
 		assertNotNull(test2);
 		assertEquals(test, test2);
+		
+		PersonView pv = tom.get(0, PersonView.class);
+		System.out.println(pv);
 	}
 	
 	@Test

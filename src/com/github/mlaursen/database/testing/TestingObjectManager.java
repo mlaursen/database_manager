@@ -19,9 +19,9 @@ import com.github.mlaursen.database.objects.Package;
 public class TestingObjectManager extends ObjectManager {
 
 	private TestingConnectionManager connectionManager;
-	/**
-	 * @param databaseObjects
-	 */
+	private boolean delete = true;
+	private boolean debug = false;
+	
 	@SafeVarargs
 	public TestingObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		super();
@@ -43,11 +43,13 @@ public class TestingObjectManager extends ObjectManager {
 		else {
 			this.addPackage(pkg);
 		}
-		System.out.println("Creating the Tables and Sequences for " + baseClass);
+		if(debug) {
+			System.out.println("Creating the Tables and Sequences for " + baseClass);
+			System.out.println("Creating Database View: " + view);
+			System.out.println("Creating Package for " + baseClass);
+		}
 		connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(baseClass));
-		System.out.println("Creating Database View: " + view);
 		connectionManager.createTestingView(ClassUtil.formatClassName(view), databaseObjects);
-		System.out.println("Creating Package for " + baseClass);
 		connectionManager.createTestingPackage(Package.formatClassName(baseClass));
 	}
 	
@@ -62,11 +64,15 @@ public class TestingObjectManager extends ObjectManager {
 			this.addPackage(pkg);
 		}
 		if(ClassUtil.objectAssignableFrom(type, DatabaseView.class)) {
-			System.out.println("Creating the test view " + type);
+			if(debug) {
+				System.out.println("Creating the test view " + type);
+			}
 			connectionManager.createTestingView(ClassUtil.formatClassName(type), databaseObjects);
 		}
 		else {
-			System.out.println("Creating the Tables, Sequences and Packages for " + type);
+			if(debug) {
+				System.out.println("Creating the Tables, Sequences and Packages for " + type);
+			}
 			connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(type));
 			connectionManager.createTestingPackage(Package.formatClassName(type));
 		}
@@ -88,15 +94,29 @@ public class TestingObjectManager extends ObjectManager {
 	public void cleanUp() {
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			if(ClassUtil.objectAssignableFrom(c, DatabaseView.class)) {
-				System.out.println("Deleting test view " + c);
-				connectionManager.deleteTestingView(ClassUtil.formatClassName(c));
+				if(debug && delete) {
+					System.out.println("Deleting test view " + c);
+				}
+				if(delete)
+					connectionManager.deleteTestingView(ClassUtil.formatClassName(c));
 			}
 			else {
-				System.out.println("Deleteing all test data for " + c);
-				connectionManager.deleteTestingTableAndSequence(ClassUtil.formatClassName(c));
-				connectionManager.deleteTestingPackage(Package.formatClassName(c));
+				if(debug && delete) {
+					System.out.println("Deleteing all test data for " + c);
+				}
+				if(delete)
+					connectionManager.deleteTestingTableAndSequence(ClassUtil.formatClassName(c));
+					connectionManager.deleteTestingPackage(Package.formatClassName(c));
 			}
 		}
 		
+	}
+	
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+	
+	public void setDelete(boolean delete) {
+		this.delete = delete;
 	}
 }
