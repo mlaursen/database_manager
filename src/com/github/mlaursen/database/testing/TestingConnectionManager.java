@@ -7,8 +7,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.List;
 
+import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.ConnectionManager;
 import com.github.mlaursen.database.SqlFormatUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
@@ -91,7 +93,7 @@ public class TestingConnectionManager extends ConnectionManager {
 	public void createTestingView(String tableName, List<Class<? extends DatabaseObject>> classes) {
 		String[] testingClasses = new String[classes.size()];
 		for(int i = 0; i < testingClasses.length; i++) {
-			testingClasses[i] = classes.get(i).getSimpleName();
+			testingClasses[i] = ClassUtil.formatClassName(classes.get(i)).replace("_View", "");
 		}
 		String vName = tableName.toUpperCase();
 		String sql = "SELECT TEXT FROM USER_VIEWS WHERE VIEW_NAME='" + vName + "'";
@@ -107,8 +109,11 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				view += rs.getString(1);
 			}
-			System.out.println(SqlFormatUtil.formatViewLine(view, testingClasses));
-			stmt.executeUpdate(SqlFormatUtil.formatViewLine(view, testingClasses));
+			//System.out.println(Arrays.asList(testingClasses));
+			view = SqlFormatUtil.formatViewLine(view, testingClasses);
+			//System.out.println(view);
+			stmt.executeUpdate(view);
+			//System.out.println(stmt.getWarnings());
 		}
 		catch (SQLException e) {
 			handleSqlException(e, "drop table ", new String[] {tableName});

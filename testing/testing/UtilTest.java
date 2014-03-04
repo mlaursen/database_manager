@@ -102,5 +102,13 @@ public class UtilTest {
 		String expected = "CREATE OR REPLACE VIEW TEST_EXAMPLE_VIEW AS SELECT * FROM TEST_EXAMPLE E INNER JOIN TEST_BLOB B ON E.ID = B.ID";
 		assertEquals(expected, SqlFormatUtil.formatViewLine(view1, new String[]{"example", "blob"}));
 		assertEquals(expected, SqlFormatUtil.formatViewLine(view1, new String[]{"example", "example_view", "blob"}));
+		try {
+			String input = FileUtil.readFile("testing/viewTest.txt");
+			String expectedView = FileUtil.readFile("testing/viewTestExpected.txt");
+			assertEquals(expectedView, SqlFormatUtil.formatViewLine(input, new String[]{"PERSON","JOB"}));
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
