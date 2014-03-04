@@ -3,6 +3,8 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
+import com.github.mlaursen.annotations.DatabaseField;
+import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyResultRow;
 import com.github.mlaursen.database.objecttypes.Createable;
@@ -31,9 +33,9 @@ public class JobType extends DatabaseObject implements Getable, GetAllable, Crea
 	{
 		primaryKeyName="name";
 	}
-	public JobType() { }
-	public JobType(String primaryKey) {
-		super(primaryKey);
+	public JobType() {}
+	public JobType(String name) {
+		super(name);
 	}
 
 	/**
@@ -43,13 +45,10 @@ public class JobType extends DatabaseObject implements Getable, GetAllable, Crea
 		super();
 		setAll(r);
 	}
-
 	
 	@Override
 	public String toString() {
-		return "JobType [primaryKey=" + primaryKey + "]";
+		return primaryKey;
 	}
-	
-	
 
 }

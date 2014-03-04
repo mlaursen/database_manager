@@ -3,20 +3,22 @@
  */
 package testing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
-import com.github.mlaursen.database.ObjectManager;
-import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyClob;
 import com.github.mlaursen.database.objects.MyResultRow;
+import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Deleteable;
@@ -24,6 +26,7 @@ import com.github.mlaursen.database.objecttypes.Filterable;
 import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
+import com.github.mlaursen.database.testing.TestingObjectManager;
 
 /**
  * @author mikkel.laursen
@@ -31,31 +34,17 @@ import com.github.mlaursen.database.objecttypes.Updateable;
  */
 public class DatabaseObjectTest {
 	public static class TestTable extends DatabaseObject implements Getable, Createable, Updateable, Deleteable, Filterable, GetAllable {
-		{
-			Procedure delAll = new Procedure("deleteall", "name");
-			delAll.setHasCursor(false);
-			manager.addCustomProcedure(delAll);
-		}
 		@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE, DatabaseFieldType.FILTER})
 		private String name;
 		
 		@DatabaseField(values={DatabaseFieldType.NEW})
 		private MyClob orange;
 
-		/**
-		 * 
-		 */
-		public TestTable() {
+		public TestTable() {}
+		public TestTable(String name, String orange) {
 			super();
-			// TODO Auto-generated constructor stub
-		}
-
-		/**
-		 * @param primaryKey
-		 */
-		public TestTable(Integer primaryKey) {
-			super(primaryKey);
-			// TODO Auto-generated constructor stub
+			this.name = name;
+			this.orange = new MyClob(orange);
 		}
 
 		/**
@@ -63,14 +52,6 @@ public class DatabaseObjectTest {
 		 */
 		public TestTable(MyResultRow r) {
 			super(r);
-			// TODO Auto-generated constructor stub
-		}
-
-		/**
-		 * @param primaryKey
-		 */
-		public TestTable(String primaryKey) {
-			super(primaryKey);
 			// TODO Auto-generated constructor stub
 		}
 
@@ -110,10 +91,6 @@ public class DatabaseObjectTest {
 			this.orange = new MyClob(r.get("orange"));
 		}
 		
-		public boolean deleteAll(String name) {
-			return manager.executeStoredProcedure("deleteall", name);
-		}
-		
 		@Override
 		public boolean equals(Object o) {
 			if(o instanceof TestTable) {
@@ -121,6 +98,13 @@ public class DatabaseObjectTest {
 				return t.getName().equalsIgnoreCase(this.name) && t.getOrange().equals(this.orange);
 			}
 			return false;
+		}
+		
+		@Override
+		public List<Procedure> getCustomProcedures() {
+			Procedure del = new Procedure("deleteall", "name");
+			del.setHasCursor(false);
+			return Arrays.asList(del);
 		}
 
 		/* (non-Javadoc)
@@ -136,7 +120,6 @@ public class DatabaseObjectTest {
 	@Test
 	public void testTestTable() {
 		List<TestTable> ttsExpect = new ArrayList<TestTable>();
-		TestTable t = new TestTable();
 		String create = "NEW(:NAME, :ORANGE)";
 		String update = "UPDATETESTTABLE(:PRIMARYKEY, :NAME)";
 		String get = "GET(:PRIMARYKEY, :CURSOR)";
@@ -145,8 +128,9 @@ public class DatabaseObjectTest {
 		String getAll = "GET(:CURSOR)";
 		String deleteAll = "DELETEALL(:NAME)";
 		
-		ObjectManager m = t.getObjectManager();
-		Package pkg = m.getPackage();
+		TestingObjectManager m = new TestingObjectManager(TestTable.class);
+		
+		Package pkg = m.getPackage(TestTable.class);
 		Procedure createProc = pkg.getProcedure("new");
 		Procedure updateProc = pkg.getProcedure("updatetesttable");
 		Procedure getProc    = pkg.getProcedure("get");
@@ -163,35 +147,30 @@ public class DatabaseObjectTest {
 		assertEquals(deleteProc.toString(), delete);
 		assertEquals(deleteAllProc.toString(), deleteAll);
 		
-		t.setName("test1");
-		t.setOrange(new MyClob("skippity do dah"));
+		TestTable t = new TestTable("test1", "skippidy do dah");
 		ttsExpect.add(t);
-		assertTrue(t.create());
+		assertTrue(m.create(t));
 		
-		TestTable t1 = new TestTable();
-		t1.setName("test1");
-		t1.setOrange(new MyClob("boop boop"));
+		TestTable t1 = new TestTable("test1", "boop boop");
 		ttsExpect.add(t1);
-		assertTrue(t1.create());
+		assertTrue(m.create(t1));
 		
-		TestTable t2 = new TestTable();
-		t2.setName("test1");
-		t2.setOrange(new MyClob("beep beep"));
+		TestTable t2 = new TestTable("test1", "beep beep");
 		ttsExpect.add(t2);
-		assertTrue(t2.create());
+		assertTrue(m.create(t2));
 		
-		TestTable t3 = new TestTable();
-		t3.setName("TEST2");
-		t3.setOrange(new MyClob("honk"));
+		TestTable t3 = new TestTable("TEST2", "honk");
 		ttsExpect.add(t3);
-		assertTrue(t3.create());
-		List<TestTable> tts = t.getAll(TestTable.class);
+		assertTrue(m.create(t3));
+		List<TestTable> tts = m.getAll(TestTable.class);
 		assertEquals(ttsExpect.size(), tts.size());
 		assertEquals(ttsExpect, tts);
-		TestTable tt = new TestTable("test2");
+		TestTable tt = m.get("test2", TestTable.class);
 		assertNotNull(tt.getPrimaryKey());
-		assertTrue(tt.deleteAll("test1"));
-		assertTrue(tt.delete());
+		assertTrue(m.executeCustomProcedure("deleteall", TestTable.class, "test1"));
+		assertTrue(m.delete(tt));
+		
+		m.cleanUp();
 	}
 
 }

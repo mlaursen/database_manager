@@ -3,6 +3,9 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.database.objects.DatabaseObject;
@@ -40,10 +43,6 @@ import com.github.mlaursen.database.objecttypes.Updateable;
  *
  */
 public class Person extends DatabaseObject implements Createable, Deleteable, Getable, Updateable {
-	{
-		Procedure getByName = new Procedure("getbyname", "first", "last");
-		this.manager.addCustomProcedure(getByName);
-	}
 	@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE})
 	protected String jobId;
 	
@@ -55,16 +54,13 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	
 	@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE})
 	protected double salary;
-	public Person() { }
-	public Person(String primaryKey) {
-		super(primaryKey);
-	}
-
-	/**
-	 * @param primaryKey
-	 */
-	public Person(Integer primaryKey) {
-		super(primaryKey);
+	
+	public Person() {} 
+	public Person(String firstName, String lastName, String jobId, double salary) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.jobId = jobId;
+		this.salary = salary;
 	}
 	
 	public Person(MyResultRow r) {
@@ -107,13 +103,13 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 		this.lastName = lastName;
 	}
 	/**
-	 * @return the salary
+	 * @return the personSalary
 	 */
 	public double getSalary() {
 		return salary;
 	}
 	/**
-	 * @param salary the salary to set
+	 * @param personSalary the personSalary to set
 	 */
 	public void setSalary(double salary) {
 		this.salary = salary;
@@ -133,24 +129,33 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	
 	public void setSalary(MyResultRow r) {
 		try {
-			this.salary = Double.parseDouble(r.get("salary"));
+			this.salary = Double.parseDouble(r.get("personSalary"));
 		}
 		catch(NullPointerException | NumberFormatException e) {
 			this.salary = 0;
 		}
 	}
 	
+	@Override
+	public List<Procedure> getCustomProcedures() {
+		List<Procedure> procs = new ArrayList<Procedure>();
+		Procedure p = new Procedure("getbyname", "first", "last");
+		procs.add(p);
+		return procs;
+	}
+	/*
 	public Person getByFirstName(String first) { return getByName(first, null); }
 	public Person getByLastName(String last) { return getByName(null, last); }
+	
 	public Person getByName(String first, String last) {
 		return manager.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
 	}
-
+*/
 
 	@Override
 	public String toString() {
 		return "Person [primaryKey=" + primaryKey + ", jobId=" + jobId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", salary=" + salary + "]";
+				+ ", personSalary=" + salary + "]";
 	}
 	
 	

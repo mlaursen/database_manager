@@ -25,6 +25,26 @@ CREATE TABLE PERSON
 , CONSTRAINT FK_JOB_ID FOREIGN KEY (JOB_ID) REFERENCES JOB(ID)
 );
 
+
+-------------------------------------------------------------------------------
+-- Create Views
+-------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW PERSON_VIEW
+AS
+  SELECT P.ID,
+         LAST_NAME||', '||FIRST_NAME PERSON_NAME,
+         FIRST_NAME,
+         LAST_NAME,
+         SALARY PERSON_SALARY, 
+         JOB_TYPE, 
+         J.NAME JOB_NAME, 
+         DESCRIPTION JOB_DESCRIPTION
+  FROM PERSON P
+  INNER JOIN JOB J ON P.JOB_ID = J.ID
+  ORDER BY LAST_NAME, FIRST_NAME
+WITH READ ONLY;
+
+
 -------------------------------------------------------------------------------
 -- Initial data
 -------------------------------------------------------------------------------
@@ -149,10 +169,12 @@ CREATE OR REPLACE PACKAGE BODY JOB_TYPE_PKG AS
       FROM JOB_TYPE
       WHERE NAME=UPPER(PNAME);
   END GET;
+  
   PROCEDURE NEW(PNAME IN JOB_TYPE.NAME%TYPE)
   IS
   BEGIN
-    INSERT INTO JOB_TYPE VALUES(PNAME);
+    INSERT INTO JOB_TYPE(NAME)
+    VALUES(UPPER(PNAME));
     COMMIT;
     
     EXCEPTION
@@ -265,10 +287,10 @@ END JOB_PKG;
 -- Person Package
 
 CREATE OR REPLACE PACKAGE PERSON_PKG AS
-  -- Gets a person by id
+  -- Gets a person by id from the person view
   PROCEDURE GET(PID IN PERSON.ID%TYPE, PCURSOR OUT SYS_REFCURSOR);
   
-  -- Gets a person by first name and last name. The first name or last name can be null
+  -- Gets a person by first name and last name from the person view. The first name or last name can be null
   PROCEDURE GETBYNAME(PFIRST IN PERSON.FIRST_NAME%TYPE, PLAST IN PERSON.LAST_NAME%TYPE, PCURSOR OUT SYS_REFCURSOR);
   
   -- Update a person
@@ -292,7 +314,7 @@ CREATE OR REPLACE PACKAGE BODY PERSON_PKG AS
   BEGIN
     OPEN PCURSOR FOR
       SELECT *
-      FROM PERSON
+      FROM PERSON_VIEW
       WHERE ID=PID;
   END GET;
   
@@ -306,10 +328,10 @@ CREATE OR REPLACE PACKAGE BODY PERSON_PKG AS
     ULAST := UPPER(PLAST);
     IF PFIRST!=NULL AND PLAST!=NULL THEN
       OPEN PCURSOR FOR
-        SELECT * FROM PERSON WHERE FIRST_NAME=UFIRST AND LAST_NAME=ULAST;
+        SELECT * FROM PERSON_VIEW WHERE FIRST_NAME=UFIRST AND LAST_NAME=ULAST;
     ELSE
       OPEN PCURSOR FOR
-        SELECT * FROM PERSON WHERE LAST_NAME=ULAST OR FIRST_NAME=UFIRST;
+        SELECT * FROM PERSON_VIEW WHERE LAST_NAME=ULAST OR FIRST_NAME=UFIRST;
     END IF;
   END GETBYNAME;
   

@@ -8,5 +8,4 @@ package com.github.mlaursen.database.objecttypes;
  * 
  */
 public interface Deleteable extends NoCursor {
-	boolean delete();
 }

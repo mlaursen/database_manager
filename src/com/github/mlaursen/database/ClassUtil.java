@@ -14,7 +14,7 @@ import java.util.List;
  * @author mikkel.laursen
  * 
  */
-public class DatabaseObjectClassUtil {
+public class ClassUtil {
 	public static final String DEF_REGEX = "(?=\\p{Upper})", DEF_COMBINE = "_";
 
 	/**
@@ -77,6 +77,21 @@ public class DatabaseObjectClassUtil {
 		}
 		Collections.reverse(classes);
 		return classes;
+	}
+	
+
+	/**
+	 * Checks if a class is assignable from another class.
+	 * Example for memory.
+	 * The Deleteable interface extends the NoCursor interface.
+	 * To check if an interface is a NoCursor,
+	 * objectAssignableFrom(Deleteable.class, NoCursor.class)
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
+	public static boolean objectAssignableFrom(Class<?> c1, Class<?> c2) {
+		return c2.isAssignableFrom(c1);
 	}
 
 	/**
