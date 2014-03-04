@@ -105,7 +105,16 @@ public class TestAll {
 	
 	@Test
 	public void testPerson() {
+		tom.addPackage(PersonView.class);
 		tom.addPackage(Person.class);
+		Job jDev = tom.get(0, Job.class);
+		assertNotNull(jDev);
+		Person test = new Person("Test", "Tester", "0", 45000);
+		assertTrue(tom.create(test));
+		
+		Person test2 = tom.get(0, Person.class);
+		assertNotNull(test2);
+		assertEquals(test, test2);
 	}
 	
 	@Test

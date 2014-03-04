@@ -84,8 +84,54 @@ public class TestingConnectionManager extends ConnectionManager {
 	}
 	
 	public void createTestingView(String tableName) {
-		String sql3 = "SELECT TEXT FROM USER_VIEWS WHERE VIEW_NAME='" + tableName.toUpperCase() + "_VIEW'";
-		
+		String vName = tableName.toUpperCase();
+		String sql = "SELECT TEXT FROM USER_VIEWS WHERE VIEW_NAME='" + vName + "'";
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			stmt.execute(sql);
+			rs = stmt.getResultSet();
+			String view = "CREATE OR REPLACE VIEW " + vName + " AS ";
+			while(rs.next()) {
+				view += rs.getString(1);
+			}
+			stmt.executeUpdate(PackageUtil.formatPackageDeclarationForTest(view, vName));
+		}
+		catch (SQLException e) {
+			handleSqlException(e, "drop table ", new String[] {tableName});
+		}
+		catch(ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		finally {
+			closeResultSet(rs);
+			closeStatement(stmt);
+			closeConnection(conn);
+		}
+	}
+	
+	public void deleteTestingView(String tableName) {
+		String sql = "DROP VIEW TEST_" + tableName.toUpperCase();
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		}
+		catch (SQLException e) {
+			handleSqlException(e, "drop table ", new String[] {tableName});
+		}
+		catch(ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		finally {
+			closeStatement(stmt);
+			closeConnection(conn);
+		}
 	}
 	
 	public void deleteTestingTableAndSequence(String tableName) {
