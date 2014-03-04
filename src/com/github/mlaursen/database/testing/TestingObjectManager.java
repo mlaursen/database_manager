@@ -44,7 +44,7 @@ public class TestingObjectManager extends ObjectManager {
 		}
 		if(ClassUtil.objectAssignableFrom(type, DatabaseView.class)) {
 			System.out.println("Creating the test view " + type);
-			connectionManager.createTestingView(ClassUtil.formatClassName(type));
+			connectionManager.createTestingView(ClassUtil.formatClassName(type), databaseObjects);
 		}
 		else {
 			System.out.println("Creating the Tables, Sequences and Packages for " + type);

@@ -7,9 +7,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import com.github.mlaursen.database.ConnectionManager;
-import com.github.mlaursen.database.PackageUtil;
+import com.github.mlaursen.database.SqlFormatUtil;
+import com.github.mlaursen.database.objects.DatabaseObject;
 
 /**
  * @author mikkel.laursen
@@ -67,8 +69,8 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				pkgBody.append(rs.getString(1));
 			}
-			String packageStr = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkg.toString(), packageName);
-			String packageBody = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkgBody.toString(), packageName);
+			String packageStr = "CREATE OR REPLACE " + SqlFormatUtil.formatPackageDeclarationForTest(pkg.toString(), packageName);
+			String packageBody = "CREATE OR REPLACE " + SqlFormatUtil.formatPackageDeclarationForTest(pkgBody.toString(), packageName);
 			stmt.execute(packageStr);
 			stmt.execute(packageBody);
 			//System.out.println("\n====================================\n" + packageBody + "\n============================\n\n");
@@ -86,7 +88,11 @@ public class TestingConnectionManager extends ConnectionManager {
 		}
 	}
 	
-	public void createTestingView(String tableName) {
+	public void createTestingView(String tableName, List<Class<? extends DatabaseObject>> classes) {
+		String[] testingClasses = new String[classes.size()];
+		for(int i = 0; i < testingClasses.length; i++) {
+			testingClasses[i] = classes.get(i).getSimpleName();
+		}
 		String vName = tableName.toUpperCase();
 		String sql = "SELECT TEXT FROM USER_VIEWS WHERE VIEW_NAME='" + vName + "'";
 		Connection conn = null;
@@ -101,8 +107,8 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				view += rs.getString(1);
 			}
-			System.out.println(PackageUtil.formatPackageDeclarationForTest(view, vName));
-			stmt.executeUpdate(PackageUtil.formatPackageDeclarationForTest(view, vName));
+			System.out.println(SqlFormatUtil.formatViewLine(view, testingClasses));
+			stmt.executeUpdate(SqlFormatUtil.formatViewLine(view, testingClasses));
 		}
 		catch (SQLException e) {
 			handleSqlException(e, "drop table ", new String[] {tableName});

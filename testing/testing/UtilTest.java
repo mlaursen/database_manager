@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import com.github.mlaursen.FileUtil;
 import com.github.mlaursen.database.ClassUtil;
-import com.github.mlaursen.database.PackageUtil;
+import com.github.mlaursen.database.SqlFormatUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.Procedure;
@@ -74,25 +74,32 @@ public class UtilTest {
 		try {
 			String inputSmall = FileUtil.readFile("testing/input_small.txt");
 			String expectedSmall = FileUtil.readFile("testing/expected_small.txt");
-			assertEquals(expectedSmall, PackageUtil.formatPackageDeclarationForTest(inputSmall, "JOB", "_TYPE"));
+			assertEquals(expectedSmall, SqlFormatUtil.formatPackageDeclarationForTest(inputSmall, "JOB", "_TYPE"));
 			
 			String inputTricky = FileUtil.readFile("testing/input_tricky.txt");
 			String expectedTricky = FileUtil.readFile("testing/expected_tricky.txt");
-			assertEquals(expectedTricky, PackageUtil.formatPackageDeclarationForTest(inputTricky, "JOB", "_TYPE"));
+			assertEquals(expectedTricky, SqlFormatUtil.formatPackageDeclarationForTest(inputTricky, "JOB", "_TYPE"));
 			
 			String input = FileUtil.readFile("testing/input.txt");
 			String expected = FileUtil.readFile("testing/expected.txt");
-			assertEquals(expected, PackageUtil.formatPackageDeclarationForTest(input, "JOB_PKG", "_TYPE"));
+			assertEquals(expected, SqlFormatUtil.formatPackageDeclarationForTest(input, "JOB_PKG", "_TYPE"));
 			
 			String jobPkg = FileUtil.readFile("testing/job_pkg.txt");
 			String jobPkgExpected = FileUtil.readFile("testing/job_pkg_expected.txt");
-			assertEquals(jobPkgExpected, PackageUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_TYPE"));
-			assertEquals(jobPkgExpected, PackageUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_type"));
-			//assertEquals(jobPkgExpected, PackageUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg"));
+			assertEquals(jobPkgExpected, SqlFormatUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_TYPE"));
+			assertEquals(jobPkgExpected, SqlFormatUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_type"));
+			//assertEquals(jobPkgExpected, SqlFormatUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg"));
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testFormatViewForTest() {
+		String view1 = "CREATE OR REPLACE VIEW EXAMPLE_VIEW AS SELECT * FROM EXAMPLE E INNER JOIN BLOB B ON E.ID = B.ID";
+		String expected = "CREATE OR REPLACE VIEW TEST_EXAMPLE_VIEW AS SELECT * FROM TEST_EXAMPLE E INNER JOIN TEST_BLOB B ON E.ID = B.ID";
+		assertEquals(expected, SqlFormatUtil.formatViewLine(view1, new String[]{"example", "blob"}));
 	}
 }

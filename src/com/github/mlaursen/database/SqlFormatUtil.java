@@ -9,9 +9,22 @@ import java.util.Arrays;
  * @author mikkel.laursen
  *
  */
-public class PackageUtil {
+public class SqlFormatUtil {
 	
 	public static final String UPDATE_IGNORE_CASE = "UPDATE";
+	public static String formatViewLine(String line, String[] testingClasses) {
+		line = line.toUpperCase();
+		for(String s : testingClasses) {
+			String regex = s.toUpperCase();
+			String[] splits = line.split(regex);
+			String s2 = "";
+			for(int i = 0; i < splits.length; i++) {
+				s2 += (i == 0 ? splits[i] : "TEST_" + regex + splits[i]);
+			}
+			line = s2;
+		}
+		return line;
+	}
 	
 	public static String formatPackageDeclarationForTest(String packageDeclaration, String packageName, String... ignoreCases) {
 		packageDeclaration = packageDeclaration.toUpperCase();
