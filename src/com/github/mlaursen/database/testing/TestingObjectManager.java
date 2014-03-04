@@ -21,7 +21,11 @@ public class TestingObjectManager extends ObjectManager {
 	private TestingConnectionManager connectionManager;
 	private boolean delete = true;
 	private boolean debug = false;
-	
+	public TestingObjectManager(boolean delete, boolean debug, Class<? extends DatabaseObject> databaseObjects) {
+		this(databaseObjects);
+		this.delete = delete;
+		this.debug = debug;
+	}
 	@SafeVarargs
 	public TestingObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		super();
