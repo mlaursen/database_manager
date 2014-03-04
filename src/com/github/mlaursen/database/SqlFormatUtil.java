@@ -23,7 +23,7 @@ public class SqlFormatUtil {
 			}
 			line = s2;
 		}
-		return line;
+		return line.replaceAll("TEST_TEST_", "TEST_");
 	}
 	
 	public static String formatPackageDeclarationForTest(String packageDeclaration, String packageName, String... ignoreCases) {

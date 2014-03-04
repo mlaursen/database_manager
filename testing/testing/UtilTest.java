@@ -101,5 +101,6 @@ public class UtilTest {
 		String view1 = "CREATE OR REPLACE VIEW EXAMPLE_VIEW AS SELECT * FROM EXAMPLE E INNER JOIN BLOB B ON E.ID = B.ID";
 		String expected = "CREATE OR REPLACE VIEW TEST_EXAMPLE_VIEW AS SELECT * FROM TEST_EXAMPLE E INNER JOIN TEST_BLOB B ON E.ID = B.ID";
 		assertEquals(expected, SqlFormatUtil.formatViewLine(view1, new String[]{"example", "blob"}));
+		assertEquals(expected, SqlFormatUtil.formatViewLine(view1, new String[]{"example", "example_view", "blob"}));
 	}
 }
