@@ -88,6 +88,7 @@ public class UtilTest {
 			String jobPkgExpected = FileUtil.readFile("testing/job_pkg_expected.txt");
 			assertEquals(jobPkgExpected, PackageUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_TYPE"));
 			assertEquals(jobPkgExpected, PackageUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_type"));
+			//assertEquals(jobPkgExpected, PackageUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg"));
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block

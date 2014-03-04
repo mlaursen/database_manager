@@ -21,7 +21,7 @@ public class TestingConnectionManager extends ConnectionManager {
 		super();
 	}
 	
-	public boolean createTestingTable(String tableName) {
+	public boolean createTestingTableAndSequence(String tableName) {
 		boolean success = false;
 		Connection conn = null;
 		Statement stmt = null;
@@ -30,6 +30,9 @@ public class TestingConnectionManager extends ConnectionManager {
 			stmt = conn.createStatement();
 			String sql = "CREATE TABLE test_" + tableName;
 			sql += " AS SELECT * FROM " + tableName + " WHERE 1=0";
+			success = stmt.executeUpdate(sql) > 0;
+			sql = "CREATE SEQUENCE SEQ_TEST_" + tableName + "_ID START WITH 0 MINVALUE 0 INCREMENT BY 1 NOCACHE";
+			System.out.println(sql);
 			success = stmt.executeUpdate(sql) > 0;
 		}
 		catch (SQLException e) {
@@ -67,10 +70,10 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				pkgBody.append(rs.getString(1));
 			}
-			//String packageStr = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkg, packageName);
-			//String packageBody = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkgBody, packageName);
-			//stmt.execute(packageStr);
-			//stmt.execute(packageBody);
+			String packageStr = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkg.toString(), packageName);
+			String packageBody = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkgBody.toString(), packageName);
+			stmt.execute(packageStr);
+			stmt.execute(packageBody);
 		}
 		catch (SQLException e) {
 			handleSqlException(e, "create table ", new String[] {packageName});
@@ -86,7 +89,7 @@ public class TestingConnectionManager extends ConnectionManager {
 		return success;
 	}
 	
-	public boolean deleteTestingTable(String tableName) {
+	public boolean deleteTestingTableAndSequence(String tableName) {
 		boolean success = false;
 		Connection conn = null;
 		Statement stmt = null;
@@ -94,6 +97,8 @@ public class TestingConnectionManager extends ConnectionManager {
 			conn = getConnection();
 			stmt = conn.createStatement();
 			String sql = "DROP TABLE test_" + tableName;
+			success = stmt.executeUpdate(sql) > 0;
+			sql = "DROP SEQUENCE SEQ_TEST_" + tableName + "_ID";
 			success = stmt.executeUpdate(sql) > 0;
 		}
 		catch (SQLException e) {

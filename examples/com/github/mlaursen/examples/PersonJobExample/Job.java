@@ -64,7 +64,7 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 	}
 
 	public void setJobType(MyResultRow r) {
-		this.jobType = new JobType(r.get("job_type"));
+		this.jobType = new JobType(r.get("type"));
 	}
 	
 	public void setName(MyResultRow r) {

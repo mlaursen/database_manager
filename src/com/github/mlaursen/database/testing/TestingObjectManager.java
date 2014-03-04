@@ -46,7 +46,7 @@ public class TestingObjectManager extends ObjectManager {
 			System.out.println("Was a view.. haven't delt with that yet");
 		}
 		else {
-			connectionManager.createTestingTable(ClassUtil.formatClassName(type));
+			connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(type));
 			connectionManager.createTestingPackage(Package.formatClassName(type));
 		}
 	}
@@ -67,9 +67,9 @@ public class TestingObjectManager extends ObjectManager {
 	public void cleanUp() {
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			System.out.println("Deleteing " + c);
-			connectionManager.deleteTestingTable(ClassUtil.formatClassName(c));
+			connectionManager.deleteTestingTableAndSequence(ClassUtil.formatClassName(c));
 			//connectionManager.deleteTestingView(ClassUtil.formatClassname(c));
-			//connectionManager.deleteTestingPackage(Package.formatClassName(c));
+			connectionManager.deleteTestingPackage(Package.formatClassName(c));
 		}
 		
 	}

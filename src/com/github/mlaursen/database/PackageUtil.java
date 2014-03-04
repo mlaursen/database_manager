@@ -13,10 +13,6 @@ public class PackageUtil {
 	
 	public static final String UPDATE_IGNORE_CASE = "UPDATE";
 	
-	public static String formatPackageDeclarationForTest(String packageDeclaration, String packageName) { 
-		return formatPackageDeclarationForTest(packageDeclaration, packageName); 
-	}
-	
 	public static String formatPackageDeclarationForTest(String packageDeclaration, String packageName, String... ignoreCases) {
 		packageDeclaration = packageDeclaration.toUpperCase();
 		packageName = packageName.toUpperCase();
@@ -28,7 +24,7 @@ public class PackageUtil {
 		}
 		return formatted.toString();
 	}
-	public static String formatProcedureLine(String line, String tableName) { return formatProcedureLine(line, tableName); }
+
 	public static String formatProcedureLine(String line, String tableName, String... ignoreCases) {
 		line = line.toUpperCase();
 		int lastIndex = 0;
