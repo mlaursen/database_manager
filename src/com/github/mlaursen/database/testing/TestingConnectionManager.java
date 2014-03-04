@@ -21,8 +21,7 @@ public class TestingConnectionManager extends ConnectionManager {
 		super();
 	}
 	
-	public boolean createTestingTableAndSequence(String tableName) {
-		boolean success = false;
+	public void createTestingTableAndSequence(String tableName) {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
@@ -30,10 +29,9 @@ public class TestingConnectionManager extends ConnectionManager {
 			stmt = conn.createStatement();
 			String sql = "CREATE TABLE test_" + tableName;
 			sql += " AS SELECT * FROM " + tableName + " WHERE 1=0";
-			success = stmt.executeUpdate(sql) > 0;
+			stmt.executeUpdate(sql);
 			sql = "CREATE SEQUENCE SEQ_TEST_" + tableName + "_ID START WITH 0 MINVALUE 0 INCREMENT BY 1 NOCACHE";
-			System.out.println(sql);
-			success = stmt.executeUpdate(sql) > 0;
+			stmt.executeUpdate(sql);
 		}
 		catch (SQLException e) {
 			handleSqlException(e, "create table ", new String[] {tableName});
@@ -45,11 +43,9 @@ public class TestingConnectionManager extends ConnectionManager {
 			closeStatement(stmt);
 			closeConnection(conn);
 		}
-		return success;
 	}
 	
-	public boolean createTestingPackage(String packageName) {
-		boolean success = false;
+	public void createTestingPackage(String packageName) {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -85,21 +81,23 @@ public class TestingConnectionManager extends ConnectionManager {
 			closeStatement(stmt);
 			closeConnection(conn);
 		}
-		System.out.println("Created " + packageName);
-		return success;
 	}
 	
-	public boolean deleteTestingTableAndSequence(String tableName) {
-		boolean success = false;
+	public void createTestingView(String tableName) {
+		String sql3 = "SELECT TEXT FROM USER_VIEWS WHERE VIEW_NAME='" + tableName.toUpperCase() + "_VIEW'";
+		
+	}
+	
+	public void deleteTestingTableAndSequence(String tableName) {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
 			String sql = "DROP TABLE test_" + tableName;
-			success = stmt.executeUpdate(sql) > 0;
+			stmt.executeUpdate(sql);
 			sql = "DROP SEQUENCE SEQ_TEST_" + tableName + "_ID";
-			success = stmt.executeUpdate(sql) > 0;
+			stmt.executeUpdate(sql);
 		}
 		catch (SQLException e) {
 			handleSqlException(e, "drop table ", new String[] {tableName});
@@ -111,21 +109,19 @@ public class TestingConnectionManager extends ConnectionManager {
 			closeStatement(stmt);
 			closeConnection(conn);
 		}
-		return success;
 	}
 	
-	public boolean deleteTestingPackage(String packageName) {
-		boolean success = false;
+	public void deleteTestingPackage(String packageName) {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
 			String sql = "DROP PACKAGE test_" + packageName;
-			success = stmt.executeUpdate(sql) > 0;
+			stmt.executeUpdate(sql);
 		}
 		catch (SQLException e) {
-			handleSqlException(e, "drop table ", new String[] {packageName});
+			handleSqlException(e, "drop package ", new String[] {packageName});
 		}
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
@@ -134,7 +130,6 @@ public class TestingConnectionManager extends ConnectionManager {
 			closeStatement(stmt);
 			closeConnection(conn);
 		}
-		return success;
 	}
 
 }
