@@ -62,6 +62,7 @@ public class TestingConnectionManager extends ConnectionManager {
 				pkg.append(rs.getString(1));
 			}
 			stmt.execute(sql2);
+			closeResultSet(rs);
 			rs = stmt.getResultSet();
 			while(rs.next()) {
 				pkgBody.append(rs.getString(1));
@@ -70,6 +71,7 @@ public class TestingConnectionManager extends ConnectionManager {
 			String packageBody = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkgBody.toString(), packageName);
 			stmt.execute(packageStr);
 			stmt.execute(packageBody);
+			//System.out.println("\n====================================\n" + packageBody + "\n============================\n\n");
 		}
 		catch (SQLException e) {
 			handleSqlException(e, "create table ", new String[] {packageName});
@@ -78,6 +80,7 @@ public class TestingConnectionManager extends ConnectionManager {
 			e.printStackTrace();
 		}
 		finally {
+			closeResultSet(rs);
 			closeStatement(stmt);
 			closeConnection(conn);
 		}
@@ -98,6 +101,7 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				view += rs.getString(1);
 			}
+			System.out.println(PackageUtil.formatPackageDeclarationForTest(view, vName));
 			stmt.executeUpdate(PackageUtil.formatPackageDeclarationForTest(view, vName));
 		}
 		catch (SQLException e) {
