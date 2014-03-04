@@ -67,10 +67,10 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				pkgBody.append(rs.getString(1));
 			}
-			String packageStr = "CREATE OR REPLACE " + PackageUtil.packageToTest(pkg, packageName);
-			String packageBody = "CREATE OR REPLACE " + PackageUtil.packageToTest(pkgBody, packageName);
-			stmt.execute(packageStr);
-			stmt.execute(packageBody);
+			//String packageStr = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkg, packageName);
+			//String packageBody = "CREATE OR REPLACE " + PackageUtil.formatPackageDeclarationForTest(pkgBody, packageName);
+			//stmt.execute(packageStr);
+			//stmt.execute(packageBody);
 		}
 		catch (SQLException e) {
 			handleSqlException(e, "create table ", new String[] {packageName});

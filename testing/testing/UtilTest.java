@@ -10,10 +10,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Test;
 
+import com.github.mlaursen.FileUtil;
 import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.PackageUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
@@ -66,43 +71,27 @@ public class UtilTest {
 	
 	@Test
 	public void testPackageToTest() {
-		String body = "PACKAGE BODY JOB_PKG AS\n";
-		body += "  PROCEDURE GET(PID IN INTEGER, PCURSOR OUT SYS_REFCURSOR)\n";
-		body += "  IS\n";
-		body += "  BEGIN\n";
-		body += "    OPEN PCURSOR FOR\n";
-		body += "      SELECT *\n";
-		body += "      FROM JOB_VIEW\n";
-		body += "      WHERE ID=PID\n";
-		body += "  END GET;\n";
-		body += "\n";
-		body += "  PROCEDURE GET(PNAME IN JOB.NAME%TYPE, PCURSOR OUT SYS_REFCURSOR\n";
-		body += "  IS\n";
-		body += "  BEGIN\n";
-		body += "   OPEN PCURSOR FOR\n";
-		body += "     SELECT *\n";
-		body += "     FROM JOB_VIEW\n";
-		body += "     WHERE NAME=UPPER(NAME)\n";
-		body += "  END GET;\n";
-		body += "  \n";
-		body += "  PROCEDURE NEW(PJOB_TYPE IN JOB.JOB_TYPE%TYPE, PNAME IN JOB.NAME%TYPE, PDESC IN JOB.DESCRIPTION%TYPE, PID IN JOB.ID%TYPE DEFAULT SEQ_JOB_ID.NEXTVAL)\n";
-		body += "  IS\n";
-		body += "  BEGIN\n";
-		body += "    INSERT INTO JOB(ID, JOB_TYPE, NAME, DESCRIPTION)\n";
-		body += "    VALUES(PID,UPPER(PJOB_TYPE),UPPER(PNAME),PDESC\n";
-		body += "    COMMIT;\n";
-		body += "\n";
-		body += "    EXCEPTION\n";
-		body += "      WHEN OTHERS THEN\n";
-		body += "        ROLLBACK;\n";
-		body += "        RAISE;\n";
-		body += "  END NEW;\n";
-		body += "END JOB_PKG;\n";
-		
-		//System.out.println(PackageUtil.packageToTest(new StringBuilder(body), "Job_Pkg"));
-		
-		String line = "  PROCEDURE NEW(PJOB_TYPE IN JOB.JOB_TYPE%TYPE, PNAME IN JOB.NAME%TYPE, PDESC IN JOB.DESCRIPTION%TYPE, PID IN JOB.ID%TYPE DEFAULT SEQ_JOB_ID.NEXTVAL)\n";
-		String expected = "  PROCEDURE NEW(PTEST_JOB_TYPE IN TEST_JOB.JOB_TYPE%TYPE, PNAME IN TEST_JOB.NAME%TYPE, PDESC IN TEST_JOB.DESCRIPTION%TYPE, PID IN TEST_JOB.ID%TYPE DEFAULT SEQ_TEST_JOB_ID.NEXTVAL)\n";
-		assertEquals(expected, PackageUtil.formatProcedureLine(line, "JOB"));
+		try {
+			String inputSmall = FileUtil.readFile("testing/input_small.txt");
+			String expectedSmall = FileUtil.readFile("testing/expected_small.txt");
+			assertEquals(expectedSmall, PackageUtil.formatPackageDeclarationForTest(inputSmall, "JOB", "_TYPE"));
+			
+			String inputTricky = FileUtil.readFile("testing/input_tricky.txt");
+			String expectedTricky = FileUtil.readFile("testing/expected_tricky.txt");
+			assertEquals(expectedTricky, PackageUtil.formatPackageDeclarationForTest(inputTricky, "JOB", "_TYPE"));
+			
+			String input = FileUtil.readFile("testing/input.txt");
+			String expected = FileUtil.readFile("testing/expected.txt");
+			assertEquals(expected, PackageUtil.formatPackageDeclarationForTest(input, "JOB_PKG", "_TYPE"));
+			
+			String jobPkg = FileUtil.readFile("testing/job_pkg.txt");
+			String jobPkgExpected = FileUtil.readFile("testing/job_pkg_expected.txt");
+			assertEquals(jobPkgExpected, PackageUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_TYPE"));
+			assertEquals(jobPkgExpected, PackageUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_type"));
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
