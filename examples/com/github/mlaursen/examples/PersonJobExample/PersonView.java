@@ -40,6 +40,13 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 		setAll(r);
 	}
 
+	public PersonView(String personName, String jobType, String jobName, String jobDescription, double personSalary) {
+		this.personName = personName;
+		this.personSalary = personSalary;
+		this.jobName = jobName;
+		this.jobDescription = jobDescription;
+		this.jobType = new JobType(jobType);
+	}
 	/**
 	 * @return the personName
 	 */
@@ -120,7 +127,7 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	}
 	
 	public void setJobType(MyResultRow r) {
-		this.jobType = new JobType(r.get("job_type"));
+		this.jobType = new JobType(r.get("type"));
 	}
 	
 	public void setJobName(MyResultRow r) {
@@ -145,5 +152,12 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 				+ jobType + ", jobName=" + jobName + ", jobDescription=" + jobDescription + "]";
 	}
 	
-	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof PersonView) {
+			PersonView pv = (PersonView) o;
+			return pv.personName.equalsIgnoreCase(personName) && pv.jobName.equalsIgnoreCase(jobName);
+		}
+		return false;
+	}
 }

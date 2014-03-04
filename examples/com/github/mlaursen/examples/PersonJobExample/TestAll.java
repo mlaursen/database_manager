@@ -121,8 +121,9 @@ public class TestAll {
 		assertNotNull(test2);
 		assertEquals(test, test2);
 		
-		PersonView pv = tom.get(0, PersonView.class);
-		System.out.println(pv);
+		PersonView testView = new PersonView("TESTER, TEST", jDev.getJobType().getPrimaryKey(), jDev.getName(), jDev.getDescription(), 45000);
+		PersonView testViewDB = tom.get(0, PersonView.class);
+		assertEquals(testView, testViewDB);
 	}
 	
 	@Test
