@@ -3,18 +3,14 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
-import org.junit.rules.TestRule;
 
 import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.testing.TestingObjectManager;
@@ -124,6 +120,7 @@ public class TestAll {
 		PersonView testView = new PersonView("TESTER, TEST", jDev.getJobType().getPrimaryKey(), jDev.getName(), jDev.getDescription(), 45000);
 		PersonView testViewDB = tom.get(0, PersonView.class);
 		assertEquals(testView, testViewDB);
+		assertFalse(tom.delete(testViewDB));
 	}
 	
 	@Test

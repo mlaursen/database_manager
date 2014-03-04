@@ -32,7 +32,7 @@ public class Main {
 		System.out.println(mechanic);
 		
 		System.out.println("\n====================\nPerson queries");
-		Person archer = manager.getCustom("getbyname", Person.class, null, "archer");
+		Person archer = manager.executeCustomGetProcedure("getbyname", Person.class, null, "archer");
 		System.out.println(archer);
 		double salary = archer.getSalary();
 		archer.setSalary(800000);
@@ -42,7 +42,7 @@ public class Main {
 		Person test = new Person("test", "testing", "1", 60000);
 		System.out.println(test);
 		System.out.println(manager.create(test));
-		test = manager.getCustom("getbyname", Person.class, "test", null);
+		test = manager.executeCustomGetProcedure("getbyname", Person.class, "test", null);
 		System.out.println(test);
 		System.out.println(manager.delete(test));
 		

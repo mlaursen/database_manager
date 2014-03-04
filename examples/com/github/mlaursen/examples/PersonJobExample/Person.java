@@ -149,7 +149,7 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	public static Person getByLastName(String last) { return getByName(null, last); }
 	
 	public static Person getByName(String first, String last) {
-		return new ObjectManager(Person.class).getCustom("getbyname", Person.class, first, last);//.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
+		return new ObjectManager(Person.class).executeCustomGetProcedure("getbyname", Person.class, first, last);//.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
 	}
 
 

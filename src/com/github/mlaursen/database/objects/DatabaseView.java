@@ -3,14 +3,12 @@
  */
 package com.github.mlaursen.database.objects;
 
-import com.github.mlaursen.annotations.DatabaseViewClass;
-import com.github.mlaursen.database.objecttypes.Getable;
 
 /**
  * @author mikkel.laursen
  *
  */
-public class DatabaseView extends DatabaseObject implements Getable {
+public class DatabaseView extends DatabaseObject {
 	
 	public DatabaseView() {}
 	/**

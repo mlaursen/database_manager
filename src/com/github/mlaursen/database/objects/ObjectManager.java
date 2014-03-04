@@ -37,6 +37,10 @@ public class ObjectManager {
 		}
 	}
 	
+	/**
+	 * Adds a new package or merges a package based on the class given.
+	 * @param c
+	 */
 	public void addPackage(Class<? extends DatabaseObject> c) {
 		this.databaseObjects.add(c);
 		Package pkg = new Package(c);
@@ -88,11 +92,24 @@ public class ObjectManager {
 		return getPackage(Package.formatClassName(type));
 	}
 	
+	/**
+	 * Returns a package for the package name given
+	 * @param pkgName
+	 * @return
+	 */
 	public Package getPackage(String pkgName) {
 		return packages.get(packageMap.get(pkgName));
 	}
 	
-	public <T extends DatabaseObject> T getCustom(String procedureName, Class<T> type, Object... params) {
+	/**
+	 * Executes a custom get procedure. This will return a single object and construct it
+	 * to the type given.
+	 * @param procedureName Custom procedure name
+	 * @param type			The Database object find the package for and to return the object as
+	 * @param params		Any parameters to help get the database object
+	 * @return
+	 */
+	public <T extends DatabaseObject> T executeCustomGetProcedure(String procedureName, Class<T> type, Object... params) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
 			if(pkg.canCallProcedure(procedureName)) {
@@ -102,7 +119,14 @@ public class ObjectManager {
 		return null;
 	}
 	
-	public <T extends DatabaseObject> List<T> getCustomList(String procedureName, Class<T> type, Object... params) {
+	/**
+	 * 
+	 * @param procedureName
+	 * @param type
+	 * @param params
+	 * @return
+	 */
+	public <T extends DatabaseObject> List<T> executeCustomGetAllProcedure(String procedureName, Class<T> type, Object... params) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
 			if(pkg.canCallProcedure(procedureName)) {
@@ -112,6 +136,13 @@ public class ObjectManager {
 		return null;
 	}
 	
+	/**
+	 * Executes a custom procedure that modifies the database instead of returning a database object
+	 * @param procedureName
+	 * @param type
+	 * @param params
+	 * @return
+	 */
 	public <T extends DatabaseObject> boolean executeCustomProcedure(String procedureName, Class<T> type, Object... params) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
@@ -122,10 +153,22 @@ public class ObjectManager {
 		return false;
 	}
 	
+	/**
+	 * 
+	 * @param primaryKey
+	 * @param type
+	 * @return
+	 */
 	public <T extends DatabaseObject> T get(Integer primaryKey, Class<T> type) {
 		return get(primaryKey.toString(), type);
 	}
 	
+	/**
+	 * Returns a signle Database Object by searchign for the primary key
+	 * @param primaryKey
+	 * @param type
+	 * @return
+	 */
 	public <T extends DatabaseObject> T get(String primaryKey, Class<T> type) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
@@ -135,6 +178,12 @@ public class ObjectManager {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns  alist of database objects for the given Database Object type
+	 * @param type
+	 * @return
+	 */
 	public <T extends DatabaseObject> List<T> getAll(Class<T> type) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
@@ -145,6 +194,11 @@ public class ObjectManager {
 		return new ArrayList<T>();
 	}
 	
+	/**
+	 * Returns a list of Database Object for the object given.
+	 * @param object
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public <T extends DatabaseObject> List<T> getAll(T object) {
 		if(packageIsAvailable(object.getClass())) {
@@ -157,6 +211,11 @@ public class ObjectManager {
 		return new ArrayList<T>();
 	}
 	
+	/**
+	 * Creates a database object in the database
+	 * @param object
+	 * @return
+	 */
 	public <T extends DatabaseObject> boolean create(T object) {
 		if(packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
@@ -173,6 +232,11 @@ public class ObjectManager {
 		return false;
 	}
 	
+	/**
+	 * Updates an object in the database.
+	 * @param object
+	 * @return
+	 */
 	public <T extends DatabaseObject> boolean update(T object) {
 		if(packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
@@ -184,16 +248,30 @@ public class ObjectManager {
 		return false;
 	}
 	
+	/**
+	 * Deletes a Database Object from the database.
+	 * It checks if there is a package for the database object and if that package
+	 * includes a delete procedure.  If it does and the primary key is not null, the stored
+	 * procedure is executed.
+	 * @param object	The object to delete from the database
+	 * @return
+	 */
 	public <T extends DatabaseObject> boolean delete(T object) {
 		if(packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
-			if(pkg.canCallProcedure("delete")) {
+			if(pkg.canCallProcedure("delete") && object.getPrimaryKey() != null) {
 				return connectionManager.executeStoredProcedure(pkg, "delete", object.getPrimaryKey());
 			}
 		}
 		return false;
 	}
 	
+	/**
+	 * Deletes an object by primary key
+	 * @param primaryKey	A string for the primary key. If the primary key is an integer, it will be converted
+	 * @param type	The DatabaseObject class that you want to delete by primary key
+	 * @return
+	 */
 	public <T extends DatabaseObject> boolean delete(String primaryKey, Class<T> type) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
@@ -204,6 +282,14 @@ public class ObjectManager {
 		return false;
 	}
 	
+	/**
+	 * Filters a result set by the objects given.
+	 * This is for limiting the results. each object in the filterBy is pretty much a
+	 * WHERE X=filterBy AND ....
+	 * @param type
+	 * @param filterBy
+	 * @return
+	 */
 	public <T extends DatabaseObject> List<T> filter(Class<T> type, Object... filterBy) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
