@@ -109,11 +109,8 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				view += rs.getString(1);
 			}
-			//System.out.println(Arrays.asList(testingClasses));
 			view = SqlFormatUtil.formatViewLine(view, testingClasses);
-			//System.out.println(view);
 			stmt.executeUpdate(view);
-			//System.out.println(stmt.getWarnings());
 		}
 		catch (SQLException e) {
 			handleSqlException(e, "drop table ", new String[] {tableName});

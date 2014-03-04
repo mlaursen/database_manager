@@ -105,8 +105,7 @@ public class TestAll {
 	
 	@Test
 	public void testPerson() {
-		tom.addPackage(PersonView.class);
-		tom.addPackage(Person.class);
+		tom.addPackageWithView(Person.class, PersonView.class);
 		Job jDev = tom.get(0, Job.class);
 		assertNotNull(jDev);
 		Person test = new Person("Test", "Tester", "0", 45000);

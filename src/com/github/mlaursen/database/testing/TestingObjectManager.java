@@ -32,6 +32,25 @@ public class TestingObjectManager extends ObjectManager {
 		}
 	}
 	
+	public void addPackageWithView(Class<? extends DatabaseObject> baseClass, Class<? extends DatabaseView> view) {
+		Package pkg = new Package(baseClass, true);
+		this.databaseObjects.add(baseClass);
+		this.databaseObjects.add(view);
+		if(packageIsAvailable(pkg.getName())) {
+			Package pkgOld = getPackage(pkg.getName());
+			pkgOld.mergeProcedures(pkg);
+		}
+		else {
+			this.addPackage(pkg);
+		}
+		System.out.println("Creating the Tables and Sequences for " + baseClass);
+		connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(baseClass));
+		System.out.println("Creating Database View: " + view);
+		connectionManager.createTestingView(ClassUtil.formatClassName(view), databaseObjects);
+		System.out.println("Creating Package for " + baseClass);
+		connectionManager.createTestingPackage(Package.formatClassName(baseClass));
+	}
+	
 	public void addPackage(Class<? extends DatabaseObject> type) {
 		Package pkg = new Package(type, true);
 		this.databaseObjects.add(type);

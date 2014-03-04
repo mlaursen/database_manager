@@ -163,7 +163,7 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	public boolean equals(Object o) {
 		if(o instanceof Person) {
 			Person p = (Person) o;
-			return firstName.equals(p.getFirstName()) && lastName.equals(p.getLastName());
+			return firstName.equalsIgnoreCase(p.getFirstName()) && lastName.equalsIgnoreCase(p.getLastName());
 		}
 		return false;
 	}
