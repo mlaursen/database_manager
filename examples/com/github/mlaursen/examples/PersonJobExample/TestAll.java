@@ -26,7 +26,7 @@ import com.github.mlaursen.database.testing.TestingObjectManager;
 public class TestAll {
 	protected static TestingObjectManager tom = new TestingObjectManager();
 	static {
-		tom.setDelete(false);
+		//tom.setDelete(false);
 	}
 	
 	@ClassRule
