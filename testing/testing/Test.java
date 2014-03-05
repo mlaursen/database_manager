@@ -29,6 +29,18 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		String s = "INSERT INTO JOB(ID, JOB_TYPE, DESCRIPTION)";
+		String s2 = "CREATE OR REPLACE PACKAGE BODY JOB_PKG AS";
+		String regex = "JOB";
+		String[] ss = s.split("\\s(?="+regex+")((?!"+regex+"\\_)|(?="+regex+"\\_PKG)|(?="+regex+"\\_VIEW))");
+		String[] aa = s.split("\\s(?="+regex+")((?!"+regex+"\\_)|(?="+regex+"_PKG)|(?="+regex+"_VIEW))");
+		for(String str : ss) {
+			System.out.println(str);
+		}
+		//System.out.println(Arrays.toString(s.split("\\s"+"JOB"+"((^\\_)|(?=\\_PKG)|(?=\\_VIEW))")));
+		//System.out.println(Arrays.toString(s2.split("\\s"+"JOB"+"((^\\_)|_PKG|\\s)")));
+		/*
 		//Package normalPkg = new Package(Person.class);
 		//System.out.println(normalPkg);
 		System.out.println(Package.formatClassName(PersonView.class));

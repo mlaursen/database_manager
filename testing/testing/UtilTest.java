@@ -77,45 +77,24 @@ public class UtilTest {
 		}
 	}
 	
-	@Test
-	public void testPackageToTest() {
-		try {
-			String inputSmall = FileUtil.readFile("testing/input_small.txt");
-			String expectedSmall = FileUtil.readFile("testing/expected_small.txt");
-			assertEquals(expectedSmall, SqlFormatUtil.formatPackageDeclarationForTest(inputSmall, "JOB", "_TYPE"));
-			
-			String inputTricky = FileUtil.readFile("testing/input_tricky.txt");
-			String expectedTricky = FileUtil.readFile("testing/expected_tricky.txt");
-			assertEquals(expectedTricky, SqlFormatUtil.formatPackageDeclarationForTest(inputTricky, "JOB", "_TYPE"));
-			
-			String input = FileUtil.readFile("testing/input.txt");
-			String expected = FileUtil.readFile("testing/expected.txt");
-			assertEquals(expected, SqlFormatUtil.formatPackageDeclarationForTest(input, "JOB_PKG", "_TYPE"));
-			
-			String jobPkg = FileUtil.readFile("testing/job_pkg.txt");
-			String jobPkgExpected = FileUtil.readFile("testing/job_pkg_expected.txt");
-			assertEquals(jobPkgExpected, SqlFormatUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_TYPE"));
-			assertEquals(jobPkgExpected, SqlFormatUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg", "_type"));
-			//assertEquals(jobPkgExpected, SqlFormatUtil.formatPackageDeclarationForTest(jobPkg, "job_pkg"));
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void test(String in, String out, String[] classes) throws IOException {
+		String tLoc = "testing/test_files/";
+		String input = FileUtil.readFile(tLoc + in);
+		String expected = FileUtil.readFile(tLoc + out);
+		String actual = SqlFormatUtil.formatForTest(input, classes);
+		assertEquals(expected, actual);
 	}
 	
 	@Test
-	public void testFormatViewForTest() {
-		String view1 = "CREATE OR REPLACE VIEW EXAMPLE_VIEW AS SELECT * FROM EXAMPLE E INNER JOIN BLOB B ON E.ID = B.ID";
-		String expected = "CREATE OR REPLACE VIEW TEST_EXAMPLE_VIEW AS SELECT * FROM TEST_EXAMPLE E INNER JOIN TEST_BLOB B ON E.ID = B.ID";
-		assertEquals(expected, SqlFormatUtil.formatViewLine(view1, new String[]{"example", "blob"}));
-		assertEquals(expected, SqlFormatUtil.formatViewLine(view1, new String[]{"example", "example_view", "blob"}));
+	public void testPackageToTest() {
 		try {
-			String input = FileUtil.readFile("testing/viewTest.txt");
-			String expectedView = FileUtil.readFile("testing/viewTestExpected.txt");
-			assertEquals(expectedView, SqlFormatUtil.formatViewLine(input, new String[]{"PERSON","JOB"}));
+			String[] params = { "job", "person", "temp_account", "account" };
+			for(int i = 1; i <= 6; i++) {
+				test("t"+i+".txt", "e"+i+".txt", params);
+			}
 		}
-		catch(IOException e) {
+		catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
