@@ -36,7 +36,7 @@ import com.github.mlaursen.database.utils.LocalSettings;
  */
 public class ConnectionManager {
 	private static enum ErrorCode {
-		UNIQUE_CONSTRAINT(1), ARGUMENT_MISMATCH(6550);
+		UNIQUE_CONSTRAINT(1), ARGUMENT_MISMATCH(6550), NAME_IN_USE(955);
 		private int code;
 		private ErrorCode(int code) {
 			this.code = code;
@@ -149,13 +149,17 @@ public class ConnectionManager {
 	
 	protected void handleSqlException(SQLException e, String procedureName, Object[] parameters) {
 		ErrorCode c = ErrorCode.getErrorCode(e.getErrorCode());
+		System.out.println(e.getErrorCode());
 		if(c == null) {
 			e.printStackTrace();
+		}
+		else if(c.equals(ErrorCode.NAME_IN_USE)) {
+			System.err.println("The name is already in use.");
 		}
 		else {
 			String msg = "There was a " + c.name() + " exception when calling " + procedureName + ".\n";
 			msg += "\tThe parameters being passed were: " + Arrays.toString(parameters);
-			e.printStackTrace();
+			//e.printStackTrace();
 			System.err.println(msg);
 		}
 	}

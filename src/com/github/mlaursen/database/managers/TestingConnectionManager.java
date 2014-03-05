@@ -99,6 +99,7 @@ public class TestingConnectionManager extends ConnectionManager {
 		}
 		String vName = tableName.toUpperCase();
 		String sql = "SELECT TEXT FROM USER_VIEWS WHERE VIEW_NAME='" + vName + "'";
+		System.out.println(sql);
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -192,4 +193,47 @@ public class TestingConnectionManager extends ConnectionManager {
 		}
 	}
 
+	
+	public void recompile(boolean debug) {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			String base = "SELECT OBJECT_NAME FROM USER_OBJECTS WHERE STATUS='INVALID' AND OBJECT_TYPE='PACKAGE";
+			String sql = base + "'";
+			String sql2 = base + " BODY'";
+			stmt.executeUpdate(sql);
+			rs = stmt.getResultSet();
+			while(rs.next()) {
+				String recompile = "ALTER PACKAGE " + rs.getString(1) + " COMPILE";
+				if(debug) {
+					System.out.println(recompile);
+				}
+				stmt.execute(recompile);
+			}
+			closeResultSet(rs);
+			stmt.execute(sql2);
+			rs = stmt.getResultSet();
+			while(rs.next()) {
+				String recompile = "ALTER PACKAGE " + rs.getString(1) + " COMPILE BODY";
+				if(debug) {
+					System.out.println(recompile);
+				}
+				stmt.execute(recompile);
+			}
+		}
+		catch (SQLException e) {
+			handleSqlException(e, "recompiling packages ", new String[] {"packages"});
+		}
+		catch(ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		finally {
+			closeResultSet(rs);
+			closeStatement(stmt);
+			closeConnection(conn);
+		}
+	}
 }

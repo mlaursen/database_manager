@@ -49,12 +49,17 @@ public class TestingObjectManager extends ObjectManager {
 		}
 		if(debug) {
 			System.out.println("Creating the Tables and Sequences for " + baseClass);
+			connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(baseClass));
 			System.out.println("Creating Database View: " + view);
+			connectionManager.createTestingView(ClassUtil.formatClassName(view), databaseObjects);
 			System.out.println("Creating Package for " + baseClass);
+			connectionManager.createTestingPackage(Package.formatClassName(baseClass), databaseObjects);
 		}
-		connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(baseClass));
-		connectionManager.createTestingView(ClassUtil.formatClassName(view), databaseObjects);
-		connectionManager.createTestingPackage(Package.formatClassName(baseClass), databaseObjects);
+		else {
+			connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(baseClass));
+			connectionManager.createTestingView(ClassUtil.formatClassName(view), databaseObjects);
+			connectionManager.createTestingPackage(Package.formatClassName(baseClass), databaseObjects);
+		}
 	}
 	
 	@Override
@@ -117,6 +122,13 @@ public class TestingObjectManager extends ObjectManager {
 			}
 		}
 		
+	}
+	
+	public void recompile() {
+		if(debug) {
+			System.out.println("Recompiling package bodies.");
+			connectionManager.recompile(debug);
+		}
 	}
 	
 	public void setDebug(boolean debug) {
