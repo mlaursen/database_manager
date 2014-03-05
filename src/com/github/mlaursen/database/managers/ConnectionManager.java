@@ -18,13 +18,13 @@ import java.util.Properties;
 
 import oracle.jdbc.OracleTypes;
 
-import com.github.mlaursen.database.ClassUtil;
-import com.github.mlaursen.database.LocalSettings;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyClob;
 import com.github.mlaursen.database.objects.MyResultSet;
 import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.database.objects.Procedure;
+import com.github.mlaursen.database.utils.ClassUtil;
+import com.github.mlaursen.database.utils.LocalSettings;
 
 /**
  * Utility class for interacting with databases. A dbconfig.properties file must

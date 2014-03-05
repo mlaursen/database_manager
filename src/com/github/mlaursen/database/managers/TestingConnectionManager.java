@@ -10,9 +10,9 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
-import com.github.mlaursen.database.ClassUtil;
-import com.github.mlaursen.database.SqlFormatUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
+import com.github.mlaursen.database.utils.ClassUtil;
+import com.github.mlaursen.database.utils.SqlFormatUtil;
 
 /**
  * @author mikkel.laursen

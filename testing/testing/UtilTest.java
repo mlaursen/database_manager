@@ -3,10 +3,10 @@
  */
 package testing;
 
-import static com.github.mlaursen.database.ClassUtil.canParseInt;
-import static com.github.mlaursen.database.ClassUtil.formatClassName;
-import static com.github.mlaursen.database.ClassUtil.getClassList;
-import static com.github.mlaursen.database.ClassUtil.isClassCallable;
+import static com.github.mlaursen.database.utils.ClassUtil.canParseInt;
+import static com.github.mlaursen.database.utils.ClassUtil.formatClassName;
+import static com.github.mlaursen.database.utils.ClassUtil.getClassList;
+import static com.github.mlaursen.database.utils.ClassUtil.isClassCallable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -19,9 +19,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.github.mlaursen.FileUtil;
-import com.github.mlaursen.database.ClassUtil;
-import com.github.mlaursen.database.SqlFormatUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.Procedure;
@@ -29,6 +26,9 @@ import com.github.mlaursen.database.objecttypes.Deleteable;
 import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
+import com.github.mlaursen.database.utils.ClassUtil;
+import com.github.mlaursen.database.utils.FileUtil;
+import com.github.mlaursen.database.utils.SqlFormatUtil;
 import com.github.mlaursen.examples.PersonJobExample.Job;
 import com.github.mlaursen.examples.PersonJobExample.Person;
 import com.github.mlaursen.examples.PersonJobExample.PersonView;

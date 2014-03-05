@@ -6,10 +6,10 @@ package com.github.mlaursen.database.managers;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.Package;
+import com.github.mlaursen.database.utils.ClassUtil;
 
 /**
  * @author mikkel.laursen
