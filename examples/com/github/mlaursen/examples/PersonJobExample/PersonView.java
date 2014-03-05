@@ -12,7 +12,6 @@ import com.github.mlaursen.database.objects.MyResultRow;
 import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
-import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
  * @author mikkel.laursen

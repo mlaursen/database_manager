@@ -55,6 +55,7 @@ public class Package {
 	 * @param databaseObject
 	 * @param test
 	 */
+	@SuppressWarnings("unchecked")
 	public Package(Class<? extends DatabaseObject> databaseObject, boolean test) {
 		if(ClassUtil.objectAssignableFrom(databaseObject, DatabaseView.class)) {
 			this.addAllCustomProcedures(databaseObject);
