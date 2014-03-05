@@ -5,7 +5,7 @@ package testing;
 
 import java.util.Arrays;
 
-import com.github.mlaursen.database.managers.DatabaseObjectManager;
+import com.github.mlaursen.database.managers.ObjectManager;
 import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.examples.PersonJobExample.Job;
 import com.github.mlaursen.examples.PersonJobExample.JobType;
@@ -32,7 +32,7 @@ public class Test {
 		//Package normalPkg = new Package(Person.class);
 		//System.out.println(normalPkg);
 		System.out.println(Package.formatClassName(PersonView.class));
-		DatabaseObjectManager om = new DatabaseObjectManager(Person.class, PersonView.class);
+		ObjectManager om = new ObjectManager(Person.class, PersonView.class);
 		System.out.println(om);
 		System.out.println(om.get(0, PersonView.class));
 		//System.out.println(om.get(1, PersonView.class));
@@ -40,7 +40,7 @@ public class Test {
 		//Package pkg = new Package(Person.class);
 		//System.out.println(pkg);
 		
-		DatabaseObjectManager mom = new DatabaseObjectManager(Person.class, Job.class, JobType.class);
+		ObjectManager mom = new ObjectManager(Person.class, Job.class, JobType.class);
 		System.out.println(mom);
 		System.out.println(mom.get("1", Person.class));
 		System.out.println(mom.getAll(Job.class));

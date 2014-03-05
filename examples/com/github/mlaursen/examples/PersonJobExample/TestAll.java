@@ -15,7 +15,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
 
-import com.github.mlaursen.database.managers.DatabaseObjectManager;
+import com.github.mlaursen.database.managers.ObjectManager;
 import com.github.mlaursen.database.managers.TestingObjectManager;
 import com.github.mlaursen.database.objects.Procedure;
 

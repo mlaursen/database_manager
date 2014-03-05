@@ -15,7 +15,7 @@ import com.github.mlaursen.database.utils.ClassUtil;
  * @author mikkel.laursen
  *
  */
-public class TestingObjectManager extends DatabaseObjectManager {
+public class TestingObjectManager extends ObjectManager {
 
 	private TestingConnectionManager connectionManager;
 	private boolean delete = true;
@@ -35,6 +35,7 @@ public class TestingObjectManager extends DatabaseObjectManager {
 		}
 	}
 	
+	@Override
 	public void addPackageWithView(Class<? extends DatabaseObject> baseClass, Class<? extends DatabaseView> view) {
 		Package pkg = new Package(baseClass, true);
 		this.databaseObjects.add(baseClass);
@@ -56,6 +57,7 @@ public class TestingObjectManager extends DatabaseObjectManager {
 		connectionManager.createTestingPackage(Package.formatClassName(baseClass));
 	}
 	
+	@Override
 	public void addPackage(Class<? extends DatabaseObject> type) {
 		Package pkg = new Package(type, true);
 		this.databaseObjects.add(type);
@@ -96,20 +98,22 @@ public class TestingObjectManager extends DatabaseObjectManager {
 	 */
 	public void cleanUp() {
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
-			if(ClassUtil.objectAssignableFrom(c, DatabaseView.class)) {
-				if(debug && delete) {
-					System.out.println("Deleting test view " + c);
+			if(delete) {
+				String cName = ClassUtil.formatClassName(c);
+				String pName = Package.formatClassName(c);
+				if(ClassUtil.objectAssignableFrom(c, DatabaseView.class)) {
+					if(debug)
+						System.out.println("Deleteing test view " + c);
+					
+					connectionManager.deleteTestingView(cName);
 				}
-				if(delete)
-					connectionManager.deleteTestingView(ClassUtil.formatClassName(c));
-			}
-			else {
-				if(debug && delete) {
-					System.out.println("Deleteing all test data for " + c);
+				else {
+					if(debug) {
+						System.out.println("Deleteing sequences, packages and database table for " + c);
+					}
+					connectionManager.deleteTestingTableAndSequence(cName);
+					connectionManager.deleteTestingPackage(pName);
 				}
-				if(delete)
-					connectionManager.deleteTestingTableAndSequence(ClassUtil.formatClassName(c));
-					connectionManager.deleteTestingPackage(Package.formatClassName(c));
 			}
 		}
 		

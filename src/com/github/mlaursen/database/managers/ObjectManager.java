@@ -15,6 +15,7 @@ import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.objects.DatabaseObject;
+import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Deleteable;
@@ -29,7 +30,7 @@ import com.github.mlaursen.database.utils.ClassUtil;
  * @author mikkel.laursen
  *
  */
-public class DatabaseObjectManager {
+public class ObjectManager {
 
 	protected ConnectionManager connectionManager;
 	protected List<Package> packages = new ArrayList<Package>();
@@ -38,7 +39,7 @@ public class DatabaseObjectManager {
 	protected List<Class<? extends DatabaseObject>> databaseObjects = new ArrayList<Class<? extends DatabaseObject>>();
 	
 	@SafeVarargs
-	public DatabaseObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
+	public ObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		connectionManager = new ConnectionManager();
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			addPackage(c);
@@ -71,6 +72,19 @@ public class DatabaseObjectManager {
 		packages.add(pkg);
 		availablePackages.add(pkg.getName());
 		packageMap.put(pkg.getName(), packages.size()-1);
+	}
+	
+	public void addPackageWithView(Class<? extends DatabaseObject> baseClass, Class<? extends DatabaseView> view) {
+		Package pkg = new Package(baseClass);
+		this.databaseObjects.add(baseClass);
+		this.databaseObjects.add(view);
+		if(packageIsAvailable(pkg.getName())) {
+			Package pkgOld = getPackage(pkg.getName());
+			pkgOld.mergeProcedures(pkg);
+		}
+		else {
+			this.addPackage(pkg);
+		}
 	}
 	
 	/**
@@ -173,7 +187,7 @@ public class DatabaseObjectManager {
 	}
 	
 	/**
-	 * Returns a signle Database Object by searchign for the primary key
+	 * Returns a single Database Object by searching for the primary key
 	 * @param primaryKey
 	 * @param type
 	 * @return
@@ -247,11 +261,14 @@ public class DatabaseObjectManager {
 	 * @return
 	 */
 	public <T extends DatabaseObject> boolean update(T object) {
+		@SuppressWarnings("unchecked")
+		Class<T> c = (Class<T>) object.getClass();
+		String update = "update" + c.getSimpleName().replace("View", "");
 		if(packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
-			if(canCallProcedure(object.getClass(), Updateable.class, pkg, "update")) {
+			if(canCallProcedure(object.getClass(), Updateable.class, pkg, update)) {
 				Object[] params = getParameters(DatabaseFieldType.UPDATE, object);
-				return connectionManager.executeStoredProcedure(pkg, "update"+ object.getClass().getSimpleName().replace("View", ""), params);
+				return connectionManager.executeStoredProcedure(pkg, update, params);
 			}
 		}
 		return false;
@@ -415,7 +432,7 @@ public class DatabaseObjectManager {
 
 	@Override
 	public String toString() {
-		String s = "DatabaseObjectManager [\n\tpackages=[";
+		String s = "ObjectManager [\n\tpackages=[";
 		for(Package p : packages) {
 			s += "\n\t\tpackage=" + p.toString();
 		}

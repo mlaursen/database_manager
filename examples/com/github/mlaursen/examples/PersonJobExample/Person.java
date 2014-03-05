@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
-import com.github.mlaursen.database.managers.DatabaseObjectManager;
+import com.github.mlaursen.database.managers.ObjectManager;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyResultRow;
 import com.github.mlaursen.database.objects.Procedure;
@@ -62,6 +62,10 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 		this.lastName = lastName;
 		this.jobId = jobId;
 		this.salary = salary;
+	}
+	
+	public Person(PersonView pv) {
+		this(pv.getPersonFirstName(), pv.getPersonLastName(), null, pv.getPersonSalary());
 	}
 	
 	public Person(MyResultRow r) {
@@ -149,7 +153,7 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	public static Person getByLastName(String last) { return getByName(null, last); }
 	
 	public static Person getByName(String first, String last) {
-		return new DatabaseObjectManager(Person.class).executeCustomGetProcedure("getbyname", Person.class, first, last);//.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
+		return new ObjectManager(Person.class).executeCustomGetProcedure("getbyname", Person.class, first, last);//.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
 	}
 
 

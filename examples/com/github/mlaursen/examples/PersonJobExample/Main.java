@@ -3,10 +3,13 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
-import com.github.mlaursen.database.managers.DatabaseObjectManager;
+import com.github.mlaursen.database.managers.ObjectManager;
 
 /**
- * @author mikkel.laursen
+ * Here is an example using the data supplied by the sql scripts.
+ * There are examples of getting objects, modifying, deleting, and filterting.
+ * 
+ * @author mlaursen
  *
  */
 public class Main {
@@ -14,11 +17,8 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println("====================\nInitilizin TestingObjectManager and creating testing environment...");
-		DatabaseObjectManager manager = new DatabaseObjectManager();
-		manager.addPackage(JobType.class);
-		manager.addPackage(Job.class);
-		//manager.addPackageWithView(Person.class, PersonView.class);
+		ObjectManager manager = new ObjectManager(JobType.class, Job.class);
+		manager.addPackageWithView(Person.class, PersonView.class);
 		System.out.println(manager);
 		
 		System.out.println("\n====================\nJobType queries");
@@ -37,18 +37,32 @@ public class Main {
 		Person archer = manager.executeCustomGetProcedure("getbyname", Person.class, null, "archer");
 		System.out.println(archer);
 		double salary = archer.getSalary();
+		archer.setSalary(8);
+		System.out.println("Salary update for Archer was " + (manager.update(archer) ? "" : "un") + "successful.");
+		archer.setSalary(salary);
+		System.out.println("Salary update for Archer was " + (manager.update(archer) ? "" : "un") + "successful.");
+		/*
+		// The next two should be unsuccessful. 
+		// PersonView does not implement Updateable
+		System.out.println("Salary update for Archer was " + (manager.update(archerV) ? "" : "un") + "successful.");
+		archerV.setPersonSalary(salary);
+		System.out.println("Salary update for Archer was " + (manager.update(archerV) ? "" : "un") + "successful.");
+		
+		//Person archer = new Person(archerV);
+		
+		/*
+		double salary = archer.getSalary();
 		archer.setSalary(800000);
 		System.out.println("Updating Archer's personSalary. Was it successful? " + manager.update(archer));
 		archer.setSalary(salary);
 		System.out.println("Returning archer's personSalary to the previous amount. " + manager.update(archer));
 		Person test = new Person("test", "testing", "1", 60000);
 		System.out.println(test);
-		System.out.println(manager.create(test));
+		System.out.println("Person '"+test.firstName+"' was created " + (manager.create(test) ? "" : "un") + "successfully in the database");
 		test = manager.executeCustomGetProcedure("getbyname", Person.class, "test", null);
 		System.out.println(test);
-		System.out.println(manager.delete(test));
-		
-		//manager.cleanUp();
+		System.out.println("Delete was " + (manager.delete(test) ? "" : "un") + "successful.");
+		*/
 	}
 
 }
