@@ -24,26 +24,20 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	protected Person person;
 	protected Job job;
 	protected String personName;
-	/*
-	protected double personSalary;
-	protected JobType jobType;
-	protected String jobName, jobDescription;
-	*/
 	public PersonView() { }
 
 	/**
 	 * @param primaryKey
 	 */
 	public PersonView(String primaryKey) {
-		this();
-		this.primaryKey = primaryKey;
+		super(primaryKey);
+		//this.primaryKey = primaryKey;
 	}
 
 	
 	public PersonView(MyResultRow r) {
-		this();
-		setAll(r);
-		System.out.println(r);
+		super(r);
+		//setAll(r);
 	}
 
 	public PersonView(String personName, String jobType, String jobName, String jobDescription, double personSalary) {
@@ -70,7 +64,7 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	}
 	
 	public void setPersonName(MyResultRow r) {
-		
+		this.personName = r.get("person_name");
 	}
 	
 	

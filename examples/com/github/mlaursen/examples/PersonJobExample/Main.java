@@ -44,28 +44,20 @@ public class Main {
 		
 		PersonView archerV = manager.get(archer.getPrimaryKey(), PersonView.class);
 		System.out.println(archerV);
-		/*
-		// The next two should be unsuccessful. 
-		// PersonView does not implement Updateable
+		
+		// The next two should be false since PersonView is NOT Updateable
+		archerV.setPersonSalary(8);
 		System.out.println("Salary update for Archer was " + (manager.update(archerV) ? "" : "un") + "successful.");
 		archerV.setPersonSalary(salary);
 		System.out.println("Salary update for Archer was " + (manager.update(archerV) ? "" : "un") + "successful.");
 		
-		//Person archer = new Person(archerV);
-		
-		/*
-		double salary = archer.getSalary();
-		archer.setSalary(800000);
-		System.out.println("Updating Archer's personSalary. Was it successful? " + manager.update(archer));
-		archer.setSalary(salary);
-		System.out.println("Returning archer's personSalary to the previous amount. " + manager.update(archer));
 		Person test = new Person("test", "testing", "1", 60000);
 		System.out.println(test);
 		System.out.println("Person '"+test.firstName+"' was created " + (manager.create(test) ? "" : "un") + "successfully in the database");
 		test = manager.executeCustomGetProcedure("getbyname", Person.class, "test", null);
 		System.out.println(test);
 		System.out.println("Delete was " + (manager.delete(test) ? "" : "un") + "successful.");
-		*/
+		
 	}
 
 }
