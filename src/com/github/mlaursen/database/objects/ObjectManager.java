@@ -193,7 +193,6 @@ public class ObjectManager {
 		}
 		return new ArrayList<T>();
 	}
-	
 	/**
 	 * Returns a list of Database Object for the object given.
 	 * @param object

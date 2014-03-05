@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.github.mlaursen.database.objects.DatabaseObject;
+
 /**
  * Utility functions used in the DatabaseManager project.
  * 
@@ -108,5 +110,17 @@ public class ClassUtil {
 		catch (NumberFormatException | ClassCastException e) {
 			return false;
 		}
+	}
+	
+	/**
+	 * Checks if a Database Object is able to call the procedureType.
+	 * This is to make sure that a view and database object can't call 
+	 * each other's procedures if they are not implemented for that class
+	 * @param type
+	 * @param procedureType
+	 * @return
+	 */
+	public static <T extends DatabaseObject> boolean isClassCallable(Class<T> type, Class<?> procedureType) {
+		return ClassUtil.objectAssignableFrom(type, procedureType);
 	}
 }

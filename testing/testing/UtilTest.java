@@ -6,6 +6,7 @@ package testing;
 import static com.github.mlaursen.database.ClassUtil.canParseInt;
 import static com.github.mlaursen.database.ClassUtil.formatClassName;
 import static com.github.mlaursen.database.ClassUtil.getClassList;
+import static com.github.mlaursen.database.ClassUtil.isClassCallable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -24,6 +25,13 @@ import com.github.mlaursen.database.SqlFormatUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.Procedure;
+import com.github.mlaursen.database.objecttypes.Deleteable;
+import com.github.mlaursen.database.objecttypes.GetAllable;
+import com.github.mlaursen.database.objecttypes.Getable;
+import com.github.mlaursen.database.objecttypes.Updateable;
+import com.github.mlaursen.examples.PersonJobExample.Job;
+import com.github.mlaursen.examples.PersonJobExample.Person;
+import com.github.mlaursen.examples.PersonJobExample.PersonView;
 
 /**
  * @author mikkel.laursen
@@ -110,5 +118,17 @@ public class UtilTest {
 		catch(IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testIsClassCallable() {
+		assertTrue(isClassCallable(Job.class, GetAllable.class));
+		assertTrue(isClassCallable(Person.class, Getable.class));
+		assertTrue(isClassCallable(Person.class, Updateable.class));
+		assertTrue(isClassCallable(Person.class, Deleteable.class));
+		assertFalse(isClassCallable(Person.class, GetAllable.class));
+		assertTrue(isClassCallable(PersonView.class, Getable.class));
+		assertFalse(isClassCallable(PersonView.class, Updateable.class));
+		assertFalse(isClassCallable(PersonView.class, Deleteable.class));
 	}
 }

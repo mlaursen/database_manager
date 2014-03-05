@@ -40,13 +40,6 @@ public class Package {
 	private Map<String, Integer> procedureMap = new HashMap<String, Integer>();
 	private List<String> availableProcedures = new ArrayList<String>();
 	
-	/*
-	public Package(String n, Procedure... procedures) {
-		setName(n);
-		this.procedures = Arrays.asList(procedures);
-	}
-	*/
-	
 	/**
 	 * The basic constructor for a Package.
 	 * It takes in a DatabaseObject class to generate a package for and generates
