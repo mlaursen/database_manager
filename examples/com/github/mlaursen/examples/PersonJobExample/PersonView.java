@@ -43,6 +43,7 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	public PersonView(MyResultRow r) {
 		this();
 		setAll(r);
+		System.out.println(r);
 	}
 
 	public PersonView(String personName, String jobType, String jobName, String jobDescription, double personSalary) {
@@ -53,6 +54,26 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 		this.job.setJobType(jobType);
 		this.job.setDescription(jobDescription);
 	}
+	
+	public void setPerson(MyResultRow r) {
+		this.person = new Person();
+		this.person.setFirstName(r.get("first_name"));
+		this.person.setLastName(r.get("last_name"));
+		this.person.setSalary(r.getDouble("salary"));
+	}
+	
+	public void setJob(MyResultRow r) {
+		this.job = new Job();
+		this.job.setName(r.get("job_name"));
+		this.job.setJobType(r.get("type"));
+		this.job.setDescription(r.get("job_description"));
+	}
+	
+	public void setPersonName(MyResultRow r) {
+		
+	}
+	
+	
 	/**
 	 * @return the personName
 	 */
@@ -137,27 +158,6 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	 */
 	public void setJobDescription(String jobDescription) {
 		this.job.setDescription(jobDescription);
-	}
-
-	
-	public void setPersonName(MyResultRow r) {
-		this.personName = r.get("person_name");
-	}
-	
-	public void setPersonSalary(MyResultRow r) {
-		this.person.setSalary(Double.parseDouble(r.get("person_salary")));
-	}
-	
-	public void setJobType(MyResultRow r) {
-		this.job.setJobType(new JobType(r.get("type")));
-	}
-	
-	public void setJobName(MyResultRow r) {
-		this.job.setName(r.get("job_name"));
-	}
-	
-	public void setJobDescription(MyResultRow r) {
-		this.job.setDescription(r.get("job_description"));
 	}
 	
 	@Override

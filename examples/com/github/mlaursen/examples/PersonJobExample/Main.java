@@ -41,6 +41,9 @@ public class Main {
 		System.out.println("Salary update for Archer was " + (manager.update(archer) ? "" : "un") + "successful.");
 		archer.setSalary(salary);
 		System.out.println("Salary update for Archer was " + (manager.update(archer) ? "" : "un") + "successful.");
+		
+		PersonView archerV = manager.get(archer.getPrimaryKey(), PersonView.class);
+		System.out.println(archerV);
 		/*
 		// The next two should be unsuccessful. 
 		// PersonView does not implement Updateable
