@@ -81,9 +81,11 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	public void setPersonName(String personName) {
 		this.personName = personName;
 		String[] name = personName.split(",");
-		if(name.length ==2) {
-			this.person.setFirstName(name[1]);
-			this.person.setLastName(name[0]);
+		if(this.person == null)
+			this.person = new Person();
+		if(name.length == 2) {
+			this.person.setFirstName(name[1].trim());
+			this.person.setLastName(name[0].trim());
 		}
 		else {
 			this.person.setFirstName(personName);
