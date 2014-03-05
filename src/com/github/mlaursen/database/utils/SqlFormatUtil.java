@@ -27,7 +27,7 @@ public class SqlFormatUtil {
 		return line.replaceAll("TEST_TEST_", "TEST_").replaceAll("\\.TEST_", ".");
 	}
 	*/	
-	public static String formatForTest(String packageDeclaration, String[] testingClasses) {
+	public static String formatSqlForTesting(String packageDeclaration, String[] testingClasses) {
 		packageDeclaration = packageDeclaration.toUpperCase();
 		String[] lines = packageDeclaration.split("\\r?\\n");
 		String pkg = "";

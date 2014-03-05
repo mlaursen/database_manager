@@ -54,7 +54,7 @@ public class TestingObjectManager extends ObjectManager {
 		}
 		connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(baseClass));
 		connectionManager.createTestingView(ClassUtil.formatClassName(view), databaseObjects);
-		connectionManager.createTestingPackage(Package.formatClassName(baseClass));
+		connectionManager.createTestingPackage(Package.formatClassName(baseClass), databaseObjects);
 	}
 	
 	@Override
@@ -79,7 +79,7 @@ public class TestingObjectManager extends ObjectManager {
 				System.out.println("Creating the Tables, Sequences and Packages for " + type);
 			}
 			connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(type));
-			connectionManager.createTestingPackage(Package.formatClassName(type));
+			connectionManager.createTestingPackage(Package.formatClassName(type), databaseObjects);
 		}
 	}
 	

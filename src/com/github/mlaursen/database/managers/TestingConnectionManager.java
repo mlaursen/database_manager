@@ -11,7 +11,7 @@ import java.util.List;
 
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.utils.ClassUtil;
-import com.github.mlaursen.database.utils.SqlFormatUtil;
+import static com.github.mlaursen.database.utils.SqlFormatUtil.formatSqlForTesting;;
 
 /**
  * @author mikkel.laursen
@@ -47,7 +47,11 @@ public class TestingConnectionManager extends ConnectionManager {
 		}
 	}
 	
-	public void createTestingPackage(String packageName) {
+	public void createTestingPackage(String packageName, List<Class<? extends DatabaseObject>> classes) {
+		String[] testingClasses = new String[classes.size()];
+		for(int i = 0; i < testingClasses.length; i++) {
+			testingClasses[i] = ClassUtil.formatClassName(classes.get(i)).replace("_View", "");
+		}
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -69,8 +73,8 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				pkgBody.append(rs.getString(1));
 			}
-			String packageStr = "CREATE OR REPLACE " + SqlFormatUtil.formatPackageDeclarationForTest(pkg.toString(), packageName);
-			String packageBody = "CREATE OR REPLACE " + SqlFormatUtil.formatPackageDeclarationForTest(pkgBody.toString(), packageName);
+			String packageStr = "CREATE OR REPLACE " + formatSqlForTesting(pkg.toString(), testingClasses);
+			String packageBody = "CREATE OR REPLACE " + formatSqlForTesting(pkgBody.toString(), testingClasses);
 			stmt.execute(packageStr);
 			stmt.execute(packageBody);
 			//System.out.println("\n====================================\n" + packageBody + "\n============================\n\n");
@@ -107,7 +111,7 @@ public class TestingConnectionManager extends ConnectionManager {
 			while(rs.next()) {
 				view += rs.getString(1);
 			}
-			view = SqlFormatUtil.formatViewLine(view, testingClasses);
+			view = formatSqlForTesting(view, testingClasses);
 			stmt.executeUpdate(view);
 		}
 		catch (SQLException e) {

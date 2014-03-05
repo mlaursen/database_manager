@@ -81,7 +81,7 @@ public class UtilTest {
 		String tLoc = "testing/test_files/";
 		String input = FileUtil.readFile(tLoc + in);
 		String expected = FileUtil.readFile(tLoc + out);
-		String actual = SqlFormatUtil.formatForTest(input, classes);
+		String actual = SqlFormatUtil.formatSqlForTesting(input, classes);
 		assertEquals(expected, actual);
 	}
 	
