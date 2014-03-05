@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.mlaursen.database.objects;
+package com.github.mlaursen.database.managers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -15,7 +15,8 @@ import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.ClassUtil;
-import com.github.mlaursen.database.ConnectionManager;
+import com.github.mlaursen.database.objects.DatabaseObject;
+import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Deleteable;
 import com.github.mlaursen.database.objecttypes.Filterable;
@@ -23,10 +24,12 @@ import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
 /**
+ * 
+ * 
  * @author mikkel.laursen
  *
  */
-public class ObjectManager {
+public class DatabaseObjectManager {
 
 	protected ConnectionManager connectionManager;
 	protected List<Package> packages = new ArrayList<Package>();
@@ -35,17 +38,13 @@ public class ObjectManager {
 	protected List<Class<? extends DatabaseObject>> databaseObjects = new ArrayList<Class<? extends DatabaseObject>>();
 	
 	@SafeVarargs
-	public ObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
+	public DatabaseObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		connectionManager = new ConnectionManager();
-		this.databaseObjects = Arrays.asList(databaseObjects);
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			addPackage(c);
 		}
 	}
 	
-	public <T extends DatabaseObject> boolean canCallProcedure(Class<T> type, Class<?> procedure, Package pkg, String procedureName) {
-		return ClassUtil.isClassCallable(type, procedure) && pkg.canCallProcedure(procedureName);
-	}
 	
 	/**
 	 * Adds a new package or merges a package based on the class given.
@@ -232,7 +231,7 @@ public class ObjectManager {
 			if(canCallProcedure(object.getClass(), Createable.class, pkg, "new")) {
 				Object[] params = getParameters(DatabaseFieldType.NEW, object);
 				if(params.length == 0) {
-					return connectionManager.executeStoredProcedure(pkg, "new", object.primaryKey);
+					return connectionManager.executeStoredProcedure(pkg, "new", object.getPrimaryKey());
 				}
 				else {
 					return connectionManager.executeStoredProcedure(pkg, "new", params);
@@ -410,9 +409,13 @@ public class ObjectManager {
 		return params;
 	}
 
+	public <T extends DatabaseObject> boolean canCallProcedure(Class<T> type, Class<?> procedure, Package pkg, String procedureName) {
+		return ClassUtil.isClassCallable(type, procedure) && pkg.canCallProcedure(procedureName);
+	}
+
 	@Override
 	public String toString() {
-		String s = "ObjectManager [\n\tpackages=[";
+		String s = "DatabaseObjectManager [\n\tpackages=[";
 		for(Package p : packages) {
 			s += "\n\t\tpackage=" + p.toString();
 		}

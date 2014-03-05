@@ -3,8 +3,7 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
-import com.github.mlaursen.database.testing.TestingConnectionManager;
-import com.github.mlaursen.database.testing.TestingObjectManager;
+import com.github.mlaursen.database.managers.DatabaseObjectManager;
 
 /**
  * @author mikkel.laursen
@@ -16,7 +15,10 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		System.out.println("====================\nInitilizin TestingObjectManager and creating testing environment...");
-		TestingObjectManager manager = new TestingObjectManager(JobType.class, Job.class, Person.class);
+		DatabaseObjectManager manager = new DatabaseObjectManager();
+		manager.addPackage(JobType.class);
+		manager.addPackage(Job.class);
+		//manager.addPackageWithView(Person.class, PersonView.class);
 		System.out.println(manager);
 		
 		System.out.println("\n====================\nJobType queries");
@@ -46,7 +48,7 @@ public class Main {
 		System.out.println(test);
 		System.out.println(manager.delete(test));
 		
-		manager.cleanUp();
+		//manager.cleanUp();
 	}
 
 }

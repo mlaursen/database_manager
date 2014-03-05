@@ -8,9 +8,9 @@ import java.util.List;
 
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
+import com.github.mlaursen.database.managers.DatabaseObjectManager;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyResultRow;
-import com.github.mlaursen.database.objects.ObjectManager;
 import com.github.mlaursen.database.objects.Procedure;
 import com.github.mlaursen.database.objecttypes.Createable;
 import com.github.mlaursen.database.objecttypes.Deleteable;
@@ -149,7 +149,7 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 	public static Person getByLastName(String last) { return getByName(null, last); }
 	
 	public static Person getByName(String first, String last) {
-		return new ObjectManager(Person.class).executeCustomGetProcedure("getbyname", Person.class, first, last);//.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
+		return new DatabaseObjectManager(Person.class).executeCustomGetProcedure("getbyname", Person.class, first, last);//.getFirstRowFromCursorProcedure("getbyname", first, last).construct(Person.class);
 	}
 
 

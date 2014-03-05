@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.mlaursen.database.testing;
+package com.github.mlaursen.database.managers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,14 +9,13 @@ import java.util.Arrays;
 import com.github.mlaursen.database.ClassUtil;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
-import com.github.mlaursen.database.objects.ObjectManager;
 import com.github.mlaursen.database.objects.Package;
 
 /**
  * @author mikkel.laursen
  *
  */
-public class TestingObjectManager extends ObjectManager {
+public class TestingObjectManager extends DatabaseObjectManager {
 
 	private TestingConnectionManager connectionManager;
 	private boolean delete = true;

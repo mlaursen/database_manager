@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.mlaursen.database;
+package com.github.mlaursen.database.managers;
 
 import java.io.IOException;
 import java.sql.CallableStatement;
@@ -18,6 +18,8 @@ import java.util.Properties;
 
 import oracle.jdbc.OracleTypes;
 
+import com.github.mlaursen.database.ClassUtil;
+import com.github.mlaursen.database.LocalSettings;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyClob;
 import com.github.mlaursen.database.objects.MyResultSet;

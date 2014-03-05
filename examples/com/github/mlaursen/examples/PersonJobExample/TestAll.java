@@ -3,7 +3,10 @@
  */
 package com.github.mlaursen.examples.PersonJobExample;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,8 +15,9 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
 
+import com.github.mlaursen.database.managers.DatabaseObjectManager;
+import com.github.mlaursen.database.managers.TestingObjectManager;
 import com.github.mlaursen.database.objects.Procedure;
-import com.github.mlaursen.database.testing.TestingObjectManager;
 
 /**
  * @author mikkel.laursen
@@ -125,5 +129,6 @@ public class TestAll {
 	
 	@Test
 	public void testAll() {
+		
 	}
 }

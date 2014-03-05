@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
+import com.github.mlaursen.database.managers.TestingObjectManager;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyClob;
 import com.github.mlaursen.database.objects.MyResultRow;
@@ -26,7 +27,6 @@ import com.github.mlaursen.database.objecttypes.Filterable;
 import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
-import com.github.mlaursen.database.testing.TestingObjectManager;
 
 /**
  * @author mikkel.laursen
