@@ -14,8 +14,14 @@ import java.util.Map;
 import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
-import com.github.mlaursen.database.ConnectionManager;
 import com.github.mlaursen.database.ClassUtil;
+import com.github.mlaursen.database.ConnectionManager;
+import com.github.mlaursen.database.objecttypes.Createable;
+import com.github.mlaursen.database.objecttypes.Deleteable;
+import com.github.mlaursen.database.objecttypes.Filterable;
+import com.github.mlaursen.database.objecttypes.GetAllable;
+import com.github.mlaursen.database.objecttypes.Getable;
+import com.github.mlaursen.database.objecttypes.Updateable;
 /**
  * @author mikkel.laursen
  *
@@ -35,6 +41,10 @@ public class ObjectManager {
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			addPackage(c);
 		}
+	}
+	
+	public <T extends DatabaseObject> boolean canCallProcedure(Class<T> type, Class<?> procedure, Package pkg, String procedureName) {
+		return ClassUtil.isClassCallable(type, procedure) && pkg.canCallProcedure(procedureName);
 	}
 	
 	/**
@@ -172,7 +182,7 @@ public class ObjectManager {
 	public <T extends DatabaseObject> T get(String primaryKey, Class<T> type) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(pkg.canCallProcedure("get")) {
+			if(canCallProcedure(type, Getable.class, pkg, "get")) {
 				return connectionManager.executeCursorProcedure(pkg, "get", primaryKey).getRow().construct(type);
 			}
 		}
@@ -187,7 +197,7 @@ public class ObjectManager {
 	public <T extends DatabaseObject> List<T> getAll(Class<T> type) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(pkg.canCallProcedure("getall")) {
+			if(canCallProcedure(type, GetAllable.class, pkg, "getall")) {
 				return connectionManager.executeCursorProcedure(pkg, "getall").toListOf(type);
 			}
 		}
@@ -198,13 +208,14 @@ public class ObjectManager {
 	 * @param object
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public <T extends DatabaseObject> List<T> getAll(T object) {
-		if(packageIsAvailable(object.getClass())) {
-			Package pkg = getPackage(object.getClass());
-			if(pkg.canCallProcedure("getall")) {
+		@SuppressWarnings("unchecked")
+		Class<T> c = (Class<T>) object.getClass();
+		if(packageIsAvailable(c)) {
+			Package pkg = getPackage(c);
+			if(canCallProcedure(c, GetAllable.class, pkg, "getall")) {
 				Object[] params = getParameters(DatabaseFieldType.GETALL, object);
-				return (List<T>) connectionManager.executeCursorProcedure(pkg, "getall", params).toListOf(object.getClass());
+				return connectionManager.executeCursorProcedure(pkg, "getall", params).toListOf(c);
 			}
 		}
 		return new ArrayList<T>();
@@ -218,7 +229,7 @@ public class ObjectManager {
 	public <T extends DatabaseObject> boolean create(T object) {
 		if(packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
-			if(pkg.canCallProcedure("new")) {
+			if(canCallProcedure(object.getClass(), Createable.class, pkg, "new")) {
 				Object[] params = getParameters(DatabaseFieldType.NEW, object);
 				if(params.length == 0) {
 					return connectionManager.executeStoredProcedure(pkg, "new", object.primaryKey);
@@ -239,7 +250,7 @@ public class ObjectManager {
 	public <T extends DatabaseObject> boolean update(T object) {
 		if(packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
-			if(pkg.canCallProcedure("update")) {
+			if(canCallProcedure(object.getClass(), Updateable.class, pkg, "update")) {
 				Object[] params = getParameters(DatabaseFieldType.UPDATE, object);
 				return connectionManager.executeStoredProcedure(pkg, "update"+ object.getClass().getSimpleName().replace("View", ""), params);
 			}
@@ -256,13 +267,7 @@ public class ObjectManager {
 	 * @return
 	 */
 	public <T extends DatabaseObject> boolean delete(T object) {
-		if(packageIsAvailable(object.getClass())) {
-			Package pkg = getPackage(object.getClass());
-			if(pkg.canCallProcedure("delete") && object.getPrimaryKey() != null) {
-				return connectionManager.executeStoredProcedure(pkg, "delete", object.getPrimaryKey());
-			}
-		}
-		return false;
+		return delete(object.getPrimaryKey(), object.getClass());
 	}
 	
 	/**
@@ -274,7 +279,7 @@ public class ObjectManager {
 	public <T extends DatabaseObject> boolean delete(String primaryKey, Class<T> type) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(pkg.canCallProcedure("delete")) {
+			if(canCallProcedure(type, Deleteable.class, pkg, "delete")) {
 				return connectionManager.executeStoredProcedure(pkg, "delete", primaryKey);
 			}
 		}
@@ -292,7 +297,7 @@ public class ObjectManager {
 	public <T extends DatabaseObject> List<T> filter(Class<T> type, Object... filterBy) {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(pkg.canCallProcedure("filter")) {
+			if(canCallProcedure(type, Filterable.class, pkg, "filter")) {
 				return (List<T>) connectionManager.executeCursorProcedure(pkg, "filter", filterBy).toListOf(type);
 			}
 		}
