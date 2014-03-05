@@ -59,7 +59,7 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 		this.person = new Person();
 		this.person.setFirstName(r.get("first_name"));
 		this.person.setLastName(r.get("last_name"));
-		this.person.setSalary(r.getDouble("salary"));
+		this.person.setSalary(r.getDouble("person_salary"));
 	}
 	
 	public void setJob(MyResultRow r) {
@@ -180,6 +180,7 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	 */
 	@Override
 	public String toString() {
-		return "PersonView [primaryKey=" + primaryKey + ", personName=" + personName + ", person=" + person + ", job=" + job + "]";
+		return "PersonView [primaryKey=" + primaryKey + ", personName=" + personName + ", salary=" + person.getSalary() + 
+				", jobName=" + job.getName() + ", jobType=" + job.getJobType() + ", jobDescription=" + job.getDescription() + "]";
 	}
 }
