@@ -4,7 +4,9 @@
 package com.github.mlaursen.database.objects;
 
 /**
- * @author mikkel.laursen
+ * A Java representation of an Oracle Stored Procedure.
+ * 
+ * @author mlaursen
  * 
  */
 public class Procedure {
@@ -13,13 +15,32 @@ public class Procedure {
 	private boolean hasCursor;
 	private String[] params;
 	
+	/**
+	 * {@link #Procedure(String, String, boolean, String...)} The display name is set to the name and the procedure automatically has a
+	 * cursor
+	 * 
+	 * @param n
+	 *            The procedure name
+	 * @param params
+	 *            The optional parameters for the procedure
+	 */
 	public Procedure(String n, String... params) {
-		name = n;
-		displayName = n;
-		hasCursor = true;
-		this.params = params;
+		this(n, n, true, params);
 	}
 	
+	/**
+	 * Creates an Oracle Stored Procedure representation
+	 * 
+	 * @param n
+	 *            The procedure name
+	 * @param displayName
+	 *            The procedure display name. The display name is used when attempting to call a procedure as a user. The {@link #name} will
+	 *            be used when executing the stored procedure
+	 * @param hasCursor
+	 *            Boolean if the procedure has a cursor
+	 * @param params
+	 *            The optional parameters for the procedure
+	 */
 	public Procedure(String n, String displayName, boolean hasCursor, String... params) {
 		name = n;
 		this.displayName = displayName;
@@ -44,17 +65,17 @@ public class Procedure {
 	}
 	
 	/**
-	 * THIS AUTOMATICALLY ADDES A :CURSOR AS THE FINAL PARAMETER IF HASCURSOR IS TRUE Turns everything to uppercase
+	 * THIS AUTOMATICALLY ADDS A :CURSOR AS THE FINAL PARAMETER IF HASCURSOR IS TRUE Turns everything to uppercase
 	 */
 	public String toString() {
-		String s = name.toUpperCase() + "(";
+		String s = name + "(";
 		for(int i = 0; i < params.length; i++) {
-			String p = params[i].toUpperCase();
+			String p = params[i];
 			s += ":" + p + (i + 1 < params.length ? ", " : "");
 			
 		}
 		s += hasCursor ? (params.length == 0 ? "" : ", ") + ":CURSOR" : "";
-		return s + ")";
+		return (s + ")").toUpperCase();
 	}
 	
 	/**
@@ -72,6 +93,12 @@ public class Procedure {
 		this.params = params;
 	}
 	
+	/**
+	 * Adds parameters to the stored procedure
+	 * 
+	 * @param params
+	 *            Parameters to add
+	 */
 	public void addParams(String... params) {
 		int psize = this.params.length;
 		int ssize = params.length;
