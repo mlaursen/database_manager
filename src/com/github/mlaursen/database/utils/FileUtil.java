@@ -12,12 +12,13 @@ import java.nio.file.Paths;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 public class FileUtil {
-
+	
 	/**
 	 * http://stackoverflow.com/questions/326390/how-to-create-a-java-string-from-the-contents-of-a-file
+	 * 
 	 * @param path
 	 * @param encoding
 	 * @return

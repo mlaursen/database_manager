@@ -11,12 +11,13 @@ import java.util.Map;
  * 
  */
 public class MyResultRow {
+	
 	private Map<String, String> row;
-
+	
 	public MyResultRow() {
 		this.row = new HashMap<String, String>();
 	}
-
+	
 	/**
 	 * Adds a column and it's value to the results
 	 * 
@@ -28,7 +29,7 @@ public class MyResultRow {
 	public void add(String column, String value) {
 		this.row.put(column, value);
 	}
-
+	
 	/**
 	 * Returns a string from the row
 	 * 
@@ -40,10 +41,9 @@ public class MyResultRow {
 		String col = this.row.get(column.toLowerCase());
 		return col == null ? this.row.get("test_" + column.toLowerCase()) : col;
 	}
-
+	
 	/**
-	 * Attempts to get an integer from the row Returns 0 if it can not be parsed
-	 * as an integer or it is null
+	 * Attempts to get an integer from the row Returns 0 if it can not be parsed as an integer or it is null
 	 * 
 	 * @param column
 	 *            The column name
@@ -53,14 +53,13 @@ public class MyResultRow {
 		try {
 			return Integer.parseInt(get(column));
 		}
-		catch (NumberFormatException | NullPointerException e) {
+		catch(NumberFormatException | NullPointerException e) {
 			return 0;
 		}
 	}
-
+	
 	/**
-	 * Attempts to get a double from the row. Returns 0.0 if it can not be
-	 * parsed as a double or it is null
+	 * Attempts to get a double from the row. Returns 0.0 if it can not be parsed as a double or it is null
 	 * 
 	 * @param column
 	 *            The column name
@@ -70,15 +69,15 @@ public class MyResultRow {
 		try {
 			return Double.parseDouble(get(column));
 		}
-		catch (NullPointerException | NumberFormatException e) {
+		catch(NullPointerException | NumberFormatException e) {
 			return 0;
 		}
 	}
-
+	
 	public String toString() {
 		return this.row.toString();
 	}
-
+	
 	/**
 	 * Calls the constructor for a Database Object using a MyResultRow
 	 * 
@@ -90,7 +89,7 @@ public class MyResultRow {
 		try {
 			return type.cast(type.getConstructor(MyResultRow.class).newInstance(this));
 		}
-		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+		catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 			return null;
