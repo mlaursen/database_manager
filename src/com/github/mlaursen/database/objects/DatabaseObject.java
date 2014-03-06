@@ -49,12 +49,26 @@ public abstract class DatabaseObject {
 	/**
 	 * Sets the primary key to the database column described as the primaryKeyName. The default is 'id'
 	 * 
+	 * @param primaryKeyName
+	 *            The primary key name to use
 	 * @param r
 	 *            A MyResultRow
 	 */
-	public DatabaseObject(MyResultRow r) {
+	public DatabaseObject(String primaryKeyName, MyResultRow r) {
+		this.primaryKeyName = primaryKeyName;
 		if(r.get(primaryKeyName) != null)
 			setAll(r);
+	}
+	
+	/**
+	 * Sets all fields that have a MyResultRow as the parameter. It also sets the primaryKeyName to id
+	 * {@link #DatabaseObject(String, MyResultRow)}
+	 * 
+	 * @param r
+	 *            A MyResultROw
+	 */
+	public DatabaseObject(MyResultRow r) {
+		this("id", r);
 	}
 	
 	/**
