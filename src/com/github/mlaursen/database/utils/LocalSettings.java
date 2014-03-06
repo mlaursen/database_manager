@@ -11,7 +11,7 @@ import java.util.Properties;
  * database=jdbc\:oracle\:thin\:@localhost\:1521\:xe dbuser=testuser
  * 
  * 
- * @author mikkel.laursen
+ * @author mmlaursen
  * 
  */
 public class LocalSettings {
@@ -29,6 +29,7 @@ public class LocalSettings {
 	 * Changes the source url to the given source url
 	 * 
 	 * @param pSource
+	 *            the Properties source path
 	 */
 	public void setpropertiesSource(String pSource) {
 		propertiesSource = pSource;
@@ -37,7 +38,7 @@ public class LocalSettings {
 	/**
 	 * Attempts to load the properties file from the propertiesSource location.
 	 * 
-	 * @return
+	 * @return A Properties
 	 * @throws IOException
 	 *             is thrown if the file does not exist
 	 */

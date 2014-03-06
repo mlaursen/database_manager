@@ -4,7 +4,7 @@
 package com.github.mlaursen.database.utils;
 
 /**
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public class SqlFormatUtil {
@@ -12,13 +12,15 @@ public class SqlFormatUtil {
 	/**
 	 * Formats a sql create query to add TEST_ in front of all the tables and views and sequences.
 	 * 
-	 * @param packageDeclaration
+	 * @param sqlToChange
+	 *            The string of sql to change
 	 * @param testingClasses
-	 * @return
+	 *            The array of classes to append test_ to
+	 * @return Formatted sql string
 	 */
-	public static String formatSqlForTesting(String packageDeclaration, String[] testingClasses) {
-		packageDeclaration = packageDeclaration.toUpperCase();
-		String[] lines = packageDeclaration.split("\\r?\\n");
+	public static String formatSqlForTesting(String sqlToChange, String[] testingClasses) {
+		sqlToChange = sqlToChange.toUpperCase();
+		String[] lines = sqlToChange.split("\\r?\\n");
 		String pkg = "";
 		for(int i = 0; i < lines.length; i++) {
 			String line = lines[i];
