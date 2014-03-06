@@ -1,8 +1,11 @@
 package com.github.mlaursen.database.objects;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.github.mlaursen.database.utils.DateUtil;
 
 /**
  * A representation of a database row
@@ -71,6 +74,22 @@ public class MyResultRow {
 		}
 		catch(NullPointerException | NumberFormatException e) {
 			return 0;
+		}
+	}
+	
+	/**
+	 * Returns a date from the database by column name. Returns null if it was null
+	 * 
+	 * @param column
+	 *            The column name
+	 * @return A date from a database or null
+	 */
+	public Date getDate(String column) {
+		try {
+			return DateUtil.stringToDate(get(column));
+		}
+		catch(NullPointerException e) {
+			return null;
 		}
 	}
 	
