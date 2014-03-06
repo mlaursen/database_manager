@@ -20,17 +20,19 @@ import com.github.mlaursen.database.objects.Procedure;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 public class TestAll {
+	
 	protected static TestingObjectManager tom = new TestingObjectManager();
 	static {
-		//tom.setDelete(false);
+		// tom.setDelete(false);
 		tom.setDebug(true);
 	}
 	
 	@ClassRule
 	public static ExternalResource resource = new ExternalResource() {
+		
 		@Override
 		protected void after() {
 			tom.cleanUp();
@@ -66,7 +68,7 @@ public class TestAll {
 			assertTrue(jobTypes.contains(jt));
 		}
 	}
-
+	
 	@Test
 	public void testJob() {
 		tom.addPackage(Job.class);
@@ -114,14 +116,15 @@ public class TestAll {
 		Person test = new Person("Test", "Tester", "0", 45000);
 		assertTrue(tom.create(test));
 		
-		/* This technically works because it can retrieve the 
-		 * first name and last name columns
+		/*
+		 * This technically works because it can retrieve the first name and last name columns
 		 */
 		Person test2 = tom.get(0, Person.class);
 		assertNotNull(test2);
 		assertEquals(test, test2);
 		
-		PersonView testView = new PersonView("TESTER, TEST", jDev.getJobType().getPrimaryKey(), jDev.getName(), jDev.getDescription(), 45000);
+		PersonView testView = new PersonView("TESTER, TEST", jDev.getJobType().getPrimaryKey(), jDev.getName(), jDev.getDescription(),
+				45000);
 		PersonView testViewDB = tom.get(0, PersonView.class);
 		assertEquals(testView, testViewDB);
 		assertFalse(tom.delete(testViewDB));

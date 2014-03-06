@@ -15,30 +15,30 @@ import com.github.mlaursen.database.objecttypes.Getable;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 @DatabaseViewClass(Person.class)
 public class PersonView extends DatabaseView implements Getable, GetAllable {
-
+	
 	protected Person person;
 	protected Job job;
 	protected String personName;
-	public PersonView() { }
-
+	
+	public PersonView() {}
+	
 	/**
 	 * @param primaryKey
 	 */
 	public PersonView(String primaryKey) {
 		super(primaryKey);
-		//this.primaryKey = primaryKey;
+		// this.primaryKey = primaryKey;
 	}
-
 	
 	public PersonView(MyResultRow r) {
 		super(r);
-		//setAll(r);
+		// setAll(r);
 	}
-
+	
 	public PersonView(String personName, String jobType, String jobName, String jobDescription, double personSalary) {
 		setPersonName(personName);
 		this.person.setSalary(personSalary);
@@ -66,16 +66,16 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 		this.personName = r.get("person_name");
 	}
 	
-	
 	/**
 	 * @return the personName
 	 */
 	public String getPersonName() {
 		return this.personName;
 	}
-
+	
 	/**
-	 * @param personName the personName to set
+	 * @param personName
+	 *            the personName to set
 	 */
 	public void setPersonName(String personName) {
 		this.personName = personName;
@@ -98,58 +98,62 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	public String getPersonLastName() {
 		return this.person.getLastName();
 	}
-
+	
 	/**
 	 * @return the personSalary
 	 */
 	public double getPersonSalary() {
 		return this.person.getSalary();
 	}
-
+	
 	/**
-	 * @param personSalary the personSalary to set
+	 * @param personSalary
+	 *            the personSalary to set
 	 */
 	public void setPersonSalary(double salary) {
 		this.person.setSalary(salary);
 	}
-
+	
 	/**
 	 * @return the jobType
 	 */
 	public JobType getJobType() {
 		return this.job.getJobType();
 	}
-
+	
 	/**
-	 * @param jobType the jobType to set
+	 * @param jobType
+	 *            the jobType to set
 	 */
 	public void setJobType(JobType jobType) {
 		this.job.setJobType(jobType);
 	}
-
+	
 	/**
 	 * @return the jobName
 	 */
 	public String getJobName() {
 		return this.job.getName();
 	}
-
+	
 	/**
-	 * @param jobName the jobName to set
+	 * @param jobName
+	 *            the jobName to set
 	 */
 	public void setJobName(String jobName) {
 		this.job.setName(jobName);
 	}
-
+	
 	/**
 	 * @return the jobDescription
 	 */
 	public String getJobDescription() {
 		return this.job.getDescription();
 	}
-
+	
 	/**
-	 * @param jobDescription the jobDescription to set
+	 * @param jobDescription
+	 *            the jobDescription to set
 	 */
 	public void setJobDescription(String jobDescription) {
 		this.job.setDescription(jobDescription);
@@ -160,7 +164,6 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 		return Arrays.asList(new Procedure("test"));
 	}
 	
-	
 	@Override
 	public boolean equals(Object o) {
 		if(o instanceof PersonView) {
@@ -169,13 +172,15 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 		}
 		return false;
 	}
-
-	/* (non-Javadoc)
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "PersonView [primaryKey=" + primaryKey + ", personName=" + personName + ", salary=" + person.getSalary() + 
-				", jobName=" + job.getName() + ", jobType=" + job.getJobType() + ", jobDescription=" + job.getDescription() + "]";
+		return "PersonView [primaryKey=" + primaryKey + ", personName=" + personName + ", salary=" + person.getSalary() + ", jobName="
+				+ job.getName() + ", jobType=" + job.getJobType() + ", jobDescription=" + job.getDescription() + "]";
 	}
 }
