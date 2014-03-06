@@ -24,15 +24,15 @@ import com.github.mlaursen.database.objects.Procedure;
  */
 public class TestAll {
 	
-	protected static TestingObjectManager tom = new TestingObjectManager();
-	static {
-		// tom.setDelete(false);
-		//tom.setDebug(true);
-	}
-	
+	protected static TestingObjectManager tom = new TestingObjectManager(true, false, false, "job", "job_type", "person");	
 	@ClassRule
 	public static ExternalResource resource = new ExternalResource() {
-		
+		@Override
+		protected void before() {
+			tom.addPackage(JobType.class);
+			tom.addPackage(Job.class);
+			tom.addPackageWithView(Person.class, PersonView.class);
+		}
 		@Override
 		protected void after() {
 			tom.cleanUp();
@@ -41,7 +41,7 @@ public class TestAll {
 	
 	@Test
 	public void testJobType() {
-		tom.addPackage(JobType.class);
+		//tom.addPackage(JobType.class);
 		Procedure get = new Procedure("get", "primarykey");
 		Procedure getAll = new Procedure("getall");
 		getAll.setName("get");
@@ -71,7 +71,7 @@ public class TestAll {
 	
 	@Test
 	public void testJob() {
-		tom.addPackage(Job.class);
+		//tom.addPackage(Job.class);
 		JobType it = tom.get("it", JobType.class);
 		JobType business = tom.get("business", JobType.class);
 		JobType hr = tom.get("hr", JobType.class);
@@ -110,7 +110,7 @@ public class TestAll {
 	
 	@Test
 	public void testPerson() {
-		tom.addPackageWithView(Person.class, PersonView.class);
+		//tom.addPackageWithView(Person.class, PersonView.class);
 		Job jDev = tom.get(0, Job.class);
 		assertNotNull(jDev);
 		Person test = new Person("Test", "Tester", "0", 45000);

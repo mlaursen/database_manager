@@ -5,6 +5,8 @@ package com.github.mlaursen.database.managers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
@@ -25,7 +27,7 @@ public class TestingObjectManager extends ObjectManager {
 	private boolean delete = true;
 	private boolean debug = false;
 	private boolean copyData = false;
-	
+	private List<String> testingClasses;
 	/**
 	 * 
 	 * @param delete
@@ -37,24 +39,30 @@ public class TestingObjectManager extends ObjectManager {
 	 * @param databaseObject
 	 *            A database object to generate a package for
 	 */
-	public TestingObjectManager(boolean delete, boolean debug, boolean copyData, Class<? extends DatabaseObject> databaseObject) {
-		this(databaseObject);
+	public TestingObjectManager(boolean delete, boolean debug, boolean copyData, String... objects) {
 		this.delete = delete;
 		this.debug = debug;
 		this.copyData = copyData;
+		this.packageMap = new HashMap<String, Integer>();
+		this.packages = new ArrayList<Package>();
+		this.availablePackages = new ArrayList<String>();
+		this.connectionManager = new TestingConnectionManager();
+		this.testingClasses = Arrays.asList(objects);
 	}
-	
+	/*
 	@SafeVarargs
 	public TestingObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		super();
 		connectionManager = new TestingConnectionManager();
-		this.databaseObjects = databaseObjects.length > 0 ? Arrays.asList(databaseObjects)
-				: new ArrayList<Class<? extends DatabaseObject>>();
+		this.packages = new ArrayList<Package>();
+		this.packageMap = new HashMap<String, Integer>();
+		this.availablePackages = new ArrayList<String>();
+		this.databaseObjects = new ArrayList<Class<? extends DatabaseObject>>();
 		for(Class<? extends DatabaseObject> c : databaseObjects) {
 			addPackage(c);
 		}
 	}
-	
+	*/
 	@Override
 	public void addPackageWithView(Class<? extends DatabaseObject> baseClass, Class<? extends DatabaseView> view) {
 		Package pkg = new Package(baseClass, true);
@@ -71,14 +79,14 @@ public class TestingObjectManager extends ObjectManager {
 			System.out.println("Creating the Tables and Sequences for " + baseClass);
 			connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(baseClass), debug, copyData);
 			System.out.println("Creating Database View: " + view);
-			connectionManager.createTestingView(ClassUtil.formatClassName(view), databaseObjects, debug);
+			connectionManager.createTestingView(ClassUtil.formatClassName(view), testingClasses, debug);
 			System.out.println("Creating Package for " + baseClass);
-			connectionManager.createTestingPackage(Package.formatClassName(baseClass), databaseObjects, debug);
+			connectionManager.createTestingPackage(Package.formatClassName(baseClass), testingClasses, debug);
 		}
 		else {
 			connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(baseClass), debug, copyData);
-			connectionManager.createTestingView(ClassUtil.formatClassName(view), databaseObjects, debug);
-			connectionManager.createTestingPackage(Package.formatClassName(baseClass), databaseObjects, debug);
+			connectionManager.createTestingView(ClassUtil.formatClassName(view), testingClasses, debug);
+			connectionManager.createTestingPackage(Package.formatClassName(baseClass), testingClasses, debug);
 		}
 	}
 	
@@ -97,14 +105,14 @@ public class TestingObjectManager extends ObjectManager {
 			if(debug) {
 				System.out.println("Creating the test view " + type);
 			}
-			connectionManager.createTestingView(ClassUtil.formatClassName(type), databaseObjects, debug);
+			connectionManager.createTestingView(ClassUtil.formatClassName(type), testingClasses, debug);
 		}
 		else {
 			if(debug) {
 				System.out.println("Creating the Tables, Sequences and Packages for " + type);
 			}
 			connectionManager.createTestingTableAndSequence(ClassUtil.formatClassName(type), debug, copyData);
-			connectionManager.createTestingPackage(Package.formatClassName(type), databaseObjects, debug);
+			connectionManager.createTestingPackage(Package.formatClassName(type), testingClasses, debug);
 		}
 	}
 	

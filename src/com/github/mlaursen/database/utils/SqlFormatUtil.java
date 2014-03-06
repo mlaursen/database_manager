@@ -3,6 +3,9 @@
  */
 package com.github.mlaursen.database.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * @author mlaursen
@@ -19,7 +22,7 @@ public class SqlFormatUtil {
 	 *            The array of classes to append test_ to
 	 * @return Formatted sql string
 	 */
-	public static String formatSqlForTesting(String sqlToChange, String[] testingClasses) {
+	public static String formatSqlForTesting(String sqlToChange, List<String> testingClasses) {
 		sqlToChange = sqlToChange.toUpperCase();
 		String[] lines = sqlToChange.split("\\r?\\n");
 		String pkg = "";
@@ -47,5 +50,17 @@ public class SqlFormatUtil {
 			pkg += line + (i + 1 < lines.length ? "\n" : "");
 		}
 		return pkg;
+	}
+	/**
+	 * Formats a sql create query to add TEST_ in front of all the tables and views and sequences.
+	 * 
+	 * @param sqlToChange
+	 *            The string of sql to change
+	 * @param testingClasses
+	 *            The array of classes to append test_ to
+	 * @return Formatted sql string
+	 */
+	public static String formatSqlForTesting(String sqlToChange, String[] testingClasses) {
+		return formatSqlForTesting(sqlToChange, Arrays.asList(testingClasses));
 	}
 }

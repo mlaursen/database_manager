@@ -100,12 +100,8 @@ public class TestingConnectionManager extends ConnectionManager {
 	 * @param debug
 	 *            Boolean if debugging statements should be printed
 	 */
-	public void createTestingPackage(String packageName, List<Class<? extends DatabaseObject>> classes, boolean debug) {
-		String[] testingClasses = new String[classes.size()];
-		for(int i = 0; i < testingClasses.length; i++) {
-			testingClasses[i] = ClassUtil.formatClassName(classes.get(i)).replace("_View", "");
-		}
-		debug(debug, "Testing classes: " + Arrays.toString(testingClasses));
+	public void createTestingPackage(String packageName, List<String> testingClasses, boolean debug) {
+		debug(debug, "Testing classes: " + testingClasses);
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -164,11 +160,7 @@ public class TestingConnectionManager extends ConnectionManager {
 	 * @param debug
 	 *            Boolean if debugging statements should be printed
 	 */
-	public void createTestingView(String tableName, List<Class<? extends DatabaseObject>> classes, boolean debug) {
-		String[] testingClasses = new String[classes.size()];
-		for(int i = 0; i < testingClasses.length; i++) {
-			testingClasses[i] = ClassUtil.formatClassName(classes.get(i)).replace("_View", "");
-		}
+	public void createTestingView(String tableName, List<String> testingClasses, boolean debug) {
 		String vName = tableName.toUpperCase();
 		
 		Connection conn = null;
