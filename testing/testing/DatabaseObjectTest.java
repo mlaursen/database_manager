@@ -30,23 +30,26 @@ import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 public class DatabaseObjectTest {
+	
 	public static class TestTable extends DatabaseObject implements Getable, Createable, Updateable, Deleteable, Filterable, GetAllable {
-		@DatabaseField(values={DatabaseFieldType.NEW, DatabaseFieldType.UPDATE, DatabaseFieldType.FILTER})
+		
+		@DatabaseField(values = { DatabaseFieldType.NEW, DatabaseFieldType.UPDATE, DatabaseFieldType.FILTER })
 		private String name;
 		
-		@DatabaseField(values={DatabaseFieldType.NEW})
+		@DatabaseField(values = { DatabaseFieldType.NEW })
 		private MyClob orange;
-
+		
 		public TestTable() {}
+		
 		public TestTable(String name, String orange) {
 			super();
 			this.name = name;
 			this.orange = new MyClob(orange);
 		}
-
+		
 		/**
 		 * @param r
 		 */
@@ -54,16 +57,17 @@ public class DatabaseObjectTest {
 			super(r);
 			// TODO Auto-generated constructor stub
 		}
-
+		
 		/**
 		 * @return the name
 		 */
 		public String getName() {
 			return name;
 		}
-
+		
 		/**
-		 * @param name the name to set
+		 * @param name
+		 *            the name to set
 		 */
 		public void setName(String name) {
 			this.name = name;
@@ -72,16 +76,17 @@ public class DatabaseObjectTest {
 		public void setName(MyResultRow r) {
 			this.name = r.get("name");
 		}
-
+		
 		/**
 		 * @return the orange
 		 */
 		public MyClob getOrange() {
 			return orange;
 		}
-
+		
 		/**
-		 * @param orange the orange to set
+		 * @param orange
+		 *            the orange to set
 		 */
 		public void setOrange(MyClob orange) {
 			this.orange = orange;
@@ -106,8 +111,10 @@ public class DatabaseObjectTest {
 			del.setHasCursor(false);
 			return Arrays.asList(del);
 		}
-
-		/* (non-Javadoc)
+		
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -133,7 +140,7 @@ public class DatabaseObjectTest {
 		Package pkg = m.getPackage(TestTable.class);
 		Procedure createProc = pkg.getProcedure("new");
 		Procedure updateProc = pkg.getProcedure("updatetesttable");
-		Procedure getProc    = pkg.getProcedure("get");
+		Procedure getProc = pkg.getProcedure("get");
 		Procedure getAllProc = pkg.getProcedure("getall");
 		Procedure filterProc = pkg.getProcedure("filter");
 		Procedure deleteProc = pkg.getProcedure("delete");
@@ -172,5 +179,5 @@ public class DatabaseObjectTest {
 		
 		m.cleanUp();
 	}
-
+	
 }

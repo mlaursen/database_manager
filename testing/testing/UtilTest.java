@@ -35,10 +35,10 @@ import com.github.mlaursen.examples.PersonJobExample.PersonView;
 
 /**
  * @author mikkel.laursen
- *
+ * 
  */
 public class UtilTest {
-
+	
 	@Test
 	public void testFormatClassName() {
 		assertEquals(formatClassName(ClassUtil.class), "Class_Util");
@@ -48,7 +48,7 @@ public class UtilTest {
 		assertEquals(formatClassName(DatabaseObject.class, "_", ""), "DatabaseObject");
 		assertEquals(formatClassName(DatabaseObject.class, "_", "_"), "DatabaseObject");
 	}
-
+	
 	@Test
 	public void testCanParseInt() {
 		assertTrue(canParseInt("1"));
@@ -58,19 +58,22 @@ public class UtilTest {
 		assertTrue(canParseInt("-100"));
 		assertFalse(canParseInt(""));
 	}
-	static class Nesting extends DatabaseObject { }
-	static class Nesting2 extends Nesting { }
-	static class Nesting3 extends Nesting2 { }
+	
+	static class Nesting extends DatabaseObject {}
+	
+	static class Nesting2 extends Nesting {}
+	
+	static class Nesting3 extends Nesting2 {}
 	
 	@Test
 	public void testGetClassList() {
-		Class<?>[] dbvXpct = {DatabaseObject.class, DatabaseView.class};
+		Class<?>[] dbvXpct = { DatabaseObject.class, DatabaseView.class };
 		List<Class<?>> dbvList = getClassList(DatabaseView.class);
 		for(int i = 0; i < dbvXpct.length; i++) {
 			assertEquals(dbvList.get(i), dbvXpct[i]);
 		}
 		
-		Class<?>[] nestingExpected = {DatabaseObject.class, Nesting.class, Nesting2.class, Nesting3.class};
+		Class<?>[] nestingExpected = { DatabaseObject.class, Nesting.class, Nesting2.class, Nesting3.class };
 		List<Class<?>> nestingList = getClassList(Nesting3.class);
 		for(int i = 0; i < nestingExpected.length; i++) {
 			assertEquals(nestingList.get(i), nestingExpected[i]);
@@ -90,10 +93,10 @@ public class UtilTest {
 		try {
 			String[] params = { "job", "person", "temp_account", "account" };
 			for(int i = 1; i <= 6; i++) {
-				test("t"+i+".txt", "e"+i+".txt", params);
+				test("t" + i + ".txt", "e" + i + ".txt", params);
 			}
 		}
-		catch (IOException e) {
+		catch(IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
