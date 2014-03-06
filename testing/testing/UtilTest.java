@@ -7,14 +7,15 @@ import static com.github.mlaursen.database.utils.ClassUtil.canParseInt;
 import static com.github.mlaursen.database.utils.ClassUtil.formatClassName;
 import static com.github.mlaursen.database.utils.ClassUtil.getClassList;
 import static com.github.mlaursen.database.utils.ClassUtil.isClassCallable;
+import static com.github.mlaursen.database.utils.DateUtil.sameDate;
+import static com.github.mlaursen.database.utils.DateUtil.stringToDate;
+import static com.github.mlaursen.database.utils.DateUtil.sysdateToDate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.sql.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -91,8 +92,8 @@ public class UtilTest {
 	@Test
 	public void testPackageToTest() {
 		try {
-			String[] params = { "job", "person", "temp_account", "account" };
-			for(int i = 1; i <= 6; i++) {
+			String[] params = { "job", "person", "temp_account", "account", "account_setting" };
+			for(int i = 1; i <= 7; i++) {
 				test("t" + i + ".txt", "e" + i + ".txt", params);
 			}
 		}
@@ -112,5 +113,28 @@ public class UtilTest {
 		assertTrue(isClassCallable(PersonView.class, Getable.class));
 		assertFalse(isClassCallable(PersonView.class, Updateable.class));
 		assertFalse(isClassCallable(PersonView.class, Deleteable.class));
+	}
+	
+	@Test
+	public void testSameDay() {
+		assertTrue(sameDate(Date.valueOf("1990-01-01"), Date.valueOf("1990-01-01")));
+		assertFalse(sameDate(Date.valueOf("1991-01-01"), Date.valueOf("1990-01-01")));
+	}
+	
+	
+	@Test
+	public void testStringToDate() {
+		Date d = Date.valueOf("1990-02-21");
+		assertTrue(sameDate(stringToDate("21-FEB-1990", "dd-MMM-yyyy"), d));
+		assertTrue(sameDate(stringToDate("02-21-1990", "MM-dd-yyyy"), d));
+		assertTrue(sameDate(stringToDate("21-02-1990", "dd-MM-yyyy"), d));
+		assertTrue(sameDate(stringToDate("1990-02-21"), d));
+		assertTrue(sameDate(stringToDate("02/21/1990"), d));
+	}
+	
+	@Test
+	public void testSysdateToString() {
+		assertTrue(sameDate(sysdateToDate("1990-02-21 8:22:13"), sysdateToDate("1990-02-21 8:22:13")));
+		assertTrue(sameDate(sysdateToDate("1990-02-21 8:22:13"), Date.valueOf("1990-02-21")));
 	}
 }

@@ -33,8 +33,15 @@ public class Test {
 		String s = "INSERT INTO JOB(ID, JOB_TYPE, DESCRIPTION)";
 		String s2 = "CREATE OR REPLACE PACKAGE BODY JOB_PKG AS";
 		String regex = "JOB";
-		String[] ss = s.split("\\s(?=" + regex + ")((?!" + regex + "\\_)|(?=" + regex + "\\_PKG)|(?=" + regex + "\\_VIEW))");
+		String[] ss = s.split("\\s(?=\\b" + regex + "\\b)((?!" + regex + "\\_)|(?=" + regex + "\\_PKG)|(?=" + regex + "\\_VIEW))");
 		String[] aa = s.split("\\s(?=" + regex + ")((?!" + regex + "\\_)|(?=" + regex + "_PKG)|(?=" + regex + "_VIEW))");
+		
+		String string = "WHERE ACCOUNTID=PACCTID";
+		String r = "\\s(?=\\bJOB\\b)(?=\\bJOB\\b((\\_VIEW)|(\\_PKG))|(?!\bJOB\\_))";
+		System.out.println(r);
+		//ss = s2.split(r);
+		regex = "ACCOUNT";
+		System.out.println(Arrays.toString(string.split("\\s(?=\\b"+regex+"(\\_VIEW|\\_PKG|[^_])?\\b)")));
 		for(String str : ss) {
 			System.out.println(str);
 		}

@@ -3,6 +3,8 @@
  */
 package com.github.mlaursen.database.utils;
 
+import java.util.Arrays;
+
 /**
  * @author mlaursen
  * 
@@ -28,17 +30,18 @@ public class SqlFormatUtil {
 				if(s.length() > line.trim().length())
 					continue;
 				
-				String regex = s.toUpperCase();
-				String myregex = "\\s(?=" + regex + ")((?!" + regex + "\\_)|(?=" + regex + "_PKG)|(?=" + regex + "_VIEW))";
+				s = s.toUpperCase();
+				String regex = ClassUtil.combineWith(s.split("\\_"), "\\_");
+				String myregex = "\\s(?=\\b"+regex+"(\\_VIEW|\\_PKG|[^_])?\\b)";
 				String[] spaceSplits = line.split(myregex);
 				String s2 = "";
 				for(int j = 0; j < spaceSplits.length; j++) {
 					s2 += (j == 0 ? "" : " TEST_") + spaceSplits[j];
 				}
-				String[] seqs = s2.split("\\sSEQ_" + regex);
+				String[] seqs = s2.split("(?=\\s)?SEQ\\_" + regex);
 				s2 = "";
 				for(int j = 0; j < seqs.length; j++) {
-					s2 += (j == 0 ? "" : " SEQ_TEST_" + regex) + seqs[j];
+					s2 += (j == 0 ? "" : "SEQ_TEST_" + s) + seqs[j];
 				}
 				line = s2;
 			}
