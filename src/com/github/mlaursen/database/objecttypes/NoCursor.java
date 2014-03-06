@@ -4,7 +4,9 @@
 package com.github.mlaursen.database.objecttypes;
 
 /**
- * @author mikkel.laursen
+ * Interface that lets the generator know that the stored procedure does not have a cursor
+ * 
+ * @author mlaursen
  * 
  */
 public interface NoCursor {
