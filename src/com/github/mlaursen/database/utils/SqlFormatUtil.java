@@ -3,7 +3,6 @@
  */
 package com.github.mlaursen.database.utils;
 
-import java.util.Arrays;
 
 /**
  * @author mlaursen
