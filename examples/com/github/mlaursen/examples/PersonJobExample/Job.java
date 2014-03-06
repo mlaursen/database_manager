@@ -26,7 +26,7 @@ import com.github.mlaursen.database.objecttypes.Updateable;
  * --> Updates all the values in the database for a job based on the job id DELETE(:PRIMARYKEY) --> Deletes a job in the database by the
  * primary key id
  * 
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public class Job extends DatabaseObject implements Getable, GetAllable, Updateable, Createable, Deleteable {
@@ -42,6 +42,16 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 	
 	public Job() {}
 	
+	/**
+	 * Constructor for a Job.
+	 * 
+	 * @param jobType
+	 *            The jobType as a string to be created as a JobType
+	 * @param name
+	 *            The Job Name
+	 * @param description
+	 *            The Job Description
+	 */
 	public Job(String jobType, String name, String description) {
 		this.jobType = new JobType(jobType);
 		this.name = name;
@@ -127,6 +137,9 @@ public class Job extends DatabaseObject implements Getable, GetAllable, Updateab
 		return "Job [primaryKey=" + primaryKey + ", jobType=" + jobType + ", name=" + name + ", description=" + description + "]";
 	}
 	
+	/**
+	 * This is for testing.
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o instanceof Job) {
