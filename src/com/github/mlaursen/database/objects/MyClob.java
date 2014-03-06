@@ -4,13 +4,15 @@
 package com.github.mlaursen.database.objects;
 
 /**
- * @author mikkel.laursen
+ * 
+ * Hacky way of creating a clob in the database.
+ * 
+ * @author mlaursen
  * 
  */
 public class MyClob {
 
 	private String v;
-
 	public MyClob(String v) {
 		this.v = v;
 	}

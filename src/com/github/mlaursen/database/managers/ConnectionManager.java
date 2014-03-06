@@ -76,7 +76,9 @@ public class ConnectionManager {
 	 * 
 	 * @return a Database Connection
 	 * @throws ClassNotFoundException
+	 *             The class could not be found for the property classForName
 	 * @throws SQLException
+	 *             A sql exception for being unable to get a connection
 	 */
 	public Connection getConnection() throws ClassNotFoundException, SQLException {
 		Class.forName(classForName);
@@ -124,7 +126,7 @@ public class ConnectionManager {
 	 *            be bound.
 	 * @param parameters
 	 *            Array of parameters to be bound to the procedure
-	 * @return
+	 * @return True if at least 1 row was updated in the database
 	 */
 	protected boolean executeStoredProcedure(String procedureName, Object... parameters) {
 		boolean success = false;
@@ -212,7 +214,8 @@ public class ConnectionManager {
 	/**
 	 * 
 	 * @param procedureName
-	 *            The full formatted String for the procedure. I.E. GET(:O, :CURSOR)
+	 *            The full formatted String for the procedure. I.E. GET(:O,
+	 *            :CURSOR)
 	 * @param parameters
 	 *            AN array of optional parameters to be passed to the stored
 	 *            procedure
@@ -253,7 +256,8 @@ public class ConnectionManager {
 	/**
 	 * Closes a database connection
 	 * 
-	 * @param conn The database connection to close
+	 * @param conn
+	 *            The database connection to close
 	 */
 	protected void closeConnection(Connection conn) {
 		if (conn != null) {
@@ -269,7 +273,8 @@ public class ConnectionManager {
 	/**
 	 * Closes a SQL CallableStatement
 	 * 
-	 * @param cs The CallableStatement to close
+	 * @param cs
+	 *            The CallableStatement to close
 	 */
 	protected void closeCallableStatement(CallableStatement cs) {
 		if (cs != null) {
@@ -284,7 +289,8 @@ public class ConnectionManager {
 
 	/**
 	 * 
-	 * @param s The Statement to close
+	 * @param s
+	 *            The Statement to close
 	 */
 	protected void closeStatement(Statement s) {
 		if (s != null) {
@@ -300,7 +306,8 @@ public class ConnectionManager {
 	/**
 	 * Closes a SQL ResultSet
 	 * 
-	 * @param rs The ResultSet to close
+	 * @param rs
+	 *            The ResultSet to close
 	 */
 	protected void closeResultSet(ResultSet rs) {
 		if (rs != null) {

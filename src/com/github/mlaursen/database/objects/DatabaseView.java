@@ -5,23 +5,18 @@ package com.github.mlaursen.database.objects;
 
 
 /**
- * @author mikkel.laursen
+ * @author mlaursen
  *
  */
 public class DatabaseView extends DatabaseObject {
 	
 	public DatabaseView() {}
-	/**
-	 * @param primaryKey
-	 */
-	public DatabaseView(String primaryKey) {
+	protected DatabaseView(String primaryKey) {
 		super(primaryKey);
-		// TODO Auto-generated constructor stub
 	}
-
-	/**
-	 * @param r
-	 */
+	protected DatabaseView(String primaryKey, String primaryKeyName) {
+		super(primaryKey, primaryKeyName);
+	}
 	public DatabaseView(MyResultRow r) {
 		super(r);
 	}
