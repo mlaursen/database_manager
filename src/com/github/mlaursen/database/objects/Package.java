@@ -72,9 +72,10 @@ public class Package {
 	
 	/**
 	 * Adds all custom stored procedures for a Database Object. It creates a new instance with the basic constructor and executes the
-	 * inheritated method getCustomProcedures and then adds each procedure from that list.
+	 * inherited method getCustomProcedures and then adds each procedure from that list.
 	 * 
 	 * @param databaseObject
+	 *            The database object to add the custom procedures for
 	 */
 	protected void addAllCustomProcedures(Class<? extends DatabaseObject> databaseObject) {
 		try {
@@ -94,6 +95,7 @@ public class Package {
 	 * Database View. The Database View has some extra stored procedures so you add the additional stored procedures to the package.
 	 * 
 	 * @param pkg
+	 *            The package to merge with this one
 	 */
 	public void mergeProcedures(Package pkg) {
 		mergeProcedures(pkg.getProcedures());
@@ -103,6 +105,7 @@ public class Package {
 	 * Merges a list of procedures to the current package.
 	 * 
 	 * @param procedures
+	 *            The list of procedures to merge
 	 */
 	public void mergeProcedures(List<Procedure> procedures) {
 		for(Procedure p : procedures) {
@@ -112,6 +115,12 @@ public class Package {
 		}
 	}
 	
+	/**
+	 * Generates the procedures for the default procedure types
+	 * 
+	 * @param databaseObject
+	 *            The database object to generate the default procedures for
+	 */
 	private void generateProcedures(Class<? extends DatabaseObject> databaseObject) {
 		generateProcedure(databaseObject, Getable.class);
 		generateProcedure(databaseObject, GetAllable.class);
@@ -121,19 +130,27 @@ public class Package {
 		generateProcedure(databaseObject, Createable.class);
 	}
 	
-	private void generateProcedure(Class<? extends DatabaseObject> databaseObject, Class<?> objectType) {
-		if(ClassUtil.objectAssignableFrom(databaseObject, objectType)) {
-			String procedureName = objectType.getSimpleName().toLowerCase().replace("able", "");
+	/**
+	 * Generates a procedure for the database object and the procedure type
+	 * 
+	 * @param databaseObject
+	 *            The database object
+	 * @param procedureType
+	 *            The database procedure interface
+	 */
+	private void generateProcedure(Class<? extends DatabaseObject> databaseObject, Class<?> procedureType) {
+		if(ClassUtil.objectAssignableFrom(databaseObject, procedureType)) {
+			String procedureName = procedureType.getSimpleName().toLowerCase().replace("able", "");
 			procedureName = procedureName.equals("create") ? "new" : procedureName
 					+ (procedureName.equals("update") ? databaseObject.getSimpleName().replace("View", "") : "");
-			Procedure p = new Procedure(procedureName, getParametersFromClass(DatabaseFieldType.classToType(objectType), databaseObject));
+			Procedure p = new Procedure(procedureName, getParametersFromClass(DatabaseFieldType.classToType(procedureType), databaseObject));
 			if(procedureName.equals("new") && p.getParams().length == 0) {
 				p.addParams(new String[] { "primarykey" });
 			}
-			if(ClassUtil.objectAssignableFrom(objectType, NoCursor.class)) {
+			if(ClassUtil.objectAssignableFrom(procedureType, NoCursor.class)) {
 				p.setHasCursor(false);
 			}
-			if(objectType.equals(GetAllable.class)) {
+			if(procedureType.equals(GetAllable.class)) {
 				p.setDisplayName("getall");
 				p.setName("get");
 			}
@@ -145,8 +162,10 @@ public class Package {
 	 * Converts the key/value pair of parameters into an ordered array of parameters
 	 * 
 	 * @param proc
+	 *            The database field type
 	 * @param c
-	 * @return
+	 *            The class to get parameters for
+	 * @return An array of string parameters
 	 */
 	private String[] getParametersFromClass(DatabaseFieldType proc, Class<?> c) {
 		Map<Integer, String> map = getParametersFromClassHelper(proc, c);
@@ -160,7 +179,7 @@ public class Package {
 	
 	/**
 	 * Phew. Big Helper. Gets all the super classes for a class and starts from superclass down to current class adding each annotation
-	 * within that class for the correspoding procedure as parameters.
+	 * within that class for the corresponding procedure as parameters.
 	 * 
 	 * @param proc
 	 *            Procedure type to lookup and possibly add parameters to the results
@@ -169,8 +188,8 @@ public class Package {
 	 * @param current
 	 *            A result set
 	 * @param counter
-	 *            Interger for the position to place the field in the procedure string
-	 * @return
+	 *            Integer for the position to place the field in the procedure string
+	 * @return Integer, String pair
 	 */
 	private Map<Integer, String> getParametersFromClassHelper(DatabaseFieldType proc, Class<?> clss) {
 		int counter = 0;
@@ -221,6 +240,11 @@ public class Package {
 		return current;
 	}
 	
+	/**
+	 * Get's the Package name
+	 * 
+	 * @return package name
+	 */
 	public String getName() {
 		return name;
 	}
@@ -238,7 +262,8 @@ public class Package {
 	 * ...) All upper case;
 	 * 
 	 * @param n
-	 * @return
+	 *            The procedure name
+	 * @return A string for the procedure or an empty string if the procedure does not exist
 	 */
 	private String callProcedure(String n) {
 		Procedure p = getProcedure(n);
@@ -250,7 +275,8 @@ public class Package {
 	 * displayName of GETALL while the name would be GET
 	 * 
 	 * @param pName
-	 * @return
+	 *            THe procedure name
+	 * @return A procedure or null
 	 */
 	public Procedure getProcedure(String pName) {
 		for(Procedure p : procedures) {
@@ -261,18 +287,14 @@ public class Package {
 	}
 	
 	/**
-	 * Creates an uppercase tring to be used in a {call ...}
+	 * Creates an upper case string to be used in a {call ...}
 	 * 
 	 * @param procedureName
-	 * @return
+	 *            The procedure name to call
+	 * @return A upper case string of the procedure with parameters
 	 */
 	public String call(String procedureName) {
 		return name.toUpperCase() + "." + callProcedure(procedureName);
-	}
-	
-	@Override
-	public String toString() {
-		return "Package [name=" + name.toUpperCase() + ", procedures=" + procedures + "]";
 	}
 	
 	/**
@@ -294,6 +316,7 @@ public class Package {
 	 * Adds a procedure to the package and updates the availableProcedures and procedureMap
 	 * 
 	 * @param p
+	 *            The procedure to add
 	 */
 	public void addProcedure(Procedure p) {
 		this.procedures.add(p);
@@ -305,7 +328,8 @@ public class Package {
 	 * Formats the class name for a DatabaseObject.
 	 * 
 	 * @param c
-	 * @return
+	 *            The database object class
+	 * @return The formatted name
 	 */
 	public static String formatClassName(Class<?> c) {
 		if(c.isAnnotationPresent(DatabaseViewClass.class)) {
@@ -319,10 +343,16 @@ public class Package {
 	 * Checks if a procedure exists by name
 	 * 
 	 * @param n
-	 * @return
+	 *            The procedure name
+	 * @return True of the procedure exists in this package
 	 */
 	public boolean canCallProcedure(String n) {
 		return getProcedure(n) != null;
+	}
+	
+	@Override
+	public String toString() {
+		return "Package [name=" + name.toUpperCase() + ", procedures=" + procedures + "]";
 	}
 	
 }
