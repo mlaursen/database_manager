@@ -14,7 +14,7 @@ import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 
 /**
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 @DatabaseViewClass(Person.class)
@@ -31,12 +31,10 @@ public class PersonView extends DatabaseView implements Getable, GetAllable {
 	 */
 	public PersonView(String primaryKey) {
 		super(primaryKey);
-		// this.primaryKey = primaryKey;
 	}
 	
 	public PersonView(MyResultRow r) {
 		super(r);
-		// setAll(r);
 	}
 	
 	public PersonView(String personName, String jobType, String jobName, String jobDescription, double personSalary) {

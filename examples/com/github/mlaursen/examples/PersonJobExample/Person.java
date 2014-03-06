@@ -34,7 +34,7 @@ import com.github.mlaursen.database.objecttypes.Updateable;
  * first or last name
  * 
  * 
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public class Person extends DatabaseObject implements Createable, Deleteable, Getable, Updateable {
@@ -152,18 +152,40 @@ public class Person extends DatabaseObject implements Createable, Deleteable, Ge
 		return procs;
 	}
 	
+	/**
+	 * Gets a person by first name only
+	 * 
+	 * @param first
+	 *            String of a first name
+	 * @return A person or null
+	 */
 	public static Person getByFirstName(String first) {
 		return getByName(first, null);
 	}
 	
+	/**
+	 * Gets a person by last name only
+	 * 
+	 * @param last
+	 *            String of a last name
+	 * @return A person or null.
+	 */
 	public static Person getByLastName(String last) {
 		return getByName(null, last);
 	}
 	
+	/**
+	 * Gets a person by first and last name, the first or last name can be null. This procedure could be called through just a basic object
+	 * manager.
+	 * 
+	 * @param first
+	 *            String first name
+	 * @param last
+	 *            String last name
+	 * @return A person or null
+	 */
 	public static Person getByName(String first, String last) {
-		return new ObjectManager(Person.class).executeCustomGetProcedure("getbyname", Person.class, first, last);// .getFirstRowFromCursorProcedure("getbyname",
-																													// first,
-																													// last).construct(Person.class);
+		return new ObjectManager(Person.class).executeCustomGetProcedure("getbyname", Person.class, first, last);
 	}
 	
 	@Override

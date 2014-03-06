@@ -19,7 +19,7 @@ import com.github.mlaursen.database.managers.TestingObjectManager;
 import com.github.mlaursen.database.objects.Procedure;
 
 /**
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public class TestAll {

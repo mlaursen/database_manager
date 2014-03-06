@@ -7,7 +7,7 @@ import com.github.mlaursen.database.managers.ObjectManager;
 
 /**
  * Here is an example using the data supplied by the sql scripts. There are examples of getting objects, modifying, deleting, and
- * filterting.
+ * filtering.
  * 
  * @author mlaursen
  * 
