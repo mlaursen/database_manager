@@ -30,7 +30,7 @@ import com.github.mlaursen.database.utils.ClassUtil;
  * 	Stored procedures.
  * 
  * 
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public class Package {

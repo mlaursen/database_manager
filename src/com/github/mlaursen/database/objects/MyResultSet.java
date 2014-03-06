@@ -11,7 +11,7 @@ import java.util.List;
  * A version of a SQL ResultSet. The only difference is that this is a List of
  * MyResultRows instead of a ResultSet that must be closed.
  * 
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public class MyResultSet implements Iterable<MyResultRow> {
@@ -33,18 +33,46 @@ public class MyResultSet implements Iterable<MyResultRow> {
 	 * Gets a String value for the column requested
 	 * 
 	 * @param rowNum
+	 *            The row number for the column to be retrieved
 	 * @param colName
-	 * @return
+	 *            The column name to get data from
+	 * @return A string for the column data
 	 */
 	public String getColumn(int rowNum, String colName) {
 		return this.getRow(rowNum).get(colName);
 	}
 
 	/**
+	 * Gets an integer for the column requested
+	 * 
+	 * @param rowNum
+	 *            The row number for the column to be retrieved
+	 * @param colName
+	 *            The column name to get data from
+	 * @return Either an integer from the database or 0
+	 */
+	public int getIntColumn(int rowNum, String colName) {
+		return this.getRow(rowNum).getInt(colName);
+	}
+
+	/**
+	 * Gets a double for the column requested
+	 * 
+	 * @param rowNum
+	 *            The row number for the column to be retrieved
+	 * @param colName
+	 *            The column name to get data from
+	 * @return Either a double from the database or 0.00
+	 */
+	public double getDoubleColumn(int rowNum, String colName) {
+		return this.getRow(rowNum).getDouble(colName);
+	}
+
+	/**
 	 * Attempts to return the first row in a result set Null is returned if the
 	 * result set size is not at least 1
 	 * 
-	 * @return
+	 * @return The first MyResultRow from the dataset
 	 */
 	public MyResultRow getRow() {
 		return size > 0 ? this.getRow(0) : null;
@@ -54,10 +82,11 @@ public class MyResultSet implements Iterable<MyResultRow> {
 	 * Returns a MyResultRow for the requested row number
 	 * 
 	 * @param rowNum
-	 * @return
+	 *            The row number to get a myresultrow from
+	 * @return A MyResultRow or null
 	 */
 	public MyResultRow getRow(int rowNum) {
-		if (size == 0 || rowNum > size)
+		if (size == 0 || rowNum > size || rowNum < 0)
 			return null;
 		else
 			return this.rs.get(rowNum);
@@ -67,8 +96,12 @@ public class MyResultSet implements Iterable<MyResultRow> {
 	 * Turns a SQL ResultSet into a MyResultSet
 	 * 
 	 * @param rs
-	 * @return
+	 *            A SQL ResultSet to convert
+	 * @return a ResultSet with the rows and column names from the sql result
+	 *         set
 	 * @throws SQLException
+	 *             A SQLException is thrown if the resultset can not get the
+	 *             meta data
 	 */
 	public static MyResultSet toMyResultSet(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
@@ -91,7 +124,7 @@ public class MyResultSet implements Iterable<MyResultRow> {
 	/**
 	 * Returns a list of the column names for the result set
 	 * 
-	 * @return
+	 * @return a list of Strings for column names
 	 */
 	public List<String> getColNames() {
 		return colNames;
