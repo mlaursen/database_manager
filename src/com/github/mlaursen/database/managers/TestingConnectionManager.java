@@ -303,7 +303,6 @@ public class TestingConnectionManager extends ConnectionManager {
 	 * 
 	 * @param debug
 	 *            Boolean if debugging information should be printed.
-	 * @return True if all packages were recompiled
 	 */
 	public void recompile(boolean debug) {
 		Connection conn = null;
