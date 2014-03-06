@@ -24,11 +24,15 @@ import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
 import com.github.mlaursen.database.utils.ClassUtil;
+
 /**
+ * THe Object Manager class generates the packages and procedure for
+ * the database objects given. THe object manager does NOT create these
+ * packages and procedures in the database.  It is expected that
+ * a DBA or someone else has created these packages/procedures.
  * 
+ * @author mlaursen
  * 
- * @author mikkel.laursen
- *
  */
 public class ObjectManager {
 
@@ -37,24 +41,32 @@ public class ObjectManager {
 	protected Map<String, Integer> packageMap = new HashMap<String, Integer>();
 	protected List<String> availablePackages = new ArrayList<String>();
 	protected List<Class<? extends DatabaseObject>> databaseObjects = new ArrayList<Class<? extends DatabaseObject>>();
-	
+
+	/**
+	 * Creates a new connectionManager and generates the packages for all the
+	 * databaseObjects given
+	 * 
+	 * @param databaseObjects
+	 *            The DatabaseObjects to generate packages for
+	 */
 	@SafeVarargs
 	public ObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
 		connectionManager = new ConnectionManager();
-		for(Class<? extends DatabaseObject> c : databaseObjects) {
+		for (Class<? extends DatabaseObject> c : databaseObjects) {
 			addPackage(c);
 		}
 	}
-	
-	
+
 	/**
 	 * Adds a new package or merges a package based on the class given.
+	 * 
 	 * @param c
+	 *            The database object class
 	 */
 	public void addPackage(Class<? extends DatabaseObject> c) {
 		this.databaseObjects.add(c);
 		Package pkg = new Package(c);
-		if(packageIsAvailable(pkg.getName())) {
+		if (packageIsAvailable(pkg.getName())) {
 			Package pkgOld = getPackage(pkg.getName());
 			pkgOld.mergeProcedures(pkg);
 		}
@@ -62,23 +74,34 @@ public class ObjectManager {
 			this.addPackage(pkg);
 		}
 	}
-	
+
 	/**
-	 * Adds a package to the List of packages.
-	 * It also updates the availablePackages list and the packageMap
+	 * Adds a package to the List of packages. It also updates the
+	 * availablePackages list and the packageMap
+	 * 
 	 * @param pkg
+	 *            The package to add
 	 */
 	public void addPackage(Package pkg) {
 		packages.add(pkg);
 		availablePackages.add(pkg.getName());
-		packageMap.put(pkg.getName(), packages.size()-1);
+		packageMap.put(pkg.getName(), packages.size() - 1);
 	}
-	
+
+	/**
+	 * This adds a databaseObject / databaseView pair to the object manager and
+	 * merges all of their procedures.
+	 * 
+	 * @param baseClass
+	 *            The database object
+	 * @param view
+	 *            The database view
+	 */
 	public void addPackageWithView(Class<? extends DatabaseObject> baseClass, Class<? extends DatabaseView> view) {
 		Package pkg = new Package(baseClass);
 		this.databaseObjects.add(baseClass);
 		this.databaseObjects.add(view);
-		if(packageIsAvailable(pkg.getName())) {
+		if (packageIsAvailable(pkg.getName())) {
 			Package pkgOld = getPackage(pkg.getName());
 			pkgOld.mergeProcedures(pkg);
 		}
@@ -86,165 +109,207 @@ public class ObjectManager {
 			this.addPackage(pkg);
 		}
 	}
-	
+
 	/**
 	 * Checks if the availablePackages list contains the package Name
+	 * 
 	 * @param pkgName
-	 * @return
+	 *            The String package name
+	 * @return True if the package has been created for this manager
 	 */
-	public boolean packageIsAvailable(String pkgName) { 
+	public boolean packageIsAvailable(String pkgName) {
 		return this.availablePackages.contains(pkgName);
 	}
-	
+
 	/**
-	 * Checks if a package is avaialbe by checking the availabePackages for the formatted 
-	 * Class name
+	 * Checks if a package is available by checking the availabePackages for the
+	 * formatted Class name
+	 * 
 	 * @param type
-	 * @return
+	 *            The database object class to check if the package is available
+	 *            for
+	 * @return True if the package for the class is available
 	 */
-	public <T extends DatabaseObject>  boolean packageIsAvailable(Class<T> type) {
+	public <T extends DatabaseObject> boolean packageIsAvailable(Class<T> type) {
 		return packageIsAvailable(Package.formatClassName(type));
 	}
-	
+
 	/**
 	 * Returns a package for the DatabaseObject class given.
+	 * 
 	 * @param type
-	 * @return
+	 *            The Database Object class to get the package for
+	 * @return The package for the database object. It will be null if it does
+	 *         not exist
 	 */
 	public <T extends DatabaseObject> Package getPackage(Class<T> type) {
 		return getPackage(Package.formatClassName(type));
 	}
-	
+
 	/**
 	 * Returns a package for the package name given
+	 * 
 	 * @param pkgName
-	 * @return
+	 *            THe package to look up
+	 * @return A package or null
 	 */
 	public Package getPackage(String pkgName) {
 		return packages.get(packageMap.get(pkgName));
 	}
-	
+
 	/**
-	 * Executes a custom get procedure. This will return a single object and construct it
-	 * to the type given.
-	 * @param procedureName Custom procedure name
-	 * @param type			The Database object find the package for and to return the object as
-	 * @param params		Any parameters to help get the database object
-	 * @return
+	 * Executes a custom get procedure. This will return a single object and
+	 * construct it to the type given.
+	 * 
+	 * @param procedureName
+	 *            Custom procedure name
+	 * @param type
+	 *            The Database object find the package for and to return the
+	 *            object as
+	 * @param params
+	 *            Any parameters to help get the database object
+	 * @return A DatabaseObject or null
 	 */
 	public <T extends DatabaseObject> T executeCustomGetProcedure(String procedureName, Class<T> type, Object... params) {
-		if(packageIsAvailable(type)) {
+		if (packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(pkg.canCallProcedure(procedureName)) {
+			if (pkg.canCallProcedure(procedureName)) {
 				return connectionManager.executeCursorProcedure(pkg, procedureName, params).getRow().construct(type);
 			}
 		}
 		return null;
 	}
-	
+
 	/**
+	 * Calls a custom GetAll proceudre. This is for returning a list of
+	 * DatabaseObjects versus a single database object
 	 * 
 	 * @param procedureName
+	 *            The procedure to call
 	 * @param type
+	 *            The database object type to call the procedure from
 	 * @param params
-	 * @return
+	 *            The optional parameters to pass to the procedure
+	 * @return A list of DatabaseObjects or an empty List
 	 */
 	public <T extends DatabaseObject> List<T> executeCustomGetAllProcedure(String procedureName, Class<T> type, Object... params) {
-		if(packageIsAvailable(type)) {
+		if (packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(pkg.canCallProcedure(procedureName)) {
+			if (pkg.canCallProcedure(procedureName)) {
 				return connectionManager.executeCursorProcedure(pkg, procedureName, params).toListOf(type);
 			}
 		}
-		return null;
+		return new ArrayList<T>();
 	}
-	
+
 	/**
-	 * Executes a custom procedure that modifies the database instead of returning a database object
+	 * Executes a custom procedure that modifies the database instead of
+	 * returning a database object
+	 * 
 	 * @param procedureName
+	 *            The procedure to call
 	 * @param type
+	 *            The database object to modify
 	 * @param params
-	 * @return
+	 *            The optional parameters to pass to the procedure
+	 * @return A boolean of if at least 1 row was modified in the database
 	 */
 	public <T extends DatabaseObject> boolean executeCustomProcedure(String procedureName, Class<T> type, Object... params) {
-		if(packageIsAvailable(type)) {
+		if (packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(pkg.canCallProcedure(procedureName)) {
+			if (pkg.canCallProcedure(procedureName)) {
 				return connectionManager.executeStoredProcedure(pkg, procedureName, params);
 			}
 		}
 		return false;
 	}
-	
+
 	/**
+	 * Returns a single Database Object by searching for the primary key
 	 * 
 	 * @param primaryKey
+	 *            An integer primaryKey
 	 * @param type
-	 * @return
+	 *            The database object type to search for
+	 * @return A possible database object
 	 */
 	public <T extends DatabaseObject> T get(Integer primaryKey, Class<T> type) {
 		return get(primaryKey.toString(), type);
 	}
-	
+
 	/**
 	 * Returns a single Database Object by searching for the primary key
+	 * 
 	 * @param primaryKey
+	 *            An string primaryKey
 	 * @param type
-	 * @return
+	 *            The database object type to search for
+	 * @return A possible database object
 	 */
 	public <T extends DatabaseObject> T get(String primaryKey, Class<T> type) {
-		if(packageIsAvailable(type)) {
+		if (packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(canCallProcedure(type, Getable.class, pkg, "get")) {
+			if (canCallProcedure(type, Getable.class, pkg, "get")) {
 				return connectionManager.executeCursorProcedure(pkg, "get", primaryKey).getRow().construct(type);
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns  alist of database objects for the given Database Object type
+	 * Returns a list of database objects for the given Database Object type
+	 * 
 	 * @param type
-	 * @return
+	 *            The Database Object class to return a list for
+	 * @return a List of database objects or an empty List
 	 */
 	public <T extends DatabaseObject> List<T> getAll(Class<T> type) {
-		if(packageIsAvailable(type)) {
+		if (packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(canCallProcedure(type, GetAllable.class, pkg, "getall")) {
+			if (canCallProcedure(type, GetAllable.class, pkg, "getall")) {
 				return connectionManager.executeCursorProcedure(pkg, "getall").toListOf(type);
 			}
 		}
 		return new ArrayList<T>();
 	}
+
 	/**
-	 * Returns a list of Database Object for the object given.
+	 * Returns a list of Database Object for the object given. This version will
+	 * also generate a list of parameters to be passed to the getall procedure.
+	 * 
 	 * @param object
-	 * @return
+	 *            The database object to get all for
+	 * @return A List of Database Objects or an empty List
 	 */
 	public <T extends DatabaseObject> List<T> getAll(T object) {
 		@SuppressWarnings("unchecked")
 		Class<T> c = (Class<T>) object.getClass();
-		if(packageIsAvailable(c)) {
+		if (packageIsAvailable(c)) {
 			Package pkg = getPackage(c);
-			if(canCallProcedure(c, GetAllable.class, pkg, "getall")) {
+			if (canCallProcedure(c, GetAllable.class, pkg, "getall")) {
 				Object[] params = getParameters(DatabaseFieldType.GETALL, object);
 				return connectionManager.executeCursorProcedure(pkg, "getall", params).toListOf(c);
 			}
 		}
 		return new ArrayList<T>();
 	}
-	
+
 	/**
-	 * Creates a database object in the database
+	 * Creates a database object in the database. It will retrieve all
+	 * parameters that have the Annotation DatabaseFieldType.NEW for the given
+	 * object. If there are no parameters, it will only insert the primary key
+	 * for the given object.
+	 * 
 	 * @param object
-	 * @return
+	 *            The object to create.
+	 * @return True if at least 1 object was inserted into the database
 	 */
 	public <T extends DatabaseObject> boolean create(T object) {
-		if(packageIsAvailable(object.getClass())) {
+		if (packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
-			if(canCallProcedure(object.getClass(), Createable.class, pkg, "new")) {
+			if (canCallProcedure(object.getClass(), Createable.class, pkg, "new")) {
 				Object[] params = getParameters(DatabaseFieldType.NEW, object);
-				if(params.length == 0) {
+				if (params.length == 0) {
 					return connectionManager.executeStoredProcedure(pkg, "new", object.getPrimaryKey());
 				}
 				else {
@@ -254,73 +319,85 @@ public class ObjectManager {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Updates an object in the database.
+	 * Updates an object in the database. It will generate an array of
+	 * parameters for the given object and pas them to the procedure
+	 * 
 	 * @param object
-	 * @return
+	 *            The object to update
+	 * @return True if at least 1 row was updated in the database
 	 */
 	public <T extends DatabaseObject> boolean update(T object) {
 		@SuppressWarnings("unchecked")
 		Class<T> c = (Class<T>) object.getClass();
 		String update = "update" + c.getSimpleName().replace("View", "");
-		if(packageIsAvailable(object.getClass())) {
+		if (packageIsAvailable(object.getClass())) {
 			Package pkg = getPackage(object.getClass());
-			if(canCallProcedure(object.getClass(), Updateable.class, pkg, update)) {
+			if (canCallProcedure(object.getClass(), Updateable.class, pkg, update)) {
 				Object[] params = getParameters(DatabaseFieldType.UPDATE, object);
 				return connectionManager.executeStoredProcedure(pkg, update, params);
 			}
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Deletes a Database Object from the database.
-	 * It checks if there is a package for the database object and if that package
-	 * includes a delete procedure.  If it does and the primary key is not null, the stored
+	 * Deletes a Database Object from the database. It checks if there is a
+	 * package for the database object and if that package includes a delete
+	 * procedure. If it does and the primary key is not null, the stored
 	 * procedure is executed.
-	 * @param object	The object to delete from the database
-	 * @return
+	 * 
+	 * @param object
+	 *            The object to delete from the database
+	 * @return True if at least 1 row was deleted from the database
 	 */
 	public <T extends DatabaseObject> boolean delete(T object) {
 		return delete(object.getPrimaryKey(), object.getClass());
 	}
-	
+
 	/**
 	 * Deletes an object by primary key
-	 * @param primaryKey	A string for the primary key. If the primary key is an integer, it will be converted
-	 * @param type	The DatabaseObject class that you want to delete by primary key
-	 * @return
+	 * 
+	 * @param primaryKey
+	 *            A string for the primary key. If the primary key is an
+	 *            integer, it will be converted
+	 * @param type
+	 *            The DatabaseObject class that you want to delete by primary
+	 *            key
+	 * @return True if at least 1 row was deleted from the database
 	 */
 	public <T extends DatabaseObject> boolean delete(String primaryKey, Class<T> type) {
-		if(packageIsAvailable(type)) {
+		if (packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(canCallProcedure(type, Deleteable.class, pkg, "delete")) {
+			if (canCallProcedure(type, Deleteable.class, pkg, "delete")) {
 				return connectionManager.executeStoredProcedure(pkg, "delete", primaryKey);
 			}
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Filters a result set by the objects given.
-	 * This is for limiting the results. each object in the filterBy is pretty much a
-	 * WHERE X=filterBy AND ....
+	 * Filters a result set by the objects given. This is for limiting the
+	 * results. each object in the filterBy is pretty much a WHERE X=filterBy
+	 * AND ....
+	 * 
 	 * @param type
+	 *            The database object to filter
 	 * @param filterBy
-	 * @return
+	 *            The optional parameters to pass to the filter procedure
+	 * @return A List of DatabaseObjects or an empty List
 	 */
 	public <T extends DatabaseObject> List<T> filter(Class<T> type, Object... filterBy) {
-		if(packageIsAvailable(type)) {
+		if (packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
-			if(canCallProcedure(type, Filterable.class, pkg, "filter")) {
+			if (canCallProcedure(type, Filterable.class, pkg, "filter")) {
 				return (List<T>) connectionManager.executeCursorProcedure(pkg, "filter", filterBy).toListOf(type);
 			}
 		}
 		return new ArrayList<T>();
 	}
-	
-	
+
 	/**
 	 * Get an array of Object to be passed to a database procedure call. The
 	 * array is generated by seraching for all the DatabaseField or
@@ -329,18 +406,19 @@ public class ObjectManager {
 	 * 
 	 * @param proc
 	 *            The procedure to get the parameters for
-	 * @return
+	 * @return An Array of Object Parameters
 	 */
 	private <T extends DatabaseObject> Object[] getParameters(DatabaseFieldType proc, T object) {
 		return getParameters(getParametersMap(proc, object));
 	}
 
 	/**
-	 * Takes a Map of interger position and objects and sorts them from 0 - max
+	 * Takes a Map of integer position and objects and sorts them from 0 - max
 	 * size of map into an array of objects
 	 * 
 	 * @param map
-	 * @return
+	 *            A Integer, Object pair
+	 * @return The map as an array in order
 	 */
 	private Object[] getParameters(Map<Integer, Object> map) {
 		int s = map.size();
@@ -356,7 +434,9 @@ public class ObjectManager {
 	 * to be passed to the database stored procedure.
 	 * 
 	 * @param proc
-	 * @return
+	 *            The Database Field Type to get the parameters for
+	 * @return A Integer, Object pair for the position of the object for the
+	 *         procedure
 	 */
 	private <T extends DatabaseObject> Map<Integer, Object> getParametersMap(DatabaseFieldType proc, T object) {
 		int counter = 0;
@@ -365,18 +445,18 @@ public class ObjectManager {
 		for (Class<?> c : classes) {
 			for (Field f : c.getDeclaredFields()) {
 				f.setAccessible(true);
-				if(f.isAnnotationPresent(MultipleDatabaseField.class)) {
+				if (f.isAnnotationPresent(MultipleDatabaseField.class)) {
 					MultipleDatabaseField a = f.getAnnotation(MultipleDatabaseField.class);
-					if(Arrays.asList(a.values()).contains(proc)) {
-						for(String n : a.names()) {
+					if (Arrays.asList(a.values()).contains(proc)) {
+						for (String n : a.names()) {
 							try {
 								Object o = f.get(object);
 								Class<?> oClass = o.getClass();
 								String oClassName = oClass.getSimpleName();
 								String searchName = n.substring(oClassName.length());
-								for(Method m : oClass.getMethods()) {
+								for (Method m : oClass.getMethods()) {
 									String mName = m.getName();
-									if(mName.startsWith("get") && mName.matches("(?i)get" + searchName)) {
+									if (mName.startsWith("get") && mName.matches("(?i)get" + searchName)) {
 										Object ret = m.invoke(o);
 										params.put(counter, ret);
 										counter++;
@@ -388,7 +468,8 @@ public class ObjectManager {
 							}
 							catch (Exception e) {
 								String err = "The position for the procedure '" + proc + "' has not been initialized for the field " + "["
-										+ f.getName() + "]\nin class [" + c.getName() + "].  This error occured when seraching for the values "
+										+ f.getName() + "]\nin class [" + c.getName()
+										+ "].  This error occured when seraching for the values "
 										+ "to add when calling the stored procedure. The value has not been added to the parameter map.";
 								System.err.println(err);
 							}
@@ -426,6 +507,22 @@ public class ObjectManager {
 		return params;
 	}
 
+	/**
+	 * Checks if a database object can call the procedure. It first checks that
+	 * the DatabaseObject implements the Procedure interface, and then checks
+	 * that the package can call the procedure name given
+	 * 
+	 * @param type
+	 *            The database object
+	 * @param procedure
+	 *            The Procedure interface
+	 * @param pkg
+	 *            The package
+	 * @param procedureName
+	 *            The procedure name to check
+	 * @return True if the DatabaseObject implments the procedure interface and
+	 *         the package has the procedure name given
+	 */
 	public <T extends DatabaseObject> boolean canCallProcedure(Class<T> type, Class<?> procedure, Package pkg, String procedureName) {
 		return ClassUtil.isClassCallable(type, procedure) && pkg.canCallProcedure(procedureName);
 	}
@@ -433,7 +530,7 @@ public class ObjectManager {
 	@Override
 	public String toString() {
 		String s = "ObjectManager [\n\tpackages=[";
-		for(Package p : packages) {
+		for (Package p : packages) {
 			s += "\n\t\tpackage=" + p.toString();
 		}
 		return s + "\n\t]";

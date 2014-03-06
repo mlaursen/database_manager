@@ -11,7 +11,7 @@ import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public enum DatabaseFieldType {

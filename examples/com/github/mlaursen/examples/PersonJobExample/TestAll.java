@@ -26,6 +26,7 @@ public class TestAll {
 	protected static TestingObjectManager tom = new TestingObjectManager();
 	static {
 		//tom.setDelete(false);
+		tom.setDebug(true);
 	}
 	
 	@ClassRule

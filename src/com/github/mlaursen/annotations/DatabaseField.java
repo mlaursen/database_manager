@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -20,7 +20,7 @@ public @interface DatabaseField {
 	 * array of just the GET type This and postion() are two linked arrays, the
 	 * order of both matter
 	 * 
-	 * @return
+	 * @return An array of DataBaseFieldType
 	 */
 	DatabaseFieldType[] values();
 

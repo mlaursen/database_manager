@@ -28,31 +28,36 @@ import com.github.mlaursen.database.utils.LocalSettings;
 
 /**
  * Utility class for interacting with databases. A dbconfig.properties file must
- * be located in {projectHomeDirectory}/config
+ * be located in {projectHomeDirectory}/config and on the classpath
  * 
  * 
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public class ConnectionManager {
-	private static enum ErrorCode {
+	static enum ErrorCode {
 		UNIQUE_CONSTRAINT(1), ARGUMENT_MISMATCH(6550), NAME_IN_USE(955);
 		private int code;
+
 		private ErrorCode(int code) {
 			this.code = code;
 		}
-		
+
 		public static ErrorCode getErrorCode(int code) {
-			for(ErrorCode c : values()) {
-				if(c.code == code)
+			for (ErrorCode c : values()) {
+				if (c.code == code)
 					return c;
 			}
 			return null;
 		}
 	}
-	
+
 	protected String databaseName, databaseUser, databasePswd, classForName;
 
+	/**
+	 * The connection manager is created by taking a dbconfig.properties file
+	 * and getting the database properties stored in there.
+	 */
 	public ConnectionManager() {
 		try {
 			Properties localProperties = new LocalSettings().getLocalSettings();
@@ -69,7 +74,7 @@ public class ConnectionManager {
 	/**
 	 * Creates a database connection from the localProperties file.
 	 * 
-	 * @return
+	 * @return a Database Connection
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
@@ -137,7 +142,7 @@ public class ConnectionManager {
 		catch (SQLException e) {
 			handleSqlException(e, procedureName, parameters);
 		}
-		catch(ClassNotFoundException e) {
+		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -146,20 +151,28 @@ public class ConnectionManager {
 		}
 		return success;
 	}
-	
+
+	/**
+	 * Helper method for dealing with SQLExceptions. It only handles the
+	 * ErrorCode enums.
+	 * 
+	 * @param e
+	 *            The SQL Exception
+	 * @param procedureName
+	 *            The procedure name that was being called when the SQLException
+	 *            happened
+	 * @param parameters
+	 *            The parameters that were being pased to the stored procedure
+	 */
 	protected void handleSqlException(SQLException e, String procedureName, Object[] parameters) {
 		ErrorCode c = ErrorCode.getErrorCode(e.getErrorCode());
-		System.out.println(e.getErrorCode());
-		if(c == null) {
+		if (c == null) {
 			e.printStackTrace();
-		}
-		else if(c.equals(ErrorCode.NAME_IN_USE)) {
-			System.err.println("The name is already in use.");
 		}
 		else {
 			String msg = "There was a " + c.name() + " exception when calling " + procedureName + ".\n";
 			msg += "\tThe parameters being passed were: " + Arrays.toString(parameters);
-			//e.printStackTrace();
+			e.printStackTrace();
 			System.err.println(msg);
 		}
 	}
@@ -176,7 +189,7 @@ public class ConnectionManager {
 	 *            An array of objects to be passed to the procedure. They will
 	 *            be bound to some data types or the toString() method will be
 	 *            called on them.
-	 * @return
+	 * @return A MyResultSet for the package procedure
 	 */
 	public MyResultSet executeCursorProcedure(Package pkg, String procedureName, Object... parameters) {
 		return executeCursorProcedure(pkg.call(procedureName), parameters);
@@ -190,7 +203,7 @@ public class ConnectionManager {
 	 * @param procedure
 	 *            The procedure to execute
 	 * @param parameters
-	 * @return
+	 * @return A MyResultSet for the procedure
 	 */
 	public MyResultSet executeCursorProcedure(Procedure procedure, Object... parameters) {
 		return executeCursorProcedure(procedure.toString(), parameters);
@@ -199,8 +212,11 @@ public class ConnectionManager {
 	/**
 	 * 
 	 * @param procedureName
+	 *            The full formatted String for the procedure. I.E. GET(:O, :CURSOR)
 	 * @param parameters
-	 * @return
+	 *            AN array of optional parameters to be passed to the stored
+	 *            procedure
+	 * @return A MyResultSet for the procedure
 	 */
 	protected MyResultSet executeCursorProcedure(String procedureName, Object... parameters) {
 		int cursorPos = parameters.length + 1;
@@ -223,7 +239,7 @@ public class ConnectionManager {
 		catch (SQLException e) {
 			handleSqlException(e, procedureName, parameters);
 		}
-		catch(ClassNotFoundException e) {
+		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -237,7 +253,7 @@ public class ConnectionManager {
 	/**
 	 * Closes a database connection
 	 * 
-	 * @param conn
+	 * @param conn The database connection to close
 	 */
 	protected void closeConnection(Connection conn) {
 		if (conn != null) {
@@ -253,7 +269,7 @@ public class ConnectionManager {
 	/**
 	 * Closes a SQL CallableStatement
 	 * 
-	 * @param cs
+	 * @param cs The CallableStatement to close
 	 */
 	protected void closeCallableStatement(CallableStatement cs) {
 		if (cs != null) {
@@ -265,13 +281,17 @@ public class ConnectionManager {
 			}
 		}
 	}
-	
+
+	/**
+	 * 
+	 * @param s The Statement to close
+	 */
 	protected void closeStatement(Statement s) {
-		if(s != null) {
+		if (s != null) {
 			try {
 				s.close();
 			}
-			catch(SQLException e) {
+			catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
@@ -280,7 +300,7 @@ public class ConnectionManager {
 	/**
 	 * Closes a SQL ResultSet
 	 * 
-	 * @param rs
+	 * @param rs The ResultSet to close
 	 */
 	protected void closeResultSet(ResultSet rs) {
 		if (rs != null) {
@@ -321,7 +341,7 @@ public class ConnectionManager {
 		else if (p instanceof Integer) {
 			cs.setInt(i, (Integer) p);
 		}
-		else if(ClassUtil.canParseInt(p)) {
+		else if (ClassUtil.canParseInt(p)) {
 			cs.setInt(i, Integer.parseInt((String) p));
 		}
 		else if (p instanceof Double) {
@@ -335,7 +355,7 @@ public class ConnectionManager {
 		else if (p instanceof DatabaseObject) {
 			cs.setString(i, ((DatabaseObject) p).getPrimaryKey());
 		}
-		else if(p == null) {
+		else if (p == null) {
 			cs.setNull(i, Types.VARCHAR);
 		}
 		else {
