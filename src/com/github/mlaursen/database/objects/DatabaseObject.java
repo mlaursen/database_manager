@@ -13,7 +13,7 @@ import com.github.mlaursen.annotations.DatabaseFieldType;
  * Basic outline for a DatbaseObject. Every database object must have at least a
  * primary key
  * 
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public abstract class DatabaseObject {

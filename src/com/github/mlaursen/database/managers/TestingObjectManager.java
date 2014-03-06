@@ -12,6 +12,10 @@ import com.github.mlaursen.database.objects.Package;
 import com.github.mlaursen.database.utils.ClassUtil;
 
 /**
+ * This is an extension of the Object Manager. The main difference is that it is
+ * using a TestingConnectionManager versus the connection manager.
+ * 
+ * 
  * @author mlaursen
  * 
  */
@@ -22,8 +26,20 @@ public class TestingObjectManager extends ObjectManager {
 	private boolean debug = false;
 	private boolean copyData = false;
 
-	public TestingObjectManager(boolean delete, boolean debug, boolean copyData, Class<? extends DatabaseObject> databaseObjects) {
-		this(databaseObjects);
+	/**
+	 * 
+	 * @param delete
+	 *            Boolean if the test data should be deleted after testing is
+	 *            complete
+	 * @param debug
+	 *            Boolean if deubgging info should be printed
+	 * @param copyData
+	 *            Boolean if all data should be copied from prod to test
+	 * @param databaseObject
+	 *            A database object to generate a package for
+	 */
+	public TestingObjectManager(boolean delete, boolean debug, boolean copyData, Class<? extends DatabaseObject> databaseObject) {
+		this(databaseObject);
 		this.delete = delete;
 		this.debug = debug;
 		this.copyData = copyData;
@@ -129,6 +145,9 @@ public class TestingObjectManager extends ObjectManager {
 
 	}
 
+	/**
+	 * Recompiles all packages and package bodies that are invalid
+	 */
 	public void recompile() {
 		if (debug) {
 			System.out.println("Recompiling package bodies.");
