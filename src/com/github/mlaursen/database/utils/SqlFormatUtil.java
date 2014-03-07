@@ -40,10 +40,10 @@ public class SqlFormatUtil {
 				for(int j = 0; j < spaceSplits.length; j++) {
 					s2 += (j == 0 ? "" : " TEST_") + spaceSplits[j];
 				}
-				String[] seqs = s2.split("(?=\\s)?SEQ\\_" + regex);
+				String[] seqs = s2.split("(?=\\s)?SEQ\\_(?=" + regex+")");
 				s2 = "";
 				for(int j = 0; j < seqs.length; j++) {
-					s2 += (j == 0 ? "" : "SEQ_TEST_" + s) + seqs[j];
+					s2 += (j == 0 ? "" : "SEQ_TEST_") + seqs[j];
 				}
 				line = s2;
 			}
