@@ -62,6 +62,7 @@ public class Package {
 	@SuppressWarnings("unchecked")
 	public Package(Class<? extends DatabaseObject> databaseObject, boolean test) {
 		if(ClassUtil.objectAssignableFrom(databaseObject, DatabaseView.class)) {
+			generateProcedures(databaseObject);
 			this.addAllCustomProcedures(databaseObject);
 			databaseObject = (Class<? extends DatabaseObject>) databaseObject.getAnnotation(DatabaseViewClass.class).value();
 		}

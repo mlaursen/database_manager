@@ -65,15 +65,17 @@ public class TestingObjectManager extends ObjectManager {
 	*/
 	@Override
 	public void addPackageWithView(Class<? extends DatabaseObject> baseClass, Class<? extends DatabaseView> view) {
-		Package pkg = new Package(baseClass, true);
+		Package pkgBase = new Package(baseClass, true);
+		Package pkgView = new Package(view, true);
+		pkgBase.mergeProcedures(pkgView);
 		this.databaseObjects.add(baseClass);
 		this.databaseObjects.add(view);
-		if(packageIsAvailable(pkg.getName())) {
-			Package pkgOld = getPackage(pkg.getName());
-			pkgOld.mergeProcedures(pkg);
+		if(packageIsAvailable(pkgBase.getName())) {
+			Package pkgOld = getPackage(pkgBase.getName());
+			pkgOld.mergeProcedures(pkgBase);
 		}
 		else {
-			this.addPackage(pkg);
+			this.addPackage(pkgBase);
 		}
 		if(debug) {
 			System.out.println("Creating the Tables and Sequences for " + baseClass);
