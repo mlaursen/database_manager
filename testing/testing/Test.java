@@ -45,6 +45,15 @@ public class Test {
 		for(String str : ss) {
 			System.out.println(str);
 		}
+		
+		regex = "(INGREDIENT|BRAND|CATEGORY)";
+		String myregex = "\\s(?=\\b"+regex+"((\\_VIEW|\\_PKG|[^_])?(?!,))\\b)";
+		String test = "INSERT INTO INGREDIENT(ID, NAME, BRAND, CATEGORY, SERVING_UNIT, SERVING_SIZE, ALT_SERVING_UNIT, ALT_SERVING_SIZE, CALORIES, FAT, CARBS, PROTEIN)";
+		String[] splits = test.split(myregex);
+		for(String str : splits) {
+			System.out.println(str);
+		}
+		
 		// System.out.println(Arrays.toString(s.split("\\s"+"JOB"+"((^\\_)|(?=\\_PKG)|(?=\\_VIEW))")));
 		// System.out.println(Arrays.toString(s2.split("\\s"+"JOB"+"((^\\_)|_PKG|\\s)")));
 		/*

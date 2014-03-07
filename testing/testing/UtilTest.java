@@ -90,10 +90,10 @@ public class UtilTest {
 	}
 	
 	@Test
-	public void testPackageToTest() {
+	public void testformatSqlForTesting() {
 		try {
-			String[] params = { "job", "person", "temp_account", "account", "account_setting" };
-			for(int i = 1; i <= 7; i++) {
+			String[] params = { "job", "person", "temp_account", "account", "account_setting", "ingredient", "category", "brand" };
+			for(int i = 1; i <= 9; i++) {
 				test("t" + i + ".txt", "e" + i + ".txt", params);
 			}
 		}

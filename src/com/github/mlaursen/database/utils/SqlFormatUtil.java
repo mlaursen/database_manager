@@ -34,7 +34,7 @@ public class SqlFormatUtil {
 				
 				s = s.toUpperCase();
 				String regex = ClassUtil.combineWith(s.split("\\_"), "\\_");
-				String myregex = "\\s(?=\\b"+regex+"(\\_VIEW|\\_PKG|[^_])?\\b)";
+				String myregex = "\\s(?=\\b"+regex+"((\\_VIEW|\\_PKG|[^_,])?)(?!,)\\b)";
 				String[] spaceSplits = line.split(myregex);
 				String s2 = "";
 				for(int j = 0; j < spaceSplits.length; j++) {
