@@ -3,10 +3,10 @@
  */
 package com.github.mlaursen.database.objecttypes;
 
-
 /**
- * @author mikkel.laursen
+ * Interface that lets a database object have a filter procedure
+ * 
+ * @author mlaursen
  * 
  */
-public interface Filterable {
-}
+public interface Filterable {}

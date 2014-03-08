@@ -9,11 +9,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author mikkel.laursen
- *
+ * 
+ * @author mlaursen
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface DatabaseViewClass {
+	
 	Class<?> value();
 }

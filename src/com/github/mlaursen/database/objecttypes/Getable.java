@@ -3,10 +3,10 @@
  */
 package com.github.mlaursen.database.objecttypes;
 
-
 /**
- * @author mikkel.laursen
+ * Interface that lets a database object be retrieved from the database
+ * 
+ * @author mlaursen
  * 
  */
-public interface Getable {
-}
+public interface Getable {}

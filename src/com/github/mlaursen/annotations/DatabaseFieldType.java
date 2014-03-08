@@ -11,47 +11,48 @@ import com.github.mlaursen.database.objecttypes.Getable;
 import com.github.mlaursen.database.objecttypes.Updateable;
 
 /**
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public enum DatabaseFieldType {
 	GET, GETALL, NEW, DELETE, UPDATE, FILTER;
+	
 	public String toString() {
 		return this.name().toLowerCase();
 	}
-
+	
 	public static DatabaseFieldType classToType(Class<?> c) {
-		if (c.equals(Getable.class))
+		if(c.equals(Getable.class))
 			return GET;
-		else if (c.equals(GetAllable.class))
+		else if(c.equals(GetAllable.class))
 			return GETALL;
-		else if (c.equals(Createable.class)) {
+		else if(c.equals(Createable.class)) {
 			return NEW;
 		}
-		else if (c.equals(Deleteable.class))
+		else if(c.equals(Deleteable.class))
 			return DELETE;
-		else if (c.equals(Updateable.class))
+		else if(c.equals(Updateable.class))
 			return UPDATE;
-		else if (c.equals(Filterable.class))
+		else if(c.equals(Filterable.class))
 			return FILTER;
 		else {
 			return null;
 		}
 	}
-
+	
 	public static int getPosition(DatabaseFieldType proc, DatabaseField a) {
 		int pos = -1;
-		if (proc.equals(DatabaseFieldType.GET))
+		if(proc.equals(DatabaseFieldType.GET))
 			pos = a.getPosition();
-		else if (proc.equals(DatabaseFieldType.GETALL))
+		else if(proc.equals(DatabaseFieldType.GETALL))
 			pos = a.getAllPosition();
-		else if (proc.equals(DatabaseFieldType.NEW))
+		else if(proc.equals(DatabaseFieldType.NEW))
 			pos = a.createPosition();
-		else if (proc.equals(DatabaseFieldType.UPDATE))
+		else if(proc.equals(DatabaseFieldType.UPDATE))
 			pos = a.updatePosition();
-		else if (proc.equals(DatabaseFieldType.DELETE))
+		else if(proc.equals(DatabaseFieldType.DELETE))
 			pos = a.deletePosition();
-		else if (proc.equals(DatabaseFieldType.FILTER))
+		else if(proc.equals(DatabaseFieldType.FILTER))
 			pos = a.filterPosition();
 		return pos;
 	}

@@ -14,136 +14,171 @@ import com.github.mlaursen.database.objecttypes.GetAllable;
 import com.github.mlaursen.database.objecttypes.Getable;
 
 /**
- * @author mikkel.laursen
- *
+ * @author mlaursen
+ * 
  */
 @DatabaseViewClass(Person.class)
 public class PersonView extends DatabaseView implements Getable, GetAllable {
-
+	
+	protected Person person;
+	protected Job job;
 	protected String personName;
-	protected double personSalary;
-	protected JobType jobType;
-	protected String jobName, jobDescription;
-	public PersonView() { }
-
+	
+	public PersonView() {}
+	
 	/**
 	 * @param primaryKey
 	 */
 	public PersonView(String primaryKey) {
-		this();
-		this.primaryKey = primaryKey;
+		super(primaryKey);
 	}
-
 	
 	public PersonView(MyResultRow r) {
-		this();
-		setAll(r);
+		super(r);
 	}
-
-	/**
-	 * @return the personName
-	 */
-	public String getPersonName() {
-		return personName;
+	
+	public PersonView(String personName, String jobType, String jobName, String jobDescription, double personSalary) {
+		setPersonName(personName);
+		this.person.setSalary(personSalary);
+		this.job = new Job();
+		this.job.setName(jobName);
+		this.job.setJobType(jobType);
+		this.job.setDescription(jobDescription);
 	}
-
-	/**
-	 * @param personName the personName to set
-	 */
-	public void setPersonName(String personName) {
-		this.personName = personName;
+	
+	public void setPerson(MyResultRow r) {
+		this.person = new Person();
+		this.person.setFirstName(r.get("first_name"));
+		this.person.setLastName(r.get("last_name"));
+		this.person.setSalary(r.getDouble("person_salary"));
 	}
-
-	/**
-	 * @return the personSalary
-	 */
-	public double getPersonSalary() {
-		return personSalary;
+	
+	public void setJob(MyResultRow r) {
+		this.job = new Job();
+		this.job.setName(r.get("job_name"));
+		this.job.setJobType(r.get("type"));
+		this.job.setDescription(r.get("job_description"));
 	}
-
-	/**
-	 * @param personSalary the personSalary to set
-	 */
-	public void setPersonSalary(double salary) {
-		this.personSalary = salary;
-	}
-
-	/**
-	 * @return the jobType
-	 */
-	public JobType getJobType() {
-		return jobType;
-	}
-
-	/**
-	 * @param jobType the jobType to set
-	 */
-	public void setJobType(JobType jobType) {
-		this.jobType = jobType;
-	}
-
-	/**
-	 * @return the jobName
-	 */
-	public String getJobName() {
-		return jobName;
-	}
-
-	/**
-	 * @param jobName the jobName to set
-	 */
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
-	}
-
-	/**
-	 * @return the jobDescription
-	 */
-	public String getJobDescription() {
-		return jobDescription;
-	}
-
-	/**
-	 * @param jobDescription the jobDescription to set
-	 */
-	public void setJobDescription(String jobDescription) {
-		this.jobDescription = jobDescription;
-	}
-
 	
 	public void setPersonName(MyResultRow r) {
 		this.personName = r.get("person_name");
 	}
 	
-	public void setPersonSalary(MyResultRow r) {
-		this.personSalary = Double.parseDouble(r.get("person_salary"));
+	/**
+	 * @return the personName
+	 */
+	public String getPersonName() {
+		return this.personName;
 	}
 	
-	public void setJobType(MyResultRow r) {
-		this.jobType = new JobType(r.get("job_type"));
+	/**
+	 * @param personName
+	 *            the personName to set
+	 */
+	public void setPersonName(String personName) {
+		this.personName = personName;
+		String[] name = personName.split(",");
+		if(this.person == null)
+			this.person = new Person();
+		if(name.length == 2) {
+			this.person.setFirstName(name[1].trim());
+			this.person.setLastName(name[0].trim());
+		}
+		else {
+			this.person.setFirstName(personName);
+		}
 	}
 	
-	public void setJobName(MyResultRow r) {
-		this.jobName = r.get("job_name");
+	public String getPersonFirstName() {
+		return this.person.getFirstName();
 	}
 	
-	public void setJobDescription(MyResultRow r) {
-		this.jobDescription = r.get("job_description");
+	public String getPersonLastName() {
+		return this.person.getLastName();
+	}
+	
+	/**
+	 * @return the personSalary
+	 */
+	public double getPersonSalary() {
+		return this.person.getSalary();
+	}
+	
+	/**
+	 * @param personSalary
+	 *            the personSalary to set
+	 */
+	public void setPersonSalary(double salary) {
+		this.person.setSalary(salary);
+	}
+	
+	/**
+	 * @return the jobType
+	 */
+	public JobType getJobType() {
+		return this.job.getJobType();
+	}
+	
+	/**
+	 * @param jobType
+	 *            the jobType to set
+	 */
+	public void setJobType(JobType jobType) {
+		this.job.setJobType(jobType);
+	}
+	
+	/**
+	 * @return the jobName
+	 */
+	public String getJobName() {
+		return this.job.getName();
+	}
+	
+	/**
+	 * @param jobName
+	 *            the jobName to set
+	 */
+	public void setJobName(String jobName) {
+		this.job.setName(jobName);
+	}
+	
+	/**
+	 * @return the jobDescription
+	 */
+	public String getJobDescription() {
+		return this.job.getDescription();
+	}
+	
+	/**
+	 * @param jobDescription
+	 *            the jobDescription to set
+	 */
+	public void setJobDescription(String jobDescription) {
+		this.job.setDescription(jobDescription);
 	}
 	
 	@Override
 	public List<Procedure> getCustomProcedures() {
 		return Arrays.asList(new Procedure("test"));
 	}
-
-	/* (non-Javadoc)
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof PersonView) {
+			PersonView pv = (PersonView) o;
+			return pv.personName.equalsIgnoreCase(personName) && pv.getJobName().equalsIgnoreCase(this.getJobName());
+		}
+		return false;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "PersonView [primaryKey=" + primaryKey + ", personName=" + personName + ", personSalary=" + personSalary + ", jobType="
-				+ jobType + ", jobName=" + jobName + ", jobDescription=" + jobDescription + "]";
+		return "PersonView [primaryKey=" + primaryKey + ", personName=" + personName + ", salary=" + person.getSalary() + ", jobName="
+				+ job.getName() + ", jobType=" + job.getJobType() + ", jobDescription=" + job.getDescription() + "]";
 	}
-	
-	
 }

@@ -1,3 +1,4 @@
 *.settin*
 *.class
 src/testing/*
+bin/*

@@ -10,125 +10,168 @@ import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 
 /**
- * Basic outline for a DatbaseObject. Every database object must have at least a
- * primary key
+ * Basic outline for a DatbaseObject. Every database object must have at least a primary key
  * 
- * @author mikkel.laursen
+ * @author mlaursen
  * 
  */
 public abstract class DatabaseObject {
-
+	
 	@DatabaseField(values = { DatabaseFieldType.GET, DatabaseFieldType.DELETE, DatabaseFieldType.UPDATE })
 	protected String primaryKey;
-	protected String primaryKeyName = "id";
-
-	public DatabaseObject() { }
-	public DatabaseObject(String primaryKey) {
-		this.primaryKey = primaryKey;
+	protected String primaryKeyName;
+	
+	public DatabaseObject() {}
+	
+	/**
+	 * A database object with a primary key value and the primary key name is set to "id"
+	 * 
+	 * @param primaryKey
+	 *            The primary key
+	 */
+	protected DatabaseObject(String primaryKey) {
+		this(primaryKey, "id");
 	}
 	
 	/**
-	 * Sets the primary key to the database column described as the
-	 * primaryKeyName. The default is 'id'
+	 * Sets the primary key and primary key name for a database object
 	 * 
-	 * @param r
+	 * @param primaryKey
+	 *            The primary key
+	 * @param primaryKeyName
+	 *            The primary key name
 	 */
-	public DatabaseObject(MyResultRow r) {
+	protected DatabaseObject(String primaryKey, String primaryKeyName) {
+		this.primaryKey = primaryKey;
+		this.primaryKeyName = primaryKeyName;
+	}
+	
+	/**
+	 * Sets the primary key to the database column described as the primaryKeyName. The default is 'id'
+	 * 
+	 * @param primaryKeyName
+	 *            The primary key name to use
+	 * @param r
+	 *            A MyResultRow
+	 */
+	public DatabaseObject(String primaryKeyName, MyResultRow r) {
+		this.primaryKeyName = primaryKeyName;
 		if(r.get(primaryKeyName) != null)
 			setAll(r);
 	}
-
+	
 	/**
-	 * This finds all the methods that start with 'set' and have a single
-	 * parameter of a MyResultRow and then invokes that method.
+	 * Sets all fields that have a MyResultRow as the parameter. It also sets the primaryKeyName to id
+	 * {@link #DatabaseObject(String, MyResultRow)}
 	 * 
 	 * @param r
+	 *            A MyResultROw
+	 */
+	public DatabaseObject(MyResultRow r) {
+		this("id", r);
+	}
+	
+	/**
+	 * This finds all the methods that start with 'set' and have a single parameter of a MyResultRow and then invokes that method.
+	 * 
+	 * @param r
+	 *            a MyResultRow
 	 */
 	protected void setAll(MyResultRow r) {
 		Method[] methods = this.getClass().getMethods();
-		for (Method m : methods) {
-			if (m.getName().startsWith("set") && Arrays.asList(m.getParameterTypes()).contains(MyResultRow.class) && r != null) {
+		for(Method m : methods) {
+			if(m.getName().startsWith("set") && Arrays.asList(m.getParameterTypes()).contains(MyResultRow.class) && r != null) {
 				try {
 					m.setAccessible(true);
 					m.invoke(this, r);
 					m.setAccessible(false);
 				}
-				catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
+				catch(InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
 					System.err.println("There was a problem trying to invoke " + m.getName());
 				}
 			}
 		}
 	}
-
+	
 	/**
+	 * Sets the primary key to the new string
 	 * 
 	 * @param primaryKey
+	 *            the new primary Key
 	 */
 	public void setPrimaryKey(String primaryKey) {
 		this.primaryKey = primaryKey;
 	}
-
+	
 	/**
+	 * Sets the primary key to the new integer, but as a string
 	 * 
 	 * @param primaryKey
+	 *            the new primary key
 	 */
 	public void setPrimaryKey(Integer primaryKey) {
 		this.primaryKey = primaryKey.toString();
 	}
-
+	
 	/**
-	 * Sets the primary key to the database column described as the
-	 * primaryKeyName. The default is 'id'
+	 * Sets the primary key to the database column described as the primaryKeyName. The default is 'id'
 	 * 
 	 * @param r
+	 *            A MyResultRow
 	 */
 	public void setPrimaryKey(MyResultRow r) {
 		primaryKey = r.get(primaryKeyName);
 	}
-
+	
 	/**
 	 * Get the primaryKey value
 	 * 
-	 * @return
+	 * @return the primary key
 	 */
 	public String getPrimaryKey() {
 		return primaryKey;
 	}
-
+	
 	/**
-	 * Set the primary key name to the new string given. This will be used for
-	 * initializing a database object
+	 * Set the primary key name to the new string given. This will be used for initializing a database object
 	 * 
 	 * @param name
+	 *            The new primary key name
 	 */
 	public void setPrimaryKeyName(String name) {
 		primaryKeyName = name;
 	}
-
+	
 	/**
 	 * Returns the primary key name for the database object. The default is 'id'
 	 * 
-	 * @return
+	 * @return the primary key name
 	 */
 	public String getPrimaryKeyName() {
 		return primaryKeyName;
 	}
 	
-	
+	/**
+	 * This is meant to be override in you have custom procedures that can not be generated by the given types for sub classes of database
+	 * object
+	 * 
+	 * @return a list of procedures
+	 */
 	public List<Procedure> getCustomProcedures() {
 		return new ArrayList<Procedure>();
 	}
 	
 	/**
-	 * This is a basic check for if a Database object equals another.
-	 * It just checks if the primary Key values are equal.
-	 * @param o The object to compare to
+	 * This is a basic check for if a Database object equals another. It just checks if the primary Key values are equal.
+	 * 
+	 * @param o
+	 *            The object to compare to
 	 */
 	@Override
 	public boolean equals(Object o) {
 		return (o instanceof DatabaseObject) && primaryKey.equals(((DatabaseObject) o).primaryKey);
 	}
-
+	
 	/**
 	 * This is the default toString
 	 */
