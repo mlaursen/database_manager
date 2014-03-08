@@ -5,13 +5,6 @@ package testing;
 
 import java.util.Arrays;
 
-import com.github.mlaursen.database.managers.ObjectManager;
-import com.github.mlaursen.database.objects.Package;
-import com.github.mlaursen.examples.PersonJobExample.Job;
-import com.github.mlaursen.examples.PersonJobExample.JobType;
-import com.github.mlaursen.examples.PersonJobExample.Person;
-import com.github.mlaursen.examples.PersonJobExample.PersonView;
-
 /**
  * @author mikkel.laursen
  * 

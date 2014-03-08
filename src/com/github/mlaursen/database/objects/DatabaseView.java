@@ -4,6 +4,8 @@
 package com.github.mlaursen.database.objects;
 
 /**
+ * This class does not really offer anything beneficial yet. The annotation DatabaseViewClass pretty much takes care of everything
+ * 
  * @author mlaursen
  * 
  */

@@ -1,5 +1,5 @@
 com.github.mlaursen.annotations
 com.github.mlaursen.database.managers
 com.github.mlaursen.database.objects
-com.github.mlaursen.database.objecttypes
+com.github.mlaursen.database.procedures
 com.github.mlaursen.database.utils

@@ -67,6 +67,7 @@ public class Procedure {
 	/**
 	 * THIS AUTOMATICALLY ADDS A :CURSOR AS THE FINAL PARAMETER IF HASCURSOR IS TRUE Turns everything to uppercase
 	 */
+	@Override
 	public String toString() {
 		String s = name + "(";
 		for(int i = 0; i < params.length; i++) {

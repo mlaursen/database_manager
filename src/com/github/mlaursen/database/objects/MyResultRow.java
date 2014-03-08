@@ -93,6 +93,7 @@ public class MyResultRow {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		return this.row.toString();
 	}

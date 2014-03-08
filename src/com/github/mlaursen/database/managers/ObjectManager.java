@@ -17,12 +17,12 @@ import com.github.mlaursen.annotations.MultipleDatabaseField;
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.Package;
-import com.github.mlaursen.database.objecttypes.Createable;
-import com.github.mlaursen.database.objecttypes.Deleteable;
-import com.github.mlaursen.database.objecttypes.Filterable;
-import com.github.mlaursen.database.objecttypes.GetAllable;
-import com.github.mlaursen.database.objecttypes.Getable;
-import com.github.mlaursen.database.objecttypes.Updateable;
+import com.github.mlaursen.database.procedures.Createable;
+import com.github.mlaursen.database.procedures.Deleteable;
+import com.github.mlaursen.database.procedures.Filterable;
+import com.github.mlaursen.database.procedures.GetAllable;
+import com.github.mlaursen.database.procedures.Getable;
+import com.github.mlaursen.database.procedures.Updateable;
 import com.github.mlaursen.database.utils.ClassUtil;
 
 /**
@@ -372,7 +372,7 @@ public class ObjectManager {
 		if(packageIsAvailable(type)) {
 			Package pkg = getPackage(type);
 			if(canCallProcedure(type, Filterable.class, pkg, "filter")) {
-				return (List<T>) connectionManager.executeCursorProcedure(pkg, "filter", filterBy).toListOf(type);
+				return connectionManager.executeCursorProcedure(pkg, "filter", filterBy).toListOf(type);
 			}
 		}
 		return new ArrayList<T>();

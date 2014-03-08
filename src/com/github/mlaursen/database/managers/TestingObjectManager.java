@@ -28,16 +28,17 @@ public class TestingObjectManager extends ObjectManager {
 	private boolean debug = false;
 	private boolean copyData = false;
 	private List<String> testingClasses;
+	
 	/**
 	 * 
 	 * @param delete
-	 *            Boolean if the test data should be deleted after testing is complete
+	 *            Boolean if the data should be deleted on cleanup
 	 * @param debug
-	 *            Boolean if deubgging info should be printed
+	 *            Boolean if deubgging statements should be printed
 	 * @param copyData
-	 *            Boolean if all data should be copied from prod to test
-	 * @param databaseObject
-	 *            A database object to generate a package for
+	 *            Boolean if the data from the main system should be copied to testing
+	 * @param objects
+	 *            Array of optional String for each object in testing. This is used in formatting the testing environment
 	 */
 	public TestingObjectManager(boolean delete, boolean debug, boolean copyData, String... objects) {
 		this.delete = delete;
@@ -49,20 +50,20 @@ public class TestingObjectManager extends ObjectManager {
 		this.connectionManager = new TestingConnectionManager();
 		this.testingClasses = Arrays.asList(objects);
 	}
-	/*
-	@SafeVarargs
-	public TestingObjectManager(Class<? extends DatabaseObject>... databaseObjects) {
-		super();
-		connectionManager = new TestingConnectionManager();
-		this.packages = new ArrayList<Package>();
-		this.packageMap = new HashMap<String, Integer>();
-		this.availablePackages = new ArrayList<String>();
-		this.databaseObjects = new ArrayList<Class<? extends DatabaseObject>>();
-		for(Class<? extends DatabaseObject> c : databaseObjects) {
-			addPackage(c);
-		}
+	
+	/**
+	 * Creates a new testing object manager with debug = false delete = true copyData = false
+	 * 
+	 * @param objects
+	 *            List of testing classes String
+	 */
+	public TestingObjectManager(List<String> objects) {
+		this.debug = false;
+		this.delete = true;
+		this.copyData = false;
+		this.testingClasses = objects;
 	}
-	*/
+	
 	@Override
 	public void addPackageWithView(Class<? extends DatabaseObject> baseClass, Class<? extends DatabaseView> view) {
 		Package pkgBase = new Package(baseClass, true);
@@ -160,18 +161,37 @@ public class TestingObjectManager extends ObjectManager {
 	public void recompile() {
 		if(debug) {
 			System.out.println("Recompiling package bodies.");
-			connectionManager.recompile(debug);
+			
 		}
+		connectionManager.recompile(debug);
 	}
 	
+	/**
+	 * Sets the debug boolean to the new boolean
+	 * 
+	 * @param debug
+	 *            Boolean
+	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 	
+	/**
+	 * Sets the delete boolean to the new boolean
+	 * 
+	 * @param delete
+	 *            Boolean
+	 */
 	public void setDelete(boolean delete) {
 		this.delete = delete;
 	}
 	
+	/**
+	 * Sets the copyData boolean to the new boolean
+	 * 
+	 * @param copyData
+	 *            Boolean
+	 */
 	public void setCopyData(boolean copyData) {
 		this.copyData = copyData;
 	}

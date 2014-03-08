@@ -91,7 +91,7 @@ public class TestingConnectionManager extends ConnectionManager {
 	 * 
 	 * @param packageName
 	 *            The package name to copy
-	 * @param classes
+	 * @param testingClasses
 	 *            The list of classes to format for test within the package declaration source
 	 * @param debug
 	 *            Boolean if debugging statements should be printed
@@ -151,7 +151,7 @@ public class TestingConnectionManager extends ConnectionManager {
 	 * 
 	 * @param tableName
 	 *            The table name to look for a view for
-	 * @param classes
+	 * @param testingClasses
 	 *            The list of classes to format the view with test_ appened to the front
 	 * @param debug
 	 *            Boolean if debugging statements should be printed

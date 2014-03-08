@@ -14,13 +14,13 @@ import com.github.mlaursen.annotations.DatabaseField;
 import com.github.mlaursen.annotations.DatabaseFieldType;
 import com.github.mlaursen.annotations.DatabaseViewClass;
 import com.github.mlaursen.annotations.MultipleDatabaseField;
-import com.github.mlaursen.database.objecttypes.Createable;
-import com.github.mlaursen.database.objecttypes.Deleteable;
-import com.github.mlaursen.database.objecttypes.Filterable;
-import com.github.mlaursen.database.objecttypes.GetAllable;
-import com.github.mlaursen.database.objecttypes.Getable;
-import com.github.mlaursen.database.objecttypes.NoCursor;
-import com.github.mlaursen.database.objecttypes.Updateable;
+import com.github.mlaursen.database.procedures.Createable;
+import com.github.mlaursen.database.procedures.Deleteable;
+import com.github.mlaursen.database.procedures.Filterable;
+import com.github.mlaursen.database.procedures.GetAllable;
+import com.github.mlaursen.database.procedures.Getable;
+import com.github.mlaursen.database.procedures.NoCursor;
+import com.github.mlaursen.database.procedures.Updateable;
 import com.github.mlaursen.database.utils.ClassUtil;
 
 /**

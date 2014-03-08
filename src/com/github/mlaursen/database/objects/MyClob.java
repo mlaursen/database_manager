@@ -18,10 +18,18 @@ public class MyClob {
 		this.v = v;
 	}
 	
+	/**
+	 * 
+	 * @return the MyClob value
+	 */
 	public String getValue() {
 		return v;
 	}
 	
+	/**
+	 * Sets the value
+	 * @param v The new value
+	 */
 	public void setValue(String v) {
 		this.v = v;
 	}
