@@ -31,6 +31,8 @@ import com.github.mlaursen.database.procedures.Updateable;
  */
 public class Job extends DatabaseObject implements Getable, GetAllable, Updateable, Createable, Deleteable {
 	
+	private static final long serialVersionUID = -1933741156454496778L;
+
 	@DatabaseField(values = { DatabaseFieldType.NEW, DatabaseFieldType.UPDATE })
 	protected JobType jobType;
 	

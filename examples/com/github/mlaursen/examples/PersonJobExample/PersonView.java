@@ -20,6 +20,7 @@ import com.github.mlaursen.database.procedures.Getable;
 @DatabaseViewClass(Person.class)
 public class PersonView extends DatabaseView implements Getable, GetAllable {
 	
+	private static final long serialVersionUID = 8271499351667588141L;
 	protected Person person;
 	protected Job job;
 	protected String personName;

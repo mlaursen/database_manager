@@ -25,6 +25,8 @@ import com.github.mlaursen.database.procedures.Getable;
  */
 public class JobType extends DatabaseObject implements Getable, GetAllable, Createable {
 	
+	private static final long serialVersionUID = -8177747561681328228L;
+
 	/**
 	 * Default constructor. This is always needed for generation purposes.
 	 */

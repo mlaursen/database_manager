@@ -1,5 +1,6 @@
 package com.github.mlaursen.database.objects;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,8 +16,9 @@ import com.github.mlaursen.annotations.DatabaseFieldType;
  * @author mlaursen
  * 
  */
-public abstract class DatabaseObject {
+public abstract class DatabaseObject implements Serializable {
 	
+	private static final long serialVersionUID = 6065274831732256844L;
 	@DatabaseField(values = { DatabaseFieldType.GET, DatabaseFieldType.DELETE, DatabaseFieldType.UPDATE })
 	protected String primaryKey;
 	protected String primaryKeyName;
