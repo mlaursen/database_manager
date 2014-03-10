@@ -3,12 +3,12 @@
  */
 package com.github.mlaursen.annotations;
 
-import com.github.mlaursen.database.objecttypes.Createable;
-import com.github.mlaursen.database.objecttypes.Deleteable;
-import com.github.mlaursen.database.objecttypes.Filterable;
-import com.github.mlaursen.database.objecttypes.GetAllable;
-import com.github.mlaursen.database.objecttypes.Getable;
-import com.github.mlaursen.database.objecttypes.Updateable;
+import com.github.mlaursen.database.procedures.Createable;
+import com.github.mlaursen.database.procedures.Deleteable;
+import com.github.mlaursen.database.procedures.Filterable;
+import com.github.mlaursen.database.procedures.GetAllable;
+import com.github.mlaursen.database.procedures.Getable;
+import com.github.mlaursen.database.procedures.Updateable;
 
 /**
  * @author mlaursen

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.mlaursen.database.objecttypes;
+package com.github.mlaursen.database.procedures;
 
 /**
  * Interface that lets a database object be retrieved from the database

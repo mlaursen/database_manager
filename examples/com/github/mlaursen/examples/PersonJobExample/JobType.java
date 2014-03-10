@@ -5,9 +5,9 @@ package com.github.mlaursen.examples.PersonJobExample;
 
 import com.github.mlaursen.database.objects.DatabaseObject;
 import com.github.mlaursen.database.objects.MyResultRow;
-import com.github.mlaursen.database.objecttypes.Createable;
-import com.github.mlaursen.database.objecttypes.GetAllable;
-import com.github.mlaursen.database.objecttypes.Getable;
+import com.github.mlaursen.database.procedures.Createable;
+import com.github.mlaursen.database.procedures.GetAllable;
+import com.github.mlaursen.database.procedures.Getable;
 
 /**
  * This is a DatabaseObject representation for the database table named JOB_TYPE.

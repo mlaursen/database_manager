@@ -1,4 +1,4 @@
-package com.github.mlaursen.database.objecttypes;
+package com.github.mlaursen.database.procedures;
 
 /**
  * Interface that lets a database object get all results from the database

@@ -10,8 +10,8 @@ import com.github.mlaursen.annotations.DatabaseViewClass;
 import com.github.mlaursen.database.objects.DatabaseView;
 import com.github.mlaursen.database.objects.MyResultRow;
 import com.github.mlaursen.database.objects.Procedure;
-import com.github.mlaursen.database.objecttypes.GetAllable;
-import com.github.mlaursen.database.objecttypes.Getable;
+import com.github.mlaursen.database.procedures.GetAllable;
+import com.github.mlaursen.database.procedures.Getable;
 
 /**
  * @author mlaursen
