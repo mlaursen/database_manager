@@ -500,6 +500,18 @@ public class ObjectManager {
 		return ClassUtil.isClassCallable(type, procedure) && pkg.canCallProcedure(procedureName);
 	}
 	
+	/**
+	 * Renames a package from a given class to the new class. It will format the class with the default regex and default combine with.
+	 * 
+	 * @param from
+	 *            Class to change package for
+	 * @param to
+	 *            The package name
+	 */
+	public void renamePackage(Class<? extends DatabaseObject> from, Class<? extends DatabaseObject> to) {
+		this.getPackage(from).setName(ClassUtil.formatClassName(to));
+	}
+	
 	@Override
 	public String toString() {
 		String s = "ObjectManager [\n\tpackages=[";

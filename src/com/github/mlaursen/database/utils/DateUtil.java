@@ -4,6 +4,7 @@
 package com.github.mlaursen.database.utils;
 
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -84,5 +85,29 @@ public class DateUtil {
 		Calendar c2 = new GregorianCalendar();
 		c2.setTime(d2);
 		return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+	}
+	
+	/**
+	 * 
+	 * @param date
+	 *            A Date to format
+	 * @param format
+	 *            The format for the date
+	 * @return A formatted date string
+	 */
+	public static String dateToString(Date date, String format) {
+		DateFormat df = new SimpleDateFormat(format);
+		return df.format(date);
+	}
+	
+	/**
+	 * Formats a date in the format: Tuesday, February 01, 1981
+	 * 
+	 * @param date
+	 *            The date to format
+	 * @return A formatted date string
+	 */
+	public static String dateToString(Date date) {
+		return dateToString(date, "EEEEE, MMMMM dd, yyyy");
 	}
 }

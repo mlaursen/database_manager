@@ -11,6 +11,8 @@ package com.github.mlaursen.database.objects;
  */
 public class DatabaseView extends DatabaseObject {
 	
+	private static final long serialVersionUID = -864055880160819780L;
+
 	public DatabaseView() {}
 	
 	protected DatabaseView(String primaryKey) {

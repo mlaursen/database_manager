@@ -39,6 +39,8 @@ import com.github.mlaursen.database.procedures.Updateable;
  */
 public class Person extends DatabaseObject implements Createable, Deleteable, Getable, Updateable {
 	
+	private static final long serialVersionUID = -8230475128123668679L;
+
 	@DatabaseField(values = { DatabaseFieldType.NEW, DatabaseFieldType.UPDATE })
 	protected String jobId;
 	

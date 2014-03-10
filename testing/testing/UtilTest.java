@@ -10,6 +10,7 @@ import static com.github.mlaursen.database.utils.ClassUtil.isClassCallable;
 import static com.github.mlaursen.database.utils.DateUtil.sameDate;
 import static com.github.mlaursen.database.utils.DateUtil.stringToDate;
 import static com.github.mlaursen.database.utils.DateUtil.sysdateToDate;
+import static com.github.mlaursen.database.utils.DateUtil.dateToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -136,5 +137,15 @@ public class UtilTest {
 	public void testSysdateToString() {
 		assertTrue(sameDate(sysdateToDate("1990-02-21 8:22:13"), sysdateToDate("1990-02-21 8:22:13")));
 		assertTrue(sameDate(sysdateToDate("1990-02-21 8:22:13"), Date.valueOf("1990-02-21")));
+	}
+	
+	@Test
+	public void testDateToString() {
+		assertEquals("Monday, March 10, 2014", dateToString(stringToDate("2014-03-10")));
+		assertEquals("Tuesday, March 11, 2014", dateToString(stringToDate("2014-03-11")));
+		assertEquals("Wednesday, March 12, 2014", dateToString(stringToDate("2014-03-12")));
+		assertEquals("Thursday, March 13, 2014", dateToString(stringToDate("2014-03-13")));
+		assertEquals("Jan-01-14", dateToString(stringToDate("2014-01-01"), "MMM-dd-yy"));
+		
 	}
 }
