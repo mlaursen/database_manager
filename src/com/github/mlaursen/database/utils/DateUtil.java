@@ -110,4 +110,13 @@ public class DateUtil {
 	public static String dateToString(Date date) {
 		return dateToString(date, "EEEEE, MMMMM dd, yyyy");
 	}
+	
+	/**
+	 * Creates a new date for the current time
+	 * 
+	 * @return A date for the current time
+	 */
+	public static Date createSysdate() {
+		return new Date(Calendar.getInstance().getTimeInMillis());
+	}
 }
